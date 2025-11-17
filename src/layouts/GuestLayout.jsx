@@ -1,9 +1,10 @@
 import { Outlet } from "react-router-dom";
+import Navbar from "@components/Navbar";
 
 function GuestLayout() {
   return (
     <div>
-      <header>Header público</header>
+      <Navbar></Navbar>
       <main>
         <Outlet /> {/* Aquí se renderiza HermandadesForm */}
       </main>
