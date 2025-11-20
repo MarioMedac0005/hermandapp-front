@@ -2,27 +2,27 @@ import { useState } from "react";
 import {
   HomeIcon,
   MusicalNoteIcon,
-  FolderOpenIcon,
-  NewspaperIcon,
   UserIcon,
   CalendarDaysIcon,
-  LightBulbIcon,
   Bars3Icon,
   XMarkIcon,
+  MapPinIcon,
+  BuildingLibraryIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "@assets/img/logo.svg";
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { name: "Inicio", icon: HomeIcon, href: "/admin-panel" },
+  { name: "Escritorio", icon: HomeIcon, href: "/admin-panel/dashboard" },
   { name: "Usuarios", icon: UserIcon, href: "/admin-panel/users" },
   { name: "Bandas", icon: MusicalNoteIcon, href: "/admin-panel/bands" },
   {
     name: "Hermandades",
-    icon: FolderOpenIcon,
+    icon: BuildingLibraryIcon,
     href: "/admin-panel/brotherhoods",
   },
-  { name: "Contratos", icon: NewspaperIcon, href: "/admin-panel/contracts" },
+  { name: "Contratos", icon: DocumentTextIcon, href: "/admin-panel/contracts" },
   {
     name: "Disponibilidad",
     icon: CalendarDaysIcon,
@@ -30,7 +30,7 @@ const menuItems = [
   },
   {
     name: "Procesiones",
-    icon: LightBulbIcon,
+    icon: MapPinIcon,
     href: "/admin-panel/processions",
   },
 ];

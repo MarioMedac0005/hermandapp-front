@@ -82,7 +82,7 @@ function UserList() {
     <div>
       <h1 className="text-2xl font-bold -mt-3 mb-2">Usuarios</h1>
       <div className="flex gap-4 flex-wrap justify-between items-center mb-4">
-        <label className="input">
+        <label className="input input-sm">
           <svg
             className="h-[1em] opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -102,10 +102,7 @@ function UserList() {
           <input type="search" required placeholder="Search" />
         </label>
         <Link to="/admin-panel/users/create">
-          <button
-            type="button"
-            className="btn"
-          >
+          <button type="button" className="btn btn-sm">
             Crear un usuario
           </button>
         </Link>

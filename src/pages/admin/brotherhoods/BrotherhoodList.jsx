@@ -72,9 +72,9 @@ function BrotherhoodList() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold -mt-3 mb-2">Hermandad</h1>
+      <h1 className="text-2xl font-bold -mt-3 mb-2">Hermandades</h1>
       <div className="flex gap-4 flex-wrap justify-between items-center mb-4 text-xs">
-        <label className="input">
+        <label className="input input-sm">
           <svg
             className="h-[1em] opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -96,9 +96,9 @@ function BrotherhoodList() {
         <Link to="/admin-panel/brotherhoods/create">
           <button
             type="button"
-            className="btn"
+            className="btn btn-sm"
           >
-            Crear un usuario
+            Crear una hermandad
           </button>
         </Link>
       </div>
