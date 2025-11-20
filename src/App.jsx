@@ -6,6 +6,8 @@ import HermandadInicio from "@pages/hermandades/panel/HermandadInicio";
 import HermandadesForm from "@pages/hermandades/HermandadesForm";
 import UserList from "@pages/admin/users/UserList";
 import UserForm from "@pages/admin/users/UserForm";
+import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
+import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
           path="hermandades/contratatos/crear"
           element={<HermandadesForm />}
         />
+        <Route path="perfil/hermandad" element={<HermandadPerfil />} />
+        <Route path="perfil/banda" element={<BandaPerfil />} />
       </Route>
       {/* Rutas para el panel de administracion nuestro */}
       <Route path="/admin-panel" element={<AdminLayout />}>
