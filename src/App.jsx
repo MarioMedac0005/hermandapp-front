@@ -12,6 +12,7 @@ function App() {
     <Routes>
       <Route path="/" element={<GuestLayout />}>
         <Route path="busqueda" element={<Busqueda />} />
+        
         <Route path="hermandades/panel" element={<HermandadInicio />} />
         <Route
           path="hermandades/contratatos/crear"
