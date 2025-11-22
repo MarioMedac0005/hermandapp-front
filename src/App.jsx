@@ -17,17 +17,16 @@ import AvailabilityForm from "@pages/admin/availabilities/AvailabilityForm";
 import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
 import Dashboard from '@pages/admin/dashboard/Dashboard'
+import LandingPage from "@/pages/landing/LandingPage";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<GuestLayout />}>
+        <Route index element={<LandingPage />} />
         <Route path="busqueda" element={<Busqueda />} />
         <Route path="hermandades/panel" element={<HermandadInicio />} />
-        <Route
-          path="hermandades/contratatos/crear"
-          element={<HermandadesForm />}
-        />
+        <Route path="hermandades/contratatos/crear" element={<HermandadesForm />} />
       </Route>
       {/* Rutas para el panel de administracion nuestro */}
       <Route path="/admin-panel" element={<AdminLayout />}>
