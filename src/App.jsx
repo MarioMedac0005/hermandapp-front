@@ -21,6 +21,7 @@ import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
 import adminMenu from "./menus/admin";
 import hermandadMenu from "./menus/hermandad";
 import Contratos from "@pages/hermandades/panel/Contratos";
+import HermandadProfile from '../src/services/HermandadProfile'
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
       {/* Ruta para el panel de administracion de las hermandades */}
       <Route
         path="hermandad/panel"
-        element={<AdminLayout menuItems={hermandadMenu} />}
+        element={<AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />}
       >
         <Route path="informacion" element={<Informacion />} />
         <Route path="buscar-banda" element={<BuscarBanda />} />

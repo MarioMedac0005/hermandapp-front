@@ -1,15 +1,14 @@
 import { useState } from "react";
-import {
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Logo from "@assets/img/logo.svg";
 import { Link, useLocation } from "react-router-dom";
 
-function Sidebar({ menuItems }) {
+function Sidebar({ menuItems, profile }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const urlActive = useLocation();
+
+  console.log(profile);
 
   return (
     <>
@@ -49,12 +48,12 @@ function Sidebar({ menuItems }) {
 
           <div className="flex gap-1">
             {/* Botón colapsar en desktop */}
-              <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition"
-              >
-                <Bars3Icon className="w-5 h-5 text-gray-700" />
-              </button>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition"
+            >
+              <Bars3Icon className="w-5 h-5 text-gray-700" />
+            </button>
 
             {/* Botón cerrar en móvil */}
             <button
@@ -68,6 +67,23 @@ function Sidebar({ menuItems }) {
 
         {/* NAVIGATION */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {/* PERFIL */}
+          {profile && !collapsed && (
+            <div className="flex items-center gap-3 px-4 py-3 my-2">
+              <img
+                src={profile.logo}
+                alt={profile.nombre}
+                className="size-14 rounded-full object-cover"
+              />
+              <div className="flex flex-col gap-2">
+                <span>{profile.nombre}</span>
+                <span className="text-gray-600 text-[10px]">
+                  Panel de Administración
+                </span>
+              </div>
+            </div>
+          )}
+
           {menuItems.map(({ name, icon: Icon, href }) => {
             const isActive =
               href === "/admin-panel"
