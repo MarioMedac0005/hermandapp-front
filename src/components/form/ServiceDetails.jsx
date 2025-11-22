@@ -45,15 +45,18 @@ export default function ServiceDetails() {
 				</fieldset>
 			</div>
 
-			<div className="mt-6 rounded-xl transition p-2 mx-auto">
-				<Calendar
-					className="text-sm"
-					onChange={(e) => setDate(e.value)}
-					value={date}
-					inline
-					locale="es"
-				/>
-			</div>
+			<fieldset className="fieldset mt-6 rounded-xl transition p-2 mx-auto">
+				<legend className="fieldset-legend mx-auto">Selecciona la fecha deseada</legend>
+				<div>
+					<Calendar
+						className="text-sm"
+						onChange={(e) => setDate(e.value)}
+						value={date}
+						inline
+						locale="es"
+					/>
+				</div>
+			</fieldset>
 		</div>
 	);
 }
