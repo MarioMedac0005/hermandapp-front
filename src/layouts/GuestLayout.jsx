@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "@components/Navbar";
+import Footer from "@components/Footer";
 
 function GuestLayout() {
-  return (
-    <div>
-      <Navbar></Navbar>
-      <main>
-        <Outlet /> {/* Aquí se renderiza HermandadesForm */}
-      </main>
-      <footer>Footer público</footer>
-    </div>
-  );
+	return (
+		<div className="min-h-screen bg-gray-50">
+			<Navbar></Navbar>
+			<main>
+				<Outlet /> {/* Aquí se renderiza HermandadesForm */}
+			</main>
+			<Footer />
+		</div>
+	);
 }
 
 export default GuestLayout;

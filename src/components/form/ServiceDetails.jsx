@@ -21,7 +21,6 @@ export default function ServiceDetails() {
 	const [date, setDate] = useState(null);
 
 	return (
-
 		<div className="card bg-base-100 shadow p-6 rounded-xl">
 			<h2 className="text-lg font-bold mb-4">1. Detalles del Servicio</h2>
 
@@ -46,12 +45,11 @@ export default function ServiceDetails() {
 				</fieldset>
 			</div>
 
-			<div className="mt-6 border border-base-300 rounded-xl transition">
+			<div className="mt-6 rounded-xl transition p-2 mx-auto">
 				<Calendar
-					className="w-full"
+					className="text-sm"
 					onChange={(e) => setDate(e.value)}
 					value={date}
-					showButtonBar
 					inline
 					locale="es"
 				/>
