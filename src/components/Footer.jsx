@@ -3,7 +3,7 @@ import Logo from "@assets/img/logo.svg";
 export default function Footer() {
     return (
         <>
-            <footer className="footer sm:footer-horizontal bg-gray-100 text-base-content p-10 mx-10">
+            <footer className="footer sm:footer-horizontal bg-gray-100 text-base-content p-10">
                 <aside>
                     <div className="flex-1">
                         <img src={Logo} alt="Logo" className="w-28" />
