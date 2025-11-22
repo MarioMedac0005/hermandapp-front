@@ -17,7 +17,7 @@ import AvailabilityForm from "@pages/admin/availabilities/AvailabilityForm";
 import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
 import Dashboard from '@pages/admin/dashboard/Dashboard'
-import LandingPage from "@/pages/landing/LandingPage";
+import LandingPage from "@pages/landing/LandingPage";
 
 function App() {
   return (
