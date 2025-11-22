@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminLayout from "@layouts/AdminLayout";
 import GuestLayout from "@layouts/GuestLayout";
 import Busqueda from "@pages/busqueda/busqueda";
-import HermandadInicio from "@pages/hermandades/panel/HermandadInicio";
+import Informacion from "@pages/hermandades/panel/Informacion";
 import HermandadesForm from "@pages/hermandades/HermandadesForm";
 import UserList from "@pages/admin/users/UserList";
 import UserForm from "@pages/admin/users/UserForm";
@@ -16,22 +16,37 @@ import AvailabilityList from "@pages/admin/availabilities/AvailabilityList";
 import AvailabilityForm from "@pages/admin/availabilities/AvailabilityForm";
 import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
-import Dashboard from '@pages/admin/dashboard/Dashboard'
+import Dashboard from "@pages/admin/dashboard/Dashboard";
+import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
+import adminMenu from "./menus/admin";
+import hermandadMenu from "./menus/hermandad";
+import Contratos from "@pages/hermandades/panel/Contratos";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<GuestLayout />}>
         <Route path="busqueda" element={<Busqueda />} />
-        
         <Route path="hermandades/panel" element={<HermandadInicio />} />
         <Route
           path="hermandades/contratatos/crear"
           element={<HermandadesForm />}
         />
       </Route>
+      {/* Ruta para el panel de administracion de las hermandades */}
+      <Route
+        path="hermandad/panel"
+        element={<AdminLayout menuItems={hermandadMenu} />}
+      >
+        <Route path="informacion" element={<Informacion />} />
+        <Route path="buscar-banda" element={<BuscarBanda />} />
+        <Route path="contratos" element={<Contratos />} />
+      </Route>
       {/* Rutas para el panel de administracion nuestro */}
-      <Route path="/admin-panel" element={<AdminLayout />}>
+      <Route
+        path="/admin-panel"
+        element={<AdminLayout menuItems={adminMenu} />}
+      >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<UserList />} />
         <Route path="users/create" element={<UserForm />} />

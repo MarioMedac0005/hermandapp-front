@@ -1,10 +1,10 @@
 import Sidebar from "@components/Sidebar";
 import { Outlet } from "react-router-dom";
 
-function AdminLayout() {
+function AdminLayout({ menuItems }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      <Sidebar />
+      <Sidebar menuItems={menuItems}/>
 
       <main
         className="

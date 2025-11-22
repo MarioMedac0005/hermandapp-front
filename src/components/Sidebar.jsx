@@ -1,41 +1,12 @@
 import { useState } from "react";
 import {
-  HomeIcon,
-  MusicalNoteIcon,
-  UserIcon,
-  CalendarDaysIcon,
   Bars3Icon,
   XMarkIcon,
-  MapPinIcon,
-  BuildingLibraryIcon,
-  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "@assets/img/logo.svg";
 import { Link, useLocation } from "react-router-dom";
 
-const menuItems = [
-  { name: "Escritorio", icon: HomeIcon, href: "/admin-panel/dashboard" },
-  { name: "Usuarios", icon: UserIcon, href: "/admin-panel/users" },
-  { name: "Bandas", icon: MusicalNoteIcon, href: "/admin-panel/bands" },
-  {
-    name: "Hermandades",
-    icon: BuildingLibraryIcon,
-    href: "/admin-panel/brotherhoods",
-  },
-  { name: "Contratos", icon: DocumentTextIcon, href: "/admin-panel/contracts" },
-  {
-    name: "Disponibilidad",
-    icon: CalendarDaysIcon,
-    href: "/admin-panel/availabilities",
-  },
-  {
-    name: "Procesiones",
-    icon: MapPinIcon,
-    href: "/admin-panel/processions",
-  },
-];
-
-function Sidebar() {
+function Sidebar({ menuItems }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const urlActive = useLocation();
@@ -78,12 +49,12 @@ function Sidebar() {
 
           <div className="flex gap-1">
             {/* Botón colapsar en desktop */}
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition"
-            >
-              <Bars3Icon className="w-5 h-5 text-gray-700" />
-            </button>
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition"
+              >
+                <Bars3Icon className="w-5 h-5 text-gray-700" />
+              </button>
 
             {/* Botón cerrar en móvil */}
             <button
