@@ -1,7 +1,7 @@
 export default function CTASection() {
   return (
-    <section className="px-10 py-12">
-      <div className="bg-purple-100 rounded-lg p-8 text-center shadow-lg">
+    <section className="px-15 py-10">
+      <div className="bg-purple-100 rounded-lg p-8 text-center shadow">
         <h3 className="text-4xl font-bold text-purple-800 mb-4 tracking-tight">
           ¿Eres una hermandad o una banda?
         </h3>

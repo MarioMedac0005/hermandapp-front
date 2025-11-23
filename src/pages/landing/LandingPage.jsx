@@ -7,20 +7,21 @@ export default function LandingPage() {
 		<>
 			<HeroSection />
 
-			<h2 className="text-3xl font-bold text-purple-700 px-10 mt-10 mb-6">
+			<h2 className="text-3xl font-bold text-purple-700 px-15 mt-10 mb-6">
 				Bandas Destacadas
 			</h2>
-			<div className="px-10 grid gap-6 justify-center grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+			<div className="px-50 flex flex-wrap justify-between gap-6">
 				<Card />
 				<Card />
 				<Card />
 				<Card />
 			</div>
 
-			<h2 className="text-3xl font-bold text-purple-700 px-10 mt-10 mb-6">
+			<h2 className="text-3xl font-bold text-purple-700 px-15 mt-10 mb-6">
 				Hermandades Destacadas
 			</h2>
-			<div className="px-10 grid gap-6 justify-center grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+			<div className="px-50 flex flex-wrap justify-between gap-6">
+				<Card />
 				<Card />
 				<Card />
 				<Card />

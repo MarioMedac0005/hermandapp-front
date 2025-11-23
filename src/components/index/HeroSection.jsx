@@ -2,7 +2,7 @@ import SearchBar from "./SearchBar";
 
 export default function HeroSection() {
 	return (
-		<section className="w-full flex justify-center px-10 mt-5">
+		<section className="w-full flex justify-center px-15 mt-5">
 			<div className="relative w-full h-[420px] rounded-xl overflow-hidden">
 
 				<img src="/src/assets/img/Hero.webp" alt="Imagen Hero" className="absolute inset-0 w-full h-full object-cover" />

@@ -1,16 +1,17 @@
 export default function BandaCard() {
 	return (
-		<div className="card bg-base-100 w-full shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-			<figure className="overflow-hidden">
-				<img
-					src="src/assets/img/CardExample.png"
-					alt="Foto de Banda"
-					className="w-full h-64 object-cover transition-transform duration-300"
-				/>
+		<div className="card card-sm max-w-50">
+			<figure className="hover-gallery h-52 overflow-hidden">
+				<img className="w-full h-full object-cover" src="src/assets/img/CardExample1.png" />
+				<img className="w-full h-full object-cover" src="src/assets/img/CardExample2.jpg" />
+				<img className="w-full h-full object-cover" src="src/assets/img/CardExample3.png" />
+				<img className="w-full h-full object-cover" src="src/assets/img/CardExample4.webp" />
 			</figure>
-			<div className="card-body">
-				<h2 className="card-title">La Macarena</h2>
-				<p className="text-sm opacity-80">Sevilla</p>
+			<div className="card text-sm text-left mt-3.5">
+				<h2 className="card-title flex justify-between">
+					La Macarena
+				</h2>
+				<p className="text-gray-600">Córdoba</p>
 			</div>
 		</div>
 	);
