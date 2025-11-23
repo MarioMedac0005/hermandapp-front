@@ -8,8 +8,6 @@ function Sidebar({ menuItems, profile }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const urlActive = useLocation();
 
-  console.log(profile);
-
   return (
     <>
       {/* BOTÓN SUPERIOR EN MÓVIL */}
@@ -69,7 +67,7 @@ function Sidebar({ menuItems, profile }) {
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {/* PERFIL */}
           {profile && !collapsed && (
-            <div className="flex items-center gap-3 px-4 py-3 my-2">
+            <div className="flex items-center gap-3 px-4 pt-3 pb-6 my-2">
               <img
                 src={profile.logo}
                 alt={profile.nombre}

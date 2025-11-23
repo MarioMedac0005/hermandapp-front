@@ -3,6 +3,7 @@ import AdminLayout from "@layouts/AdminLayout";
 import GuestLayout from "@layouts/GuestLayout";
 import Busqueda from "@pages/busqueda/busqueda";
 import Informacion from "@pages/hermandades/panel/Informacion";
+import ProfileBanda from "@pages/banda/panel/Perfil";
 import HermandadesForm from "@pages/hermandades/HermandadesForm";
 import UserList from "@pages/admin/users/UserList";
 import UserForm from "@pages/admin/users/UserForm";
@@ -20,15 +21,17 @@ import Dashboard from "@pages/admin/dashboard/Dashboard";
 import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
 import adminMenu from "./menus/admin";
 import hermandadMenu from "./menus/hermandad";
+import bandaMenu from "./menus/banda";
 import Contratos from "@pages/hermandades/panel/Contratos";
-import HermandadProfile from '../src/services/HermandadProfile'
+import ContratosBanda from "@pages/banda/panel/Contratos";
+import HermandadProfile from "../src/services/HermandadProfile";
+import BandaProfile from "../src/services/BandaProfile";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<GuestLayout />}>
         <Route path="busqueda" element={<Busqueda />} />
-        <Route path="hermandades/panel" element={<HermandadInicio />} />
         <Route
           path="hermandades/contratatos/crear"
           element={<HermandadesForm />}
@@ -37,12 +40,26 @@ function App() {
       {/* Ruta para el panel de administracion de las hermandades */}
       <Route
         path="hermandad/panel"
-        element={<AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />}
+        element={
+          <AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />
+        }
       >
         <Route path="informacion" element={<Informacion />} />
         <Route path="buscar-banda" element={<BuscarBanda />} />
         <Route path="contratos" element={<Contratos />} />
       </Route>
+
+      {/* Rutas para el panel de administracion de la banda */}
+      <Route
+        path="banda/panel"
+        element={
+          <AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />
+        }
+      >
+        <Route path="informacion" element={<ProfileBanda />} />
+        <Route path="contratos" element={<ContratosBanda />} />
+      </Route>
+
       {/* Rutas para el panel de administracion nuestro */}
       <Route
         path="/admin-panel"
