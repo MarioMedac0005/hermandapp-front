@@ -26,6 +26,8 @@ import Contratos from "@pages/hermandades/panel/Contratos";
 import ContratosBanda from "@pages/banda/panel/Contratos";
 import HermandadProfile from "../src/services/HermandadProfile";
 import BandaProfile from "../src/services/BandaProfile";
+import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
+import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
           path="hermandades/contratatos/crear"
           element={<HermandadesForm />}
         />
+        <Route path="perfil/hermandad" element={<HermandadPerfil />} />
+        <Route path="perfil/banda" element={<BandaPerfil />} />
       </Route>
       {/* Ruta para el panel de administracion de las hermandades */}
       <Route
