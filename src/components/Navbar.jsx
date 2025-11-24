@@ -29,7 +29,9 @@ function Navbar() {
   return (
     <div className="navbar bg-base-100 shadow-sm px-7">
       <div className="flex-1">
-        <img src={Logo} alt="Logo" className="w-28" />
+        <Link to='/'>
+          <img src={Logo} alt="Logo" className="w-28" />
+        </Link>
       </div>
 
       <div className="flex-none">
@@ -113,7 +115,7 @@ function Navbar() {
         </div>
       </div>
 
-      <Link to='/admin-panel/dashboard'>
+      <Link to="/admin-panel/dashboard">
         <button className="btn btn-soft ml-4 btn-sm">Dashboard</button>
       </Link>
     </div>
