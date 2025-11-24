@@ -1,9 +1,28 @@
 import { EnvelopeIcon, NewspaperIcon, PhoneIcon, GlobeAltIcon, PhotoIcon, CalendarDaysIcon, MusicalNoteIcon } from '@heroicons/react/24/outline';
 import Escudo from '../banda/assets/escudo.png'
 import Banner from '../banda/assets/banner.png'
-import React from 'react';
+import { Calendar } from 'primereact/calendar';
+import { addLocale } from 'primereact/api';
+import "primereact/resources/themes/lara-light-blue/theme.css"; 
+import "primereact/resources/primereact.min.css"; 
+import "primeicons/primeicons.css";
+import React, { useState } from 'react';
+
+addLocale('es', {
+    firstDayOfWeek: 1, 
+    dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+    dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+    dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+    today: 'Hoy',
+    clear: 'Limpiar',
+})
 
 function BandaPerfil() {
+
+  const [date, setDate] = useState(null);
+
   return (
     <div className="min-h-screen bg-gray-100">
 
@@ -155,8 +174,17 @@ function BandaPerfil() {
             </div>
           </section>
 
-          <section className="pt-4">
+          <section className="pt-4 bg-white p-6 rounded-xl shadow-lg"> 
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">Disponibilidad</h2>
+            <div className="flex justify-center">
+              <Calendar 
+                value={date} 
+                onChange={(e) => setDate(e.value)} 
+                inline 
+                showWeek
+                locale="es"
+              />
+            </div>
           </section>
 
         </div>
