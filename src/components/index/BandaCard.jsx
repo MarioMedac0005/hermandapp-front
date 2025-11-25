@@ -1,4 +1,8 @@
 import { Link } from "react-router-dom";
+import CardExample1 from "@assets/img/CardExample1.png";
+import CardExample2 from "@assets/img/CardExample2.jpg";
+import CardExample3 from "@assets/img/CardExample3.png";
+import CardExample3 from "@assets/img/CardExample3.webp";
 
 export default function BandaCard({ href }) {
   return (
@@ -7,19 +11,19 @@ export default function BandaCard({ href }) {
         <figure className="hover-gallery h-52 overflow-hidden">
           <img
             className="w-full h-full object-cover"
-            src="src/assets/img/CardExample1.png"
+            src= {CardExample1}
           />
           <img
             className="w-full h-full object-cover"
-            src="src/assets/img/CardExample2.jpg"
+            src= {CardExample2}
           />
           <img
             className="w-full h-full object-cover"
-            src="src/assets/img/CardExample3.png"
+            src= {CardExample3}
           />
           <img
             className="w-full h-full object-cover"
-            src="src/assets/img/CardExample4.webp"
+            src= {CardExample4}
           />
         </figure>
         <div className="card text-sm text-left mt-3.5">
