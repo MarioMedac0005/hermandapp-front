@@ -1,6 +1,5 @@
 import CardBusqueda from "../../components/busqueda/CardBusqueda";
 import Pagination from "../../components/Pagination";
-import pruebaImagen from "./prueba_virgen_paso.jpg";
 
 function Busqueda() {
   return (

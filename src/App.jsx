@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import AdminLayout from "@layouts/AdminLayout";
 import GuestLayout from "@layouts/GuestLayout";
-import Busqueda from "@pages/busqueda/busqueda";
+import Busqueda from "@pages/busqueda/Busqueda";
 import Informacion from "@pages/hermandades/panel/Informacion";
 import ProfileBanda from "@pages/banda/panel/Perfil";
 import HermandadesForm from "@pages/hermandades/HermandadesForm";
