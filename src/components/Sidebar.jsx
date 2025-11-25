@@ -12,7 +12,9 @@ function Sidebar({ menuItems, profile }) {
     <>
       {/* BOTÓN SUPERIOR EN MÓVIL */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-[#e8e9ed]">
-        <img src={Logo} alt="Logo" className="w-28" />
+        <Link to="/admin-panel/dashboard">
+          <img src={Logo} alt="Logo" className="w-28" />
+        </Link>
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 rounded-md hover:bg-gray-100"
@@ -37,11 +39,13 @@ function Sidebar({ menuItems, profile }) {
         {/* HEADER */}
         <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-[#e8e9ed]">
           {!collapsed && (
-            <img
-              src={Logo}
-              alt="Logo Cofradía"
-              className="w-28 transition-all"
-            />
+            <Link to='/admin-panel/dashboard'>
+              <img
+                src={Logo}
+                alt="Logo Cofradía"
+                className="w-28 transition-all"
+              />
+            </Link>
           )}
 
           <div className="flex gap-1">
