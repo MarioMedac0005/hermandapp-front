@@ -1,0 +1,18 @@
+export default function CTASection() {
+  return (
+    <section className="px-15 py-10">
+      <div className="bg-purple-100 rounded-lg p-8 text-center shadow">
+        <h3 className="text-2xl font-bold text-purple-800 mb-4 tracking-tight">
+          ¿Eres una hermandad o una banda?
+        </h3>
+        <p className="text-gray-700 mb-6 text-sm">
+          Únete a nuestra plataforma para conectar, gestionar contratos y llegar a una comunidad
+          apasionada por la Semana Santa.
+        </p>
+        <button className="px-6 py-3 bg-purple-600 text-xs text-white rounded-lg shadow hover:bg-purple-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+          Saber más
+        </button>
+      </div>
+    </section>
+  );
+}
