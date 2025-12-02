@@ -29,7 +29,7 @@ function Navbar() {
   return (
     <div className="navbar bg-base-100 shadow-sm px-7">
       <div className="flex-1">
-        <Link to='/'>
+        <Link to="/">
           <img src={Logo} alt="Logo" className="w-28" />
         </Link>
       </div>
@@ -37,13 +37,21 @@ function Navbar() {
       <div className="flex-none">
         <ul className="menu menu-horizontal px-6">
           <li>
-            <a className="active:bg-gray-200 hover:text-inherit">Inicio</a>
+            <Link to="/">
+              <a className="active:bg-gray-200 hover:text-inherit">Inicio</a>
+            </Link>
           </li>
           <li>
-            <a className="active:bg-gray-200 hover:text-inherit">Bandas</a>
+            <Link to="perfil/banda">
+              <a className="active:bg-gray-200 hover:text-inherit">Bandas</a>
+            </Link>
           </li>
           <li>
-            <a className="active:bg-gray-200 hover:text-inherit">Hermandades</a>
+            <Link to='perfil/hermandad'>
+              <a className="active:bg-gray-200 hover:text-inherit">
+                Hermandades
+              </a>
+            </Link>
           </li>
           <li>
             <a className="active:bg-gray-200 hover:text-inherit">Contacto</a>
