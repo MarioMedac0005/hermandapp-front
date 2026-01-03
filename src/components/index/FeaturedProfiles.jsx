@@ -10,7 +10,7 @@ export default function FeaturedProfiles() {
 		async function fetchFeatured() {
 			try {
 				const response = await fetch(
-					"http://127.0.0.1:8000/api/featured"
+					"https://daw23.arenadaw.com.es/api/featured"
 				);
 
 				if (!response.ok) {
