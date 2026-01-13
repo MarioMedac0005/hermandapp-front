@@ -26,5 +26,4 @@ function CardBusqueda() {
     </div>
   );
 }
-
 export default CardBusqueda;
