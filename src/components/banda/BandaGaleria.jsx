@@ -1,7 +1,7 @@
 import { getMediaByCategories } from "../../utils/media";
 
 export default function BandaGaleria({ media }) {
-	const galeria = getMediaByCategories(media, "galeria");
+	const galeria = getMediaByCategories(media, "gallery");
 
 	return (
 		<section>

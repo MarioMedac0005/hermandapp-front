@@ -1,16 +1,14 @@
 export default function BandaInfo({ banda }) {
 	return (
-		<main className="container mx-auto px-6 py-8 max-w-7xl">
+		<section>
+			<h2 className="text-2xl font-semibold mb-6">Información</h2>
+
 			<div className="bg-white rounded-xl shadow divide-y">
+				<Item label="Historia" value={banda.description} />
 				<Item label="Ciudad" value={banda.city} />
 				<Item label="Lugar de ensayo" value={banda.rehearsal_space} />
-				<Item label="Correo electrónico" value={banda.email} />
-				<Item
-					label="Fecha de creación"
-					value={formatDate(banda.created_at)}
-				/>
 			</div>
-		</main>
+		</section>
 	);
 }
 
@@ -18,15 +16,17 @@ function Item({ label, value }) {
 	if (!value) return null;
 
 	return (
-		<div className="flex p-4">
-			<span className="w-48 font-semibold text-gray-700">
+		<div className="flex gap-4 p-4">
+			<span className="w-32 sm:w-48 shrink-0 font-semibold text-lg">
 				{label}
 			</span>
-			<span className="text-gray-600">{value}</span>
+
+
+			<p className="flex-1 text-gray-800 whitespace-normal wrap-break-words">
+				{value}
+			</p>
 		</div>
 	);
 }
 
-function formatDate(date) {
-	return new Date(date).toLocaleDateString("es-ES");
-}
+

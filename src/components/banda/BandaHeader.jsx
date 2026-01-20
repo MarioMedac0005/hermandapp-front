@@ -3,7 +3,7 @@ import { getMediaByCategory } from "../../utils/media";
 
 export default function BandaHeader({ banda }) {
 	const banner = getMediaByCategory(banda.media, "banner");
-	const perfil = getMediaByCategory(banda.media, "perfil");
+	const perfil = getMediaByCategory(banda.media, "profile");
 
 	return (
 		<div className="container mx-auto px-6 pt-8 max-w-7xl">

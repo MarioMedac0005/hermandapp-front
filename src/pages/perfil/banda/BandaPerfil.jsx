@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import BandaHeader from "../../../components/banda/BandaHeader";
 import BandaNav from "../../../components/banda/BandaNav";
-import BandaHistoria from "../../../components/banda/BandaHistoria";
+import BandaInfo from "../../../components/banda/BandaInfo";
 import BandaGaleria from "../../../components/banda/BandaGaleria";
 import BandaDisponibilidad from "../../../components/banda/BandaDisponibilidad";
 
@@ -18,7 +18,8 @@ function BandaPerfil() {
 		async function fetchBand() {
 			try {
 				const response = await fetch(
-					`https://daw23.arenadaw.com.es/api/bands/${band}`
+					// `https://daw23.arenadaw.com.es/api/bands/${band}`
+					`http://127.0.0.1:8000/api/bands/${band}`
 				);
 
 				if (!response.ok) {
@@ -51,16 +52,16 @@ function BandaPerfil() {
 			<BandaHeader banda={banda} />
 
 			<BandaNav
-				hasGaleria={banda.media?.some(m => m.category === "galeria")}
+				hasGaleria={banda.media?.some(m => m.category === "gallery")}
 			/>
 
 			<main className="container mx-auto px-6 py-8 max-w-7xl">
 				<div className="flex flex-col space-y-10">
 					<section id="historia">
-						<BandaHistoria banda={banda} />
+						<BandaInfo banda={banda} />
 					</section>
 
-					{banda.media?.some(m => m.category === "galeria") && (
+					{banda.media?.some(m => m.category === "gallery") && (
 						<section id="galeria">
 							<BandaGaleria media={banda.media} />
 						</section>
