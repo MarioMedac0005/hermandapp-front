@@ -50,8 +50,8 @@ function App() {
             path="hermandades/contratatos/crear"
             element={<HermandadesForm />}
           />
-          <Route path="perfil/hermandad" element={<HermandadPerfil />} />
-          <Route path="perfil/banda" element={<BandaPerfil />} />
+          <Route path="perfil/hermandad/:brotherhood" element={<HermandadPerfil />} />
+          <Route path="perfil/banda/:band" element={<BandaPerfil />} />
         </Route>
         {/* Ruta para el panel de administracion de las hermandades */}
         <Route
