@@ -29,10 +29,13 @@ import BandaProfile from "../src/services/BandaProfile";
 import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
+import Login from "@pages/auth/Login";
 
 function App() {
   return (
     <Routes>
+
+      <Route path="login" element={<Login />} />
       <Route path="/" element={<GuestLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="busqueda" element={<Busqueda />} />
