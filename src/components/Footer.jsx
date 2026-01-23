@@ -1,4 +1,4 @@
-import Logo from "@assets/img/logo.svg";
+import Logo from "@assets/img/isotipo.png";
 
 export default function Footer() {
     return (
@@ -6,19 +6,18 @@ export default function Footer() {
             <footer className="footer sm:footer-horizontal bg-gray-100 text-base-content p-10">
                 <aside>
                     <div className="flex-1">
-                        <img src={Logo} alt="Logo" className="w-28" />
+                        <img src={Logo} alt="Logo" className="w-38" />
                     </div>
                 </aside>
                 <nav>
-                    <h6 className="footer-title">Servicios</h6>
-                    <a className="link link-hover">Contrataciones</a>
-                    <a className="link link-hover">Hermandades</a>
-                    <a className="link link-hover">Bandas</a>
+                    <h6 className="footer-title">Acceso</h6>
+                    <a className="link link-hover">Iniciar Sesión</a>
+                    <a className="link link-hover">Registrarse</a>
                 </nav>
                 <nav>
-                    <h6 className="footer-title">Compañia</h6>
-                    <a className="link link-hover">Sobre Nosotros</a>
-                    <a className="link link-hover">Contacto</a>
+                    <h6 className="footer-title">Contacto</h6>
+                    <a className="link link-hover">Email</a>
+                    <a className="link link-hover">Telefono</a>
                 </nav>
                 <nav>
                     <h6 className="footer-title">Legal</h6>
