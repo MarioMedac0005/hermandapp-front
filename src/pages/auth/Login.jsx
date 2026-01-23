@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import LoginForm from "@components/auth/LoginForm";
 
-
-
 export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-base-200 px-4 py-10">

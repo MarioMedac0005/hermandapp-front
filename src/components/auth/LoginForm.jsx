@@ -10,6 +10,7 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const API_URL = "http://127.0.0.1:8000/api";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,31 +18,46 @@ export default function LoginForm() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                import.meta.env.VITE_API_URL + "/login",
+            const response = await fetch(API_URL + "/login",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        Accept: "application/json",
                     },
                     body: JSON.stringify({ email, password }),
                 }
             );
 
+            // 🔒 Si no es OK, NO intentamos parsear JSON a ciegas
             if (!response.ok) {
-                throw new Error("Credenciales incorrectas");
+                let message = "Credenciales incorrectas";
+
+                try {
+                    const errorData = await response.json();
+                    if (errorData?.message) {
+                        message = errorData.message;
+                    }
+                } catch {
+                    // Si no hay JSON, usamos mensaje genérico
+                }
+
+                throw new Error(message);
             }
 
+            // ✅ Aquí sí sabemos que hay JSON válido
             const data = await response.json();
-            localStorage.setItem("token", data.token);
 
+            localStorage.setItem("token", data.access_token);
             navigate("/");
+
         } catch (err) {
-            setError(err.message);
+            setError(err.message || "Error inesperado");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -56,7 +72,7 @@ export default function LoginForm() {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required/>
+                    required />
             </div>
 
             <div className="form-control">
@@ -74,7 +90,7 @@ export default function LoginForm() {
                         autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required/>
+                        required />
 
                     <button
                         type="button"
