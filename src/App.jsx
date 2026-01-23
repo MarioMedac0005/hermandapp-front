@@ -29,6 +29,7 @@ import BandaProfile from "../src/services/BandaProfile";
 import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
+import Contacto from "@pages/contacto/Contacto";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         />
         <Route path="perfil/hermandad" element={<HermandadPerfil />} />
         <Route path="perfil/banda" element={<BandaPerfil />} />
+        <Route path="contacto" element={<Contacto />} />
       </Route>
       {/* Ruta para el panel de administracion de las hermandades */}
       <Route

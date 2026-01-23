@@ -30,9 +30,9 @@ function Navbar() {
 				</Link>
 			</li>
 			<li>
-				<a className={linkClasses} onClick={onClick}>
+				<Link to="/contacto" className={linkClasses} onClick={onClick}>
 					Contacto
-				</a>
+				</Link>
 			</li>
 			<li>
 				<Link to="/admin-panel/dashboard" className={linkClasses} onClick={onClick}>
