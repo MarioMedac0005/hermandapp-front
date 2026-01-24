@@ -30,12 +30,18 @@ import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
 
+import Register from "@pages/register/Register";
+
+
 function App() {
   return (
     <Routes>
+      <Route path="/register" element={<Register />} />
+
       <Route path="/" element={<GuestLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="busqueda" element={<Busqueda />} />
+
         <Route
           path="hermandades/contratatos/crear"
           element={<HermandadesForm />}
@@ -43,7 +49,8 @@ function App() {
         <Route path="perfil/hermandad" element={<HermandadPerfil />} />
         <Route path="perfil/banda" element={<BandaPerfil />} />
       </Route>
-      {/* Ruta para el panel de administracion de las hermandades */}
+
+      {/* Panel hermandad */}
       <Route
         path="hermandad/panel"
         element={
@@ -55,22 +62,17 @@ function App() {
         <Route path="contratos" element={<Contratos />} />
       </Route>
 
-      {/* Rutas para el panel de administracion de la banda */}
+      {/* Panel banda */}
       <Route
         path="banda/panel"
-        element={
-          <AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />
-        }
+        element={<AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />}
       >
         <Route path="informacion" element={<ProfileBanda />} />
         <Route path="contratos" element={<ContratosBanda />} />
       </Route>
 
-      {/* Rutas para el panel de administracion nuestro */}
-      <Route
-        path="/admin-panel"
-        element={<AdminLayout menuItems={adminMenu} />}
-      >
+      {/* Admin general */}
+      <Route path="/admin-panel" element={<AdminLayout menuItems={adminMenu} />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<UserList />} />
         <Route path="users/create" element={<UserForm />} />

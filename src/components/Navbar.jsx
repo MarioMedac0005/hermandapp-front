@@ -39,6 +39,13 @@ function Navbar() {
 					Dashboard
 				</Link>
 			</li>
+
+			<li>
+				<Link to="/register" className={linkClasses} onClick={onClick}>
+					Registrarse
+				</Link>
+			</li>
+
 		</>
 	);
 
