@@ -1,133 +1,168 @@
-import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "@assets/img/logo.svg";
-import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Navbar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isBlogOpen, setIsBlogOpen] = useState(false);
+	const { user, loading, logout } = useAuth();
+	const navigate = useNavigate();
 
-  const dropdownRef = useRef(null);
-  const blogRef = useRef(null);
+	const handleLogout = async () => {
+		await logout();
+		navigate("/login");
+	};
 
-  // Cerrar dropdowns al hacer click fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-      if (blogRef.current && !blogRef.current.contains(event.target)) {
-        setIsBlogOpen(false);
-      }
-    };
+	if (loading) {
+		return (
+			<div className="navbar bg-base-100 shadow px-6">
+				<span className="text-sm opacity-60">Cargando…</span>
+			</div>
+		);
+	}
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+	return (
+		<>
+			{/* <div className="drawer md:hidden">
+				<input id="main-drawer" type="checkbox" className="drawer-toggle" />
 
-  return (
-    <div className="navbar bg-base-100 shadow-sm px-7">
-      <div className="flex-1">
-        <Link to="/">
-          <img src={Logo} alt="Logo" className="w-28" />
-        </Link>
-      </div>
+				<div className="drawer-content">
 
-      <div className="flex-none">
-        <ul className="menu menu-horizontal px-6">
-          <li>
-            <Link to="/">
-              <a className="active:bg-gray-200 hover:text-inherit">Inicio</a>
-            </Link>
-          </li>
-          <li>
-            <Link to="perfil/banda">
-              <a className="active:bg-gray-200 hover:text-inherit">Bandas</a>
-            </Link>
-          </li>
-          <li>
-            <Link to='perfil/hermandad'>
-              <a className="active:bg-gray-200 hover:text-inherit">
-                Hermandades
-              </a>
-            </Link>
-          </li>
-          <li>
-            <a className="active:bg-gray-200 hover:text-inherit">Contacto</a>
-          </li>
+					<div className="navbar bg-base-100 shadow px-4">
+						<div className="navbar-start">
+							<label
+								htmlFor="main-drawer"
+								className="btn btn-ghost btn-circle"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="h-5 w-5"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M4 6h16M4 12h16M4 18h16"
+									/>
+								</svg>
+							</label>
 
-          {/* Blog con <details> */}
-          <li ref={blogRef}>
-            <details open={isBlogOpen}>
-              <summary
-                onClick={(e) => {
-                  e.preventDefault(); // prevenir toggle nativo
-                  setIsBlogOpen(!isBlogOpen);
-                }}
-                className="active:bg-gray-200 hover:text-inherit cursor-pointer"
-              >
-                Blog
-              </summary>
-              <ul className="bg-base-100 rounded-t-none p-2 absolute mt-1 z-10 shadow">
-                <li>
-                  <a className="active:bg-gray-200 hover:text-inherit">
-                    Novedades
-                  </a>
-                </li>
-                <li>
-                  <a className="active:bg-gray-200 hover:text-inherit">Posts</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-        </ul>
-      </div>
+							<img src={Logo} className="w-28 ml-2" />
+						</div>
+					</div>
+				</div>
 
-      {/* Dropdown del avatar */}
-      <div className="flex gap-2">
-        <div
-          ref={dropdownRef}
-          className={`dropdown dropdown-end ${
-            isDropdownOpen ? "dropdown-open" : ""
-          }`}
-        >
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Foto de perfil del usuario"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
+				<div className="drawer-side z-40">
+					<label htmlFor="main-drawer" className="drawer-overlay"></label>
 
-          <ul
-            tabIndex="-1"
-            className="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-40 p-2 shadow"
-          >
-            <li>
-              <a className="active:bg-gray-200 hover:text-inherit">Perfil</a>
-            </li>
-            <li>
-              <a className="active:bg-gray-200 hover:text-inherit">Ajustes</a>
-            </li>
-            <li>
-              <a className="active:bg-gray-200 hover:text-inherit">Salir</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+					<aside className="w-72 bg-base-100 p-6 flex flex-col">
+						{user && (
+							<div className="flex items-center gap-4 mb-8">
+								<img
+									src={user.avatar}
+									className="w-12 h-12 rounded-full"
+								/>
+								<div>
+									<p className="font-bold">{user.name}</p>
+									<p className="text-sm opacity-70">
+										{user.organization}
+									</p>
+								</div>
+							</div>
+						)}
 
-      <Link to="/admin-panel/dashboard">
-        <button className="btn btn-soft ml-4 btn-sm">Dashboard</button>
-      </Link>
-    </div>
-  );
+						<ul className="menu gap-1 flex-1">
+							<li><Link to="/">Inicio</Link></li>
+							<li><Link to="/perfil">Perfil</Link></li>
+
+							{user?.permissions.can_access_admin && (
+								<li>
+									<Link to="/admin-panel/dashboard">
+										Panel Administración
+									</Link>
+								</li>
+							)}
+						</ul>
+
+						{user && (
+							<button
+								className="btn btn-outline mt-4"
+								onClick={handleLogout}
+							>
+								Cerrar sesión
+							</button>
+						)}
+					</aside>
+				</div>
+			</div> */}
+			{/* ===== MOBILE DRAWER ===== */}
+
+			{/* ===== DESKTOP NAVBAR ===== */}
+			<div className="navbar bg-base-100 shadow px-6 hidden md:flex">
+				<div className="navbar-start">
+					<Link to="/">
+						<img src={Logo} className="w-28" />
+					</Link>
+				</div>
+
+				<div className="navbar-end gap-2">
+					{!user ? (
+						<>
+							<Link to="/login" className="btn btn-ghost">
+								Iniciar sesión
+							</Link>
+							<Link to="/register" className="btn btn-primary">
+								Registrarse
+							</Link>
+						</>
+					) : (
+						<div className="dropdown dropdown-end">
+							<div tabIndex={0} className="btn btn-ghost btn-circle avatar">
+								<img
+									src={user.avatar}
+									className="w-10 rounded-full"
+								/>
+							</div>
+
+							<ul className="menu dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+								<li className="px-3 py-2">
+									<p className="font-bold">{user.name}</p>
+									<p className="text-sm opacity-70">
+										{user.organization}
+									</p>
+								</li>
+
+								<li><Link to="/perfil">Perfil</Link></li>
+
+
+								{/* REVISA, DA ERROR */}
+
+								{/* {user.permissions.can_access_admin && (
+								<li>
+									<Link to="/admin-panel/dashboard">
+										Panel Administración
+									</Link>
+								</li>
+								)} */}
+								<li>
+									<Link to="/admin-panel/dashboard">
+										Panel Administración
+									</Link>
+								</li>
+
+								<li>
+									<button onClick={handleLogout}>
+										Salir
+									</button>
+								</li>
+							</ul>
+						</div>
+					)}
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default Navbar;

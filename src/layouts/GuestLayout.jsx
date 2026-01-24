@@ -5,7 +5,7 @@ import Footer from "@components/Footer";
 function GuestLayout() {
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<Navbar></Navbar>
+			<Navbar />
 			<main>
 				<Outlet /> {/* Aquí se renderiza HermandadesForm */}
 			</main>
