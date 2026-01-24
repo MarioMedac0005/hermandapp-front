@@ -1,74 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import BrotherhoodForm from "./BrotherhoodForm";
+// import { Link } from "react-router-dom";
 import Table from "@components/Table";
+import { brotherhoodsColumns } from "../../../config/tables/brotherhoodsColumns";
+import { useFetchData } from "../../../hooks/useFetchData";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function BrotherhoodList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const entidad = "hermandad";
+  const columnas = brotherhoodsColumns;
+  const { data, loading, error } = useFetchData(API_ENDPOINTS.brotherhoods);
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "city",
-      label: "Ciudad",
-    },
-    {
-      key: "office",
-      label: "Sede",
-    },
-    {
-      key: "phone_number",
-      label: "Teléfono",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      name: "Hermandad del Gran Poder",
-      city: "Sevilla",
-      office: "Calle Feria 12",
-      phone_number: "955-123-456",
-      email: "granpoder@gmail.com",
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      name: "Hermandad de la Macarena",
-      city: "Sevilla",
-      office: "Plaza de la Esperanza 5",
-      phone_number: "955-234-567",
-      email: "macarena@gmail.com",
-      created_at: "2024-02-22",
-    },
-    {
-      id: 3,
-      name: "Hermandad del Silencio",
-      city: "Córdoba",
-      office: "Calle de la Cruz 8",
-      phone_number: "957-345-678",
-      email: "silencio@gmail.com",
-      created_at: "2024-03-18",
-    },
-    {
-      id: 4,
-      name: "Hermandad de Jesús Nazareno",
-      city: "Málaga",
-      office: "Avenida de Andalucía 20",
-      phone_number: "952-456-789",
-      email: "jesusnazareno@gmail.com",
-      created_at: "2024-04-30",
-    },
-  ];
+  if (loading) return <p>Cargando hermandades...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -91,18 +37,30 @@ function BrotherhoodList() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" className="placeholder:text-xs"/>
+          <input
+            type="search"
+            required
+            placeholder="Search"
+            className="placeholder:text-xs"
+          />
         </label>
-        <Link to="/admin-panel/brotherhoods/create">
-          <button
-            type="button"
-            className="btn btn-sm"
-          >
-            Crear una hermandad
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Crear una hermandad
+        </button>
       </div>
       <Table columns={columnas} data={data} entity={entidad} />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <BrotherhoodForm />
+      </Modal>
     </div>
   );
 }

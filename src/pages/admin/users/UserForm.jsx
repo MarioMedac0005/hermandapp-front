@@ -1,72 +1,128 @@
+import { useState } from "react";
+import InputField from "@components/forms/InputField";
+import SelectField from "@components/forms/SelectField";
+// import { useCreateEntity } from "../../../hooks/useCreateEntity";
+
 function UserForm() {
+  // const { create, loading, error } = useCreateEntity();
+  const [form, setForm] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    user_type: "",
+    band_id: "",
+    brotherhood_id: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSelectChange = (value) => {
+    setForm({ ...form, user_type: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // if (loading) return;
+    // const result = await create("/users", form); // Adjust endpoint if needed
+    // if (result) {
+      // alert("Usuario creado correctamente");
+       // setForm({ firstname: "", lastname: "", email: "", password: "", user_type: "", band_id: "", brotherhood_id: "" });
+    // }
+    console.log("Submitting form:", form);
+  };
+
+  const userTypeOptions = [
+    { id: "band_admin", name: "Administrador de Banda" },
+    { id: "brotherhood_admin", name: "Administrador de Hermandad" },
+    { id: "guest", name: "Invitado" },
+  ];
   return (
-    <fieldset className="fieldset border-base-300 rounded-box w-xs border p-4 mx-auto mt-10 bg-white">
-      <legend className="fieldset-legend text-lg">
-        Crear Usuario
-      </legend>
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="grid grid-cols-1 gap-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <InputField
+            label="Nombre"
+            name="firstname"
+            type="text"
+            placeholder="John"
+            value={form.firstname}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Apellido"
+            name="lastname"
+            type="text"
+            placeholder="Doe"
+            value={form.lastname}
+            onChange={handleChange}
+          />
+        </div>
 
-      {/* Nombre */}
-      <label className="label">Nombre</label>
-      <input
-        type="text"
-        placeholder="Nombre del usuario"
-        className="input input-sm"
-      />
+        <InputField
+          label="Email"
+          name="email"
+          type="email"
+          placeholder="john.doe@example.com"
+          value={form.email}
+          onChange={handleChange}
+        />
 
-      {/* Apellido */}
-      <label className="label">Apellido</label>
-      <input
-        type="text"
-        placeholder="Apellido del usuario"
-        className="input input-sm"
-      />
+        <InputField
+          label="Contraseña"
+          name="password"
+          type="password"
+          placeholder="********"
+          value={form.password}
+          onChange={handleChange}
+        />
 
-      {/* Email */}
-      <label className="label">Email</label>
-      <input
-        type="email"
-        placeholder="Email"
-        className="input input-sm"
-      />
+        <SelectField
+          label="Tipo de Usuario"
+          options={userTypeOptions}
+          value={form.user_type}
+          onChange={handleSelectChange}
+        />
 
-      {/* Password */}
-      <label className="label">Contraseña</label>
-      <input
-        type="password"
-        placeholder="Contraseña"
-        className="input input-sm"
-      />
+        {(form.user_type === "band_admin" || form.user_type === "guest") && ( // Show band ID if relevant, adjust logic as needed
+           <InputField
+            label="ID de Banda"
+            name="band_id"
+            type="number"
+            placeholder="1"
+            value={form.band_id}
+            onChange={handleChange}
+            description="Opcional: ID de la banda asociada"
+          />
+        )}
 
-      {/* Tipo */}
-      <label className="label">Tipo</label>
-      <select className="select select-sm">
-        <option disabled selected>Selecciona un tipo</option>
-        <option value="band_admin">Administrador de Banda</option>
-        <option value="brotherhood_admin">Administrador de Hermandad</option>
-        <option value="guest">Invitado</option>
-      </select>
+        {(form.user_type === "brotherhood_admin" || form.user_type === "guest") && (
+           <InputField
+            label="ID de Hermandad"
+            name="brotherhood_id"
+            type="number"
+            placeholder="1"
+            value={form.brotherhood_id}
+            onChange={handleChange}
+            description="Opcional: ID de la hermandad asociada"
+          />
+        )}
+      </div>
 
-      {/* Band ID */}
-      <label className="label">Banda</label>
-      <input
-        type="number"
-        placeholder="ID de Banda"
-        className="input input-sm"
-      />
-
-      {/* Brotherhood ID */}
-      <label className="label">Hermandad</label>
-      <input
-        type="number"
-        placeholder="ID de Hermandad"
-        className="input input-sm"
-      />
-
-      {/* Botón */}
-      <button className="btn btn-sm bg-purple-100 text-purple-700">
-        Guardar
-      </button>
-    </fieldset>
+      <div className="mt-6 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          // disabled={loading}
+        >
+           Guardar Usuario
+        </button>
+      </div>
+      
+       {/* {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>} */}
+    </form>
   );
 }
 

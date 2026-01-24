@@ -67,8 +67,29 @@ function Table({ columns, data, entity }) {
         onConfirm={handleConfirm}
         title="¿Eliminar registro?"
       >
-        ¿Seguro que quieres eliminar este registro? Esta acción no se puede
-        deshacer.
+        <div className="mt-2">
+          <p className="text-sm text-gray-500">
+            ¿Seguro que quieres eliminar este registro? Esta acción no se puede
+            deshacer.
+          </p>
+        </div>
+
+        <div className="mt-4 flex justify-end gap-3">
+          <button
+            type="button"
+            className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+            onClick={() => setOpen(false)}
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            onClick={handleConfirm}
+          >
+            Confirmar
+          </button>
+        </div>
       </Modal>
     </div>
   );

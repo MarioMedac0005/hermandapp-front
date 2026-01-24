@@ -1,56 +1,111 @@
+import { useState } from "react";
+import InputField from "@components/forms/InputField";
+import SelectField from "@components/forms/SelectField";
+// import { useCreateEntity } from "../../../hooks/useCreateEntity";
+
 function ProcessionForm() {
+    // const { create, loading, error } = useCreateEntity();
+    const [form, setForm] = useState({
+        name: "",
+        type: "",
+        itinerary: "",
+        start_time: "",
+        end_time: "",
+        brotherhood_id: "",
+    });
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSelectChange = (name, value) => {
+        setForm({ ...form, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // const result = await create("/processions", form);
+        // if (result) {
+        //     alert("Procesión creada correctamente");
+        //     setForm({ name: "", type: "", itinerary: "", start_time: "", end_time: "", brotherhood_id: "" });
+        // }
+        console.log("Submitting form:", form);
+    };
+
+    const typeOptions = [
+        { id: "christ", name: "Cristo" },
+        { id: "virgin", name: "Virgen" },
+    ];
+    
+    // TODO: Fetch real brotherhoods
+    const brotherhoodOptions = [
+        { id: "1", name: "Hermandad 1" },
+        { id: "2", name: "Hermandad 2" },
+    ];
   return (
-    <fieldset className="fieldset border-base-300 rounded-box w-xs border p-4 mx-auto mt-10 bg-white">
-      <legend className="fieldset-legend text-lg">Crear Procesión</legend>
+    <form onSubmit={handleSubmit} className="w-full">
+        <InputField
+          label="Nombre"
+          name="name"
+          type="text"
+          placeholder="Nombre de la procesión"
+          value={form.name}
+          onChange={handleChange}
+        />
 
-      {/* Nombre */}
-      <label className="label">Nombre</label>
-      <input
-        type="text"
-        placeholder="Nombre de la procesión"
-        className="input input-sm"
-      />
+        <SelectField
+          label="Tipo"
+          options={typeOptions}
+          value={form.type}
+          onChange={(val) => handleSelectChange("type", val)}
+        />
 
-      {/* Tipo */}
-      <label className="label">Tipo</label>
-      <select className="select select-sm">
-        <option disabled selected>
-          Selecciona tipo
-        </option>
-        <option value="christ">Cristo</option>
-        <option value="virgin">Virgen</option>
-      </select>
+        <InputField
+          label="Itinerario"
+          name="itinerary"
+          type="text"
+          placeholder="Descripción del itinerario"
+          value={form.itinerary}
+          onChange={handleChange}
+        />
 
-      {/* Itinerario */}
-      <label className="label">Itinerario</label>
-      <textarea
-        className="textarea textarea-sm"
-        placeholder="Descripción del itinerario"
-      ></textarea>
+        <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Hora de salida"
+              name="start_time"
+              type="datetime-local"
+              value={form.start_time}
+              onChange={handleChange} 
+            />
 
-      {/* Hora de salida */}
-      <label className="label">Hora de salida</label>
-      <input type="datetime-local" className="input input-sm" />
+            <InputField
+              label="Hora de llegada"
+              name="end_time"
+              type="datetime-local"
+              value={form.end_time}
+              onChange={handleChange} 
+            />
+        </div>
 
-      {/* Hora de llegada */}
-      <label className="label">Hora de llegada</label>
-      <input type="datetime-local" className="input input-sm" />
+        <SelectField
+          label="Hermandad"
+          options={brotherhoodOptions}
+          value={form.brotherhood_id}
+          onChange={(val) => handleSelectChange("brotherhood_id", val)}
+        />
 
-      {/* Hermandad */}
-      <label className="label">Hermandad</label>
-      <select className="select select-sm">
-        <option disabled selected>
-          Selecciona una hermandad
-        </option>
-        <option value="1">Hermandad 1</option>
-        <option value="2">Hermandad 2</option>
-      </select>
+      <div className="mt-6 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          // disabled={loading}
+        >
+          Guardar Procesión
+        </button>
+      </div>
 
-      {/* Botón */}
-      <button className="btn btn-sm bg-purple-100 text-purple-700 mt-2">
-        Guardar
-      </button>
-    </fieldset>
+      {/* {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>} */}
+    </form>
   );
 }
 

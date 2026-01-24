@@ -1,41 +1,80 @@
-function BandForm() {
-  return (
-    <fieldset className="fieldset border-base-300 rounded-box w-xs border p-4 mx-auto mt-10 bg-white">
-      <legend className="fieldset-legend text-lg">Crear Banda</legend>
+import { useState } from "react";
+import InputField from "@components/forms/InputField";
+// import { useCreateEntity } from "../../../hooks/useCreateEntity";
 
-      {/* Nombre */}
-      <label className="label">Nombre</label>
-      <input
+function BandForm() {
+  // const { create, loading, error } = useCreateEntity();
+  const [form, setForm] = useState({
+    name: "",
+    country: "",
+    rehearsal_space: "",
+    email: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // const result = await create("/bands", form);
+    // if (result) {
+    //   alert("Banda creada correctamente");
+    //   setForm({ name: "", country: "", rehearsal_space: "", email: "" });
+    // }
+    console.log("Submitting form:", form);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="w-full">
+      <InputField
+        label="Nombre"
+        name="name"
         type="text"
         placeholder="Nombre de la banda"
-        className="input input-sm"
+        value={form.name}
+        onChange={handleChange}
       />
 
-      {/* Ciudad */}
-      <label className="label">Ciudad</label>
-      <input type="text" placeholder="Ciudad" className="input input-sm" />
+      <InputField
+        label="País"
+        name="country"
+        type="text"
+        placeholder="País"
+        value={form.country}
+        onChange={handleChange}
+      />
 
-      {/* Espacio de ensayo */}
-      <label className="label">Lugar de Ensayo</label>
-      <input
+      <InputField
+        label="Lugar de Ensayo"
+        name="rehearsal_space"
         type="text"
         placeholder="Local de ensayo"
-        className="input input-sm"
+        value={form.rehearsal_space}
+        onChange={handleChange}
       />
 
-      {/* Email */}
-      <label className="label">Email</label>
-      <input
+      <InputField
+        label="Email"
+        name="email"
         type="email"
         placeholder="Email de contacto"
-        className="input input-sm"
+        value={form.email}
+        onChange={handleChange}
       />
 
-      {/* Botón */}
-      <button className="btn btn-sm bg-purple-100 text-purple-700 mt-2">
-        Guardar
-      </button>
-    </fieldset>
+      <div className="mt-6 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          // disabled={loading}
+        >
+          Guardar Banda
+        </button>
+      </div>
+
+      {/* {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>} */}
+    </form>
   );
 }
 

@@ -1,66 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import AvailabilityForm from "./AvailabilityForm";
+// import { Link } from "react-router-dom";
 import Table from "@components/Table";
+import { availabilitiesColumns } from '../../../config/tables/availabilitiesColumns'
+import { useFetchData } from "../../../hooks/useFetchData";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function AvailabilityList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const entidad = "availabilities";
+  const columnas = availabilitiesColumns
+  const { data, loading, error } = useFetchData(API_ENDPOINTS.availabilities)
 
-  const columnas = [
-    {
-      key: "date",
-      label: "Fecha",
-    },
-    {
-      key: "status",
-      label: "Estado",
-    },
-    {
-      key: "description",
-      label: "Descripción",
-    },
-    {
-      key: "band_id",
-      label: "ID Banda",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      date: "2024-04-05 10:00:00",
-      status: "free",
-      description: "Disponibilidad para la banda en la mañana",
-      band_id: 1,
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      date: "2024-04-06 14:00:00",
-      status: "occupied",
-      description: "Ocupada por evento especial",
-      band_id: 2,
-      created_at: "2024-02-15",
-    },
-    {
-      id: 3,
-      date: "2024-04-07 16:00:00",
-      status: "free",
-      description: "Disponible para cualquier evento",
-      band_id: 3,
-      created_at: "2024-03-05",
-    },
-    {
-      id: 4,
-      date: "2024-04-08 18:00:00",
-      status: "occupied",
-      description: "Ocupada por concierto de la banda",
-      band_id: 4,
-      created_at: "2024-04-01",
-    },
-  ];
+  if (loading) return <p>Cargando disponibilidades...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -89,13 +43,23 @@ function AvailabilityList() {
             placeholder="Search"
           />
         </label>
-        <Link to="/admin-panel/availabilities/create">
-          <button type="button" className="btn btn-sm">
-            Crear una disponibilidad
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Crear una disponibilidad
+        </button>
       </div>
       <Table columns={columnas} data={data} entity={entidad} />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <AvailabilityForm />
+      </Modal>
     </div>
   );
 }

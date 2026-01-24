@@ -1,82 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import ProcessionForm from "./ProcessionForm";
+// import { Link } from "react-router-dom";
 import Table from "@components/Table";
+import { processionsColumns } from '../../../config/tables/processionsColumns'
+import { useFetchData } from "../../../hooks/useFetchData";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function ProcessionList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const entidad = "processions";
+  const columnas = processionsColumns
+  const { data, loading, error } = useFetchData(API_ENDPOINTS.processions)
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "type",
-      label: "Tipo",
-    },
-    {
-      key: "itinerary",
-      label: "Itinerario",
-    },
-    {
-      key: "checkout_time",
-      label: "Hora de Salida",
-    },
-    {
-      key: "checkin_time",
-      label: "Hora de Entrada",
-    },
-    {
-      key: "brotherhood_id",
-      label: "ID Hermandad",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      name: "Procesión del Gran Poder",
-      type: "christ",
-      itinerary: "Calle Feria, Plaza Mayor, Catedral",
-      checkout_time: "2024-03-28 18:00:00",
-      checkin_time: "2024-03-28 22:30:00",
-      brotherhood_id: 1,
-      created_at: "2024-01-12",
-    },
-    {
-      id: 2,
-      name: "Procesión de la Macarena",
-      type: "virgin",
-      itinerary: "Plaza de la Esperanza, Calle Real, Iglesia Mayor",
-      checkout_time: "2024-03-29 19:00:00",
-      checkin_time: "2024-03-29 23:45:00",
-      brotherhood_id: 2,
-      created_at: "2024-02-03",
-    },
-    {
-      id: 3,
-      name: "Procesión del Silencio",
-      type: "christ",
-      itinerary: "Calle de la Cruz, Plaza del Silencio, Parroquia Central",
-      checkout_time: "2024-03-30 21:00:00",
-      checkin_time: "2024-03-31 01:00:00",
-      brotherhood_id: 3,
-      created_at: "2024-03-01",
-    },
-    {
-      id: 4,
-      name: "Procesión de Jesús Nazareno",
-      type: "christ",
-      itinerary: "Avenida de Andalucía, Plaza Nueva, Santuario Nazareno",
-      checkout_time: "2024-03-31 18:45:00",
-      checkin_time: "2024-03-31 23:00:00",
-      brotherhood_id: 4,
-      created_at: "2024-03-15",
-    },
-  ];
+  if (loading) return <p>Cargando procesiones...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -106,13 +44,23 @@ function ProcessionList() {
             className="placeholder:text-xs"
           />
         </label>
-        <Link to="/admin-panel/processions/create">
-          <button type="button" className="btn btn-sm">
-            Crear una procesion
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Crear una procesion
+        </button>
       </div>
       <Table columns={columnas} data={data} entity={entidad} />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <ProcessionForm />
+      </Modal>
     </div>
   );
 }

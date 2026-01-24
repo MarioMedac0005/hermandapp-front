@@ -1,82 +1,20 @@
 import Table from "@components/Table";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import UserForm from "./UserForm";
+// import { Link } from "react-router-dom"; // Removed Link as it is no longer needed for creation
+import { useFetchData } from "../../../hooks/useFetchData";
+import { userColumns } from "../../../config/tables/usersColumns";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function UserList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const entidad = "usuario";
+  const columnas = userColumns;
+  const { data, loading, error } = useFetchData(API_ENDPOINTS.users);
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "surname",
-      label: "Apellidos",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "type",
-      label: "Rol",
-    },
-    {
-      key: "band_id",
-      label: "Banda",
-    },
-    {
-      key: "brotherhood_id",
-      label: "Hermandad",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      name: "Juan",
-      surname: "Pérez",
-      email: "juan.perez@example.com",
-      type: "band_admin",
-      band_id: 3,
-      brotherhood_id: 7,
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      name: "Ana",
-      surname: "Gómez",
-      email: "ana.gomez@example.com",
-      type: "brotherhood_admin",
-      band_id: 2,
-      brotherhood_id: 5,
-      created_at: "2024-02-22",
-    },
-    {
-      id: 3,
-      name: "Carlos",
-      surname: "López",
-      email: "carlos.lopez@example.com",
-      type: "guest",
-      band_id: 1,
-      brotherhood_id: 1,
-      created_at: "2024-03-18",
-    },
-    {
-      id: 4,
-      name: "Lucía",
-      surname: "Rodríguez",
-      email: "lucia.rodriguez@example.com",
-      type: "guest",
-      band_id: 5,
-      brotherhood_id: 3,
-      created_at: "2024-04-30",
-    },
-  ];
+  if (loading) return <p>Cargando usuarios...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -101,13 +39,23 @@ function UserList() {
           </svg>
           <input type="search" required placeholder="Search" />
         </label>
-        <Link to="/admin-panel/users/create">
-          <button type="button" className="btn btn-sm">
-            Crear un usuario
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Crear un usuario
+        </button>
       </div>
       <Table columns={columnas} data={data} entity={entidad} />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <UserForm />
+      </Modal>
     </div>
   );
 }

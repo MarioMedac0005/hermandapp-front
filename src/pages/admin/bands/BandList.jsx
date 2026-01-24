@@ -1,66 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import BandForm from "./BandForm";
+// import { Link } from "react-router-dom";
 import Table from "@components/Table";
+import { bandColumns } from "../../../config/tables/bandsColumns";
+import { useFetchData } from "../../../hooks/useFetchData";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function BandList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const entidad = "banda";
+  const columnas = bandColumns;
+  const { data, loading, error } = useFetchData(API_ENDPOINTS.bands);
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "city",
-      label: "Ciudad",
-    },
-    {
-      key: "rehearsal_space",
-      label: "Lugar de Ensayo",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      name: "Banda de Cornetas y Tambores Santa Cecilia",
-      city: "Sevilla",
-      rehearsal_space: "Calle San Luis 42",
-      email: "santacecilia@gmail.com",
-      created_at: "2024-01-15",
-    },
-    {
-      id: 2,
-      name: "Agrupación Musical Cristo del Amor",
-      city: "Córdoba",
-      rehearsal_space: "Av. de la Paz 10",
-      email: "cristodelamor@gmail.com",
-      created_at: "2024-02-05",
-    },
-    {
-      id: 3,
-      name: "Banda de Música Virgen del Rosario",
-      city: "Granada",
-      rehearsal_space: "Plaza Nueva 8",
-      email: "virgendelrosario@gmail.com",
-      created_at: "2024-03-20",
-    },
-    {
-      id: 4,
-      name: "Banda de Cornetas y Tambores La Estrella",
-      city: "Málaga",
-      rehearsal_space: "Calle Larios 25",
-      email: "laestrella@gmail.com",
-      created_at: "2024-04-02",
-    },
-  ];
+  if (loading) return <p>Cargando bandas...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -85,13 +39,23 @@ function BandList() {
           </svg>
           <input type="search" required placeholder="Search" />
         </label>
-        <Link to="/admin-panel/bands/create">
-          <button type="button" className="btn btn-sm">
-            Crear una banda
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Crear una banda
+        </button>
       </div>
       <Table columns={columnas} data={data} entity={entidad} />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title=""
+      >
+        <BandForm />
+      </Modal>
     </div>
   );
 }
