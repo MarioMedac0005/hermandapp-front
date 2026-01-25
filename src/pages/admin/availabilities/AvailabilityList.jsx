@@ -1,17 +1,43 @@
 import { useState } from "react";
 import Modal from "@components/Modal";
 import AvailabilityForm from "./AvailabilityForm";
-// import { Link } from "react-router-dom";
 import Table from "@components/Table";
 import { availabilitiesColumns } from '../../../config/tables/availabilitiesColumns'
 import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function AvailabilityList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAvailability, setSelectedAvailability] = useState(null);
+
   const entidad = "availabilities";
   const columnas = availabilitiesColumns
-  const { data, loading, error } = useFetchData(API_ENDPOINTS.availabilities)
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.availabilities)
+  const { destroy } = useDeleteEntity();
+
+  const handleCreate = () => {
+    setSelectedAvailability(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (item) => {
+    setSelectedAvailability(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.availabilities}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedAvailability(null);
+    refetch();
+  };
 
   if (loading) return <p>Cargando disponibilidades...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -45,20 +71,30 @@ function AvailabilityList() {
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear una disponibilidad
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedAvailability ? "Editar Disponibilidad" : "Crear Disponibilidad"}
       >
-        <AvailabilityForm />
+        <AvailabilityForm 
+            initialData={selectedAvailability}
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

@@ -1,17 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@components/Modal";
 import BrotherhoodForm from "./BrotherhoodForm";
-// import { Link } from "react-router-dom";
 import Table from "@components/Table";
 import { brotherhoodsColumns } from "../../../config/tables/brotherhoodsColumns";
 import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function BrotherhoodList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBrotherhood, setSelectedBrotherhood] = useState(null);
+
   const entidad = "hermandad";
   const columnas = brotherhoodsColumns;
-  const { data, loading, error } = useFetchData(API_ENDPOINTS.brotherhoods);
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.brotherhoods);
+  const { destroy } = useDeleteEntity();
+
+  const handleCreate = () => {
+    setSelectedBrotherhood(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (brotherhood) => {
+    setSelectedBrotherhood(brotherhood);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.brotherhoods}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedBrotherhood(null);
+    refetch();
+  };
 
   if (loading) return <p>Cargando hermandades...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -39,27 +65,36 @@ function BrotherhoodList() {
           </svg>
           <input
             type="search"
-            required
-            placeholder="Search"
+            placeholder="Buscar..."
             className="placeholder:text-xs"
           />
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear una hermandad
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedBrotherhood ? "Editar Hermandad" : "Crear Hermandad"}
       >
-        <BrotherhoodForm />
+        <BrotherhoodForm 
+            initialData={selectedBrotherhood}
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

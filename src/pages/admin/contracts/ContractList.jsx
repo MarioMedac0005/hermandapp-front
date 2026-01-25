@@ -1,17 +1,43 @@
 import { useState } from "react";
 import Modal from "@components/Modal";
 import ContractForm from "./ContractForm";
-// import { Link } from "react-router-dom";
 import Table from "@components/Table";
 import { contractColumns } from "../../../config/tables/contractsColumns";
 import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function ContractList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const entidad = "contracts";
+  const [selectedContract, setSelectedContract] = useState(null);
+
+  const entidad = "contrato";
   const columnas = contractColumns;
-  const { data, error, loading } = useFetchData(API_ENDPOINTS.contracts);
+  const { data, error, loading, refetch } = useFetchData(API_ENDPOINTS.contracts);
+  const { destroy } = useDeleteEntity();
+
+  const handleCreate = () => {
+    setSelectedContract(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (contract) => {
+    setSelectedContract(contract);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.contracts}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedContract(null);
+    refetch();
+  };
 
   if (loading) return <p>Cargando contratos...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -39,27 +65,36 @@ function ContractList() {
           </svg>
           <input
             type="search"
-            required
-            placeholder="Search"
+            placeholder="Buscar..."
             className="placeholder:text-xs"
           />
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear un contrato
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedContract ? "Editar Contrato" : "Crear Contrato"}
       >
-        <ContractForm />
+        <ContractForm 
+            initialData={selectedContract}
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

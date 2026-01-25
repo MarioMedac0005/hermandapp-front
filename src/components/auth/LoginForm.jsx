@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { API_ENDPOINTS } from "@config/api";
+import { useAuth } from "@contexts/AuthContext";
 
 export default function LoginForm() {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const API_URL = "http://127.0.0.1:8000/api";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,7 +20,7 @@ export default function LoginForm() {
         setLoading(true);
 
         try {
-            const response = await fetch(API_URL + "/login",
+            const response = await fetch(API_ENDPOINTS.login,
                 {
                     method: "POST",
                     headers: {
@@ -48,8 +50,25 @@ export default function LoginForm() {
             // ✅ Aquí sí sabemos que hay JSON válido
             const data = await response.json();
 
-            localStorage.setItem("token", data.access_token);
-            navigate("/");
+            // Esperar a que el contexto cargue el usuario y nos devuelva sus datos
+            const user = await login(data.access_token, data.user);
+            
+            console.log("Login exitoso, usuario:", user);
+
+            switch (user.panel) {
+                case 'admin':
+                    navigate("/admin-panel/dashboard");
+                    break;
+                case 'gestor_banda':
+                    navigate("/banda/panel/informacion");
+                    break;
+                case 'gestor_hermandad':
+                    navigate("/hermandad/panel/informacion");
+                    break;
+                default:
+                    navigate("/");
+                    break;
+            }
 
         } catch (err) {
             setError(err.message || "Error inesperado");

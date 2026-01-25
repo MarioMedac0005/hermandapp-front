@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputField from "@components/forms/InputField";
-// import { useCreateEntity } from "../../../hooks/useCreateEntity";
+import { useCreateEntity } from "../../../hooks/useCreateEntity";
+import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
-function BrotherhoodForm() {
-    // const { create, loading, error } = useCreateEntity();
+function BrotherhoodForm({ initialData = null, onSuccess }) {
+    const { create, loading: creating, error: createError } = useCreateEntity();
+    const { update, loading: updating, error: updateError } = useUpdateEntity();
+    
+    const loading = creating || updating;
+    const error = createError || updateError;
+
     const [form, setForm] = useState({
         name: "",
         city: "",
@@ -12,19 +19,37 @@ function BrotherhoodForm() {
         email: "",
     });
 
+    useEffect(() => {
+        if (initialData) {
+            setForm({
+                name: initialData.name || "",
+                city: initialData.city || "",
+                office_address: initialData.office_address || "",
+                phone: initialData.phone || "",
+                email: initialData.email || "",
+            });
+        }
+    }, [initialData]);
+
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // const result = await create("/brotherhoods", form); // Adjust endpoint
-        // if (result) {
-        //     alert("Hermandad creada correctamente");
-        //     setForm({ name: "", city: "", office_address: "", phone: "", email: "" });
-        // }
-        console.log("Submitting form:", form);
+        
+        let result;
+        if (initialData) {
+            result = await update(`${API_ENDPOINTS.brotherhoods}/${initialData.id}`, form);
+        } else {
+            result = await create(API_ENDPOINTS.brotherhoods, form);
+        }
+
+        if (result && onSuccess) {
+            onSuccess();
+        }
     };
+
   return (
     <form onSubmit={handleSubmit} className="w-full">
         <InputField
@@ -78,13 +103,13 @@ function BrotherhoodForm() {
         <button
           type="submit"
           className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          // disabled={loading}
+          disabled={loading}
         >
-          Guardar Hermandad
+          {loading ? 'Guardando...' : (initialData ? 'Actualizar Hermandad' : 'Crear Hermandad')}
         </button>
       </div>
 
-      {/* {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>} */}
+       {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
     </form>
   );
 }

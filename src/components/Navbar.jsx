@@ -1,168 +1,137 @@
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "@assets/img/logo.svg";
-import useAuth from "../hooks/useAuth";
+import { useAuth } from "@contexts/AuthContext";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  UserIcon,
+  ArrowRightStartOnRectangleIcon,
+  CommandLineIcon,
+  ChevronDownIcon
+} from "@heroicons/react/24/outline";
 
 function Navbar() {
-	const { user, loading, logout } = useAuth();
-	const navigate = useNavigate();
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
 
-	const handleLogout = async () => {
-		await logout();
-		navigate("/login");
-	};
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
-	if (loading) {
-		return (
-			<div className="navbar bg-base-100 shadow px-6">
-				<span className="text-sm opacity-60">Cargando…</span>
-			</div>
-		);
-	}
+  if (loading && !user) {
+    return (
+      <div className="navbar bg-white shadow-sm px-6 h-16 flex items-center">
+        <span className="text-sm text-gray-400">Cargando...</span>
+      </div>
+    );
+  }
 
-	return (
-		<>
-			{/* <div className="drawer md:hidden">
-				<input id="main-drawer" type="checkbox" className="drawer-toggle" />
+  return (
+    <>
+      {/* ===== DESKTOP NAVBAR ===== */}
+      <div className="navbar bg-white shadow-sm px-6 hidden md:flex h-16 border-b border-gray-100 justify-between items-center z-50 relative">
+        <div className="navbar-start">
+          <Link to="/">
+            <img src={Logo} alt="Logo" className="w-28" />
+          </Link>
+        </div>
 
-				<div className="drawer-content">
+        <div className="navbar-end flex items-center gap-4">
+          {!user ? (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-all shadow-sm hover:shadow"
+              >
+                Registrarse
+              </Link>
+            </div>
+          ) : (
+            <Menu as="div" className="relative ml-3">
+                <MenuButton className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 p-1 pr-2 hover:bg-gray-50 transition-colors">
+                  <img
+                    className="h-9 w-9 rounded-full object-cover border border-gray-200"
+                    src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
+                    alt={user.name}
+                  />
+                  <div className="flex flex-col items-start sr-only sm:not-sr-only">
+                    <span className="text-xs font-medium text-gray-700 max-w-[100px] truncate">
+                      {user.name}
+                    </span>
+                  </div>
+                  <ChevronDownIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                </MenuButton>
 
-					<div className="navbar bg-base-100 shadow px-4">
-						<div className="navbar-start">
-							<label
-								htmlFor="main-drawer"
-								className="btn btn-ghost btn-circle"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="h-5 w-5"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M4 6h16M4 12h16M4 18h16"
-									/>
-								</svg>
-							</label>
+              <MenuItems
+                transition
+                className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 transition duration-100 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
+              >
+                <div className="px-4 py-3">
+                  <p className="text-sm font-semibold text-gray-900 truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate mt-0.5">
+                    {user.organization}
+                  </p>
+                </div>
 
-							<img src={Logo} className="w-28 ml-2" />
-						</div>
-					</div>
-				</div>
+                <div className="py-1">
+                  <MenuItem>
+                    <Link
+                      to="/perfil"
+                      className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+                    >
+                      <UserIcon
+                        className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+                        aria-hidden="true"
+                      />
+                      Mi Perfil
+                    </Link>
+                  </MenuItem>
 
-				<div className="drawer-side z-40">
-					<label htmlFor="main-drawer" className="drawer-overlay"></label>
+                  {user?.permissions?.can_access_admin && (
+                    <MenuItem>
+                      <Link
+                        to="/admin-panel/dashboard"
+                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+                      >
+                        <CommandLineIcon
+                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+                          aria-hidden="true"
+                        />
+                        Panel Administración
+                      </Link>
+                    </MenuItem>
+                  )}
+                </div>
 
-					<aside className="w-72 bg-base-100 p-6 flex flex-col">
-						{user && (
-							<div className="flex items-center gap-4 mb-8">
-								<img
-									src={user.avatar}
-									className="w-12 h-12 rounded-full"
-								/>
-								<div>
-									<p className="font-bold">{user.name}</p>
-									<p className="text-sm opacity-70">
-										{user.organization}
-									</p>
-								</div>
-							</div>
-						)}
-
-						<ul className="menu gap-1 flex-1">
-							<li><Link to="/">Inicio</Link></li>
-							<li><Link to="/perfil">Perfil</Link></li>
-
-							{user?.permissions.can_access_admin && (
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Panel Administración
-									</Link>
-								</li>
-							)}
-						</ul>
-
-						{user && (
-							<button
-								className="btn btn-outline mt-4"
-								onClick={handleLogout}
-							>
-								Cerrar sesión
-							</button>
-						)}
-					</aside>
-				</div>
-			</div> */}
-			{/* ===== MOBILE DRAWER ===== */}
-
-			{/* ===== DESKTOP NAVBAR ===== */}
-			<div className="navbar bg-base-100 shadow px-6 hidden md:flex">
-				<div className="navbar-start">
-					<Link to="/">
-						<img src={Logo} className="w-28" />
-					</Link>
-				</div>
-
-				<div className="navbar-end gap-2">
-					{!user ? (
-						<>
-							<Link to="/login" className="btn btn-ghost">
-								Iniciar sesión
-							</Link>
-							<Link to="/register" className="btn btn-primary">
-								Registrarse
-							</Link>
-						</>
-					) : (
-						<div className="dropdown dropdown-end">
-							<div tabIndex={0} className="btn btn-ghost btn-circle avatar">
-								<img
-									src={user.avatar}
-									className="w-10 rounded-full"
-								/>
-							</div>
-
-							<ul className="menu dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-								<li className="px-3 py-2">
-									<p className="font-bold">{user.name}</p>
-									<p className="text-sm opacity-70">
-										{user.organization}
-									</p>
-								</li>
-
-								<li><Link to="/perfil">Perfil</Link></li>
-
-
-								{/* REVISA, DA ERROR */}
-
-								{/* {user.permissions.can_access_admin && (
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Panel Administración
-									</Link>
-								</li>
-								)} */}
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Panel Administración
-									</Link>
-								</li>
-
-								<li>
-									<button onClick={handleLogout}>
-										Salir
-									</button>
-								</li>
-							</ul>
-						</div>
-					)}
-				</div>
-			</div>
-		</>
-	);
+                <div className="py-1">
+                  <MenuItem>
+                    <button
+                      onClick={handleLogout}
+                      className="group flex w-full items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-red-50 data-[focus]:text-red-700 transition-colors"
+                    >
+                      <ArrowRightStartOnRectangleIcon
+                        className="h-5 w-5 text-gray-400 group-data-[focus]:text-red-500"
+                        aria-hidden="true"
+                      />
+                      Cerrar Sesión
+                    </button>
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </Menu>
+          )}
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Navbar;

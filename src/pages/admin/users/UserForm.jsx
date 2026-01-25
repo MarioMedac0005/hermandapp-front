@@ -1,19 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputField from "@components/forms/InputField";
 import SelectField from "@components/forms/SelectField";
-// import { useCreateEntity } from "../../../hooks/useCreateEntity";
+import { useCreateEntity } from "../../../hooks/useCreateEntity";
+import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
-function UserForm() {
-  // const { create, loading, error } = useCreateEntity();
+function UserForm({ initialData = null, onSuccess }) {
+  const { create, loading: creating, error: createError } = useCreateEntity();
+  const { update, loading: updating, error: updateError } = useUpdateEntity();
+  
+  const loading = creating || updating;
+  const error = createError || updateError;
+
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
     email: "",
     password: "",
-    user_type: "",
+    user_type: "guest",
     band_id: "",
     brotherhood_id: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+        setForm({
+            firstname: initialData.firstname || "",
+            lastname: initialData.lastname || "",
+            email: initialData.email || "",
+            password: "", // Don't prefill password
+            user_type: initialData.user_type || "guest",
+            band_id: initialData.band_id || "",
+            brotherhood_id: initialData.brotherhood_id || "",
+        });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,13 +46,23 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (loading) return;
-    // const result = await create("/users", form); // Adjust endpoint if needed
-    // if (result) {
-      // alert("Usuario creado correctamente");
-       // setForm({ firstname: "", lastname: "", email: "", password: "", user_type: "", band_id: "", brotherhood_id: "" });
-    // }
-    console.log("Submitting form:", form);
+    
+    let result;
+    if (initialData) {
+        // Update
+        // Exclude password if empty to avoid overwriting with empty string if backend handles it
+        const payload = { ...form };
+        if (!payload.password) delete payload.password;
+        
+        result = await update(`${API_ENDPOINTS.users}/${initialData.id}`, payload);
+    } else {
+        // Create
+        result = await create(API_ENDPOINTS.users, form);
+    }
+
+    if (result && onSuccess) {
+        onSuccess();
+    }
   };
 
   const userTypeOptions = [
@@ -74,9 +105,10 @@ function UserForm() {
           label="Contraseña"
           name="password"
           type="password"
-          placeholder="********"
+          placeholder={initialData ? "Dejar en blanco para mantener" : "********"}
           value={form.password}
           onChange={handleChange}
+          required={!initialData} 
         />
 
         <SelectField
@@ -86,7 +118,7 @@ function UserForm() {
           onChange={handleSelectChange}
         />
 
-        {(form.user_type === "band_admin" || form.user_type === "guest") && ( // Show band ID if relevant, adjust logic as needed
+        {(form.user_type === "band_admin" ) && ( 
            <InputField
             label="ID de Banda"
             name="band_id"
@@ -98,7 +130,7 @@ function UserForm() {
           />
         )}
 
-        {(form.user_type === "brotherhood_admin" || form.user_type === "guest") && (
+        {(form.user_type === "brotherhood_admin" ) && (
            <InputField
             label="ID de Hermandad"
             name="brotherhood_id"
@@ -115,13 +147,13 @@ function UserForm() {
         <button
           type="submit"
           className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          // disabled={loading}
+          disabled={loading}
         >
-           Guardar Usuario
+           {loading ? 'Guardando...' : (initialData ? 'Actualizar Usuario' : 'Crear Usuario')}
         </button>
       </div>
       
-       {/* {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>} */}
+       {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
     </form>
   );
 }

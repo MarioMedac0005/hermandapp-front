@@ -2,19 +2,45 @@ import Table from "@components/Table";
 import { useState } from "react";
 import Modal from "@components/Modal";
 import UserForm from "./UserForm";
-// import { Link } from "react-router-dom"; // Removed Link as it is no longer needed for creation
 import { useFetchData } from "../../../hooks/useFetchData";
-import { userColumns } from "../../../config/tables/usersColumns";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { userColumns } from "../../../config/tables/usersColumns.jsx";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function UserList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  
   const entidad = "usuario";
   const columnas = userColumns;
-  const { data, loading, error } = useFetchData(API_ENDPOINTS.users);
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.users);
+  const { destroy } = useDeleteEntity();
 
-  if (loading) return <p>Cargando usuarios...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const handleCreate = () => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.users}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    refetch();
+  };
+
+  if (loading) return <div className="p-4 text-center">Cargando usuarios...</div>;
+  if (error) return <div className="p-4 text-center text-red-500">Error: {error}</div>;
 
   return (
     <div>
@@ -37,24 +63,34 @@ function UserList() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" />
+          <input type="search" placeholder="Buscar..." />
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear un usuario
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedUser ? "Editar Usuario" : "Crear Usuario"}
       >
-        <UserForm />
+        <UserForm 
+            initialData={selectedUser} 
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

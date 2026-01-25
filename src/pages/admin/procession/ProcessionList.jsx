@@ -1,17 +1,43 @@
 import { useState } from "react";
 import Modal from "@components/Modal";
 import ProcessionForm from "./ProcessionForm";
-// import { Link } from "react-router-dom";
 import Table from "@components/Table";
 import { processionsColumns } from '../../../config/tables/processionsColumns'
 import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function ProcessionList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProcession, setSelectedProcession] = useState(null);
+
   const entidad = "processions";
   const columnas = processionsColumns
-  const { data, loading, error } = useFetchData(API_ENDPOINTS.processions)
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.processions)
+  const { destroy } = useDeleteEntity();
+
+  const handleCreate = () => {
+    setSelectedProcession(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (item) => {
+    setSelectedProcession(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.processions}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedProcession(null);
+    refetch();
+  };
 
   if (loading) return <p>Cargando procesiones...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -46,20 +72,30 @@ function ProcessionList() {
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear una procesion
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedProcession ? "Editar Procesión" : "Crear Procesión"}
       >
-        <ProcessionForm />
+        <ProcessionForm 
+            initialData={selectedProcession}
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

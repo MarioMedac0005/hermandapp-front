@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import AdminLayout from "@layouts/AdminLayout";
 import GuestLayout from "@layouts/GuestLayout";
 import Busqueda from "@pages/busqueda/Busqueda";
@@ -30,65 +30,82 @@ import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
 import Login from "@pages/auth/Login";
+import { AuthProvider } from "@contexts/AuthContext";
+import ProtectedRoute from "@components/auth/ProtectedRoute";
+
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <Routes>
+    <AuthProvider>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Routes>
 
-      <Route path="login" element={<Login />} />
-      <Route path="/" element={<GuestLayout />}>
-        <Route index element={<LandingPage />} />
-        <Route path="busqueda" element={<Busqueda />} />
+        <Route path="login" element={<Login />} />
+        <Route path="/admon-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
+        <Route path="/" element={<GuestLayout />}>
+          <Route index element={<LandingPage />} />
+          <Route path="busqueda" element={<Busqueda />} />
+          <Route
+            path="hermandades/contratatos/crear"
+            element={<HermandadesForm />}
+          />
+          <Route path="perfil/hermandad" element={<HermandadPerfil />} />
+          <Route path="perfil/banda" element={<BandaPerfil />} />
+        </Route>
+        {/* Ruta para el panel de administracion de las hermandades */}
         <Route
-          path="hermandades/contratatos/crear"
-          element={<HermandadesForm />}
-        />
-        <Route path="perfil/hermandad" element={<HermandadPerfil />} />
-        <Route path="perfil/banda" element={<BandaPerfil />} />
-      </Route>
-      {/* Ruta para el panel de administracion de las hermandades */}
-      <Route
-        path="hermandad/panel"
-        element={
-          <AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />
-        }
-      >
-        <Route path="informacion" element={<Informacion />} />
-        <Route path="buscar-banda" element={<BuscarBanda />} />
-        <Route path="contratos" element={<Contratos />} />
-      </Route>
+          path="hermandad/panel"
+          element={
+            <ProtectedRoute allowedPanels={['gestor_hermandad']}>
+              <AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="informacion" element={<Informacion />} />
+          <Route path="buscar-banda" element={<BuscarBanda />} />
+          <Route path="contratos" element={<Contratos />} />
+        </Route>
 
-      {/* Rutas para el panel de administracion de la banda */}
-      <Route
-        path="banda/panel"
-        element={
-          <AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />
-        }
-      >
-        <Route path="informacion" element={<ProfileBanda />} />
-        <Route path="contratos" element={<ContratosBanda />} />
-      </Route>
+        {/* Rutas para el panel de administracion de la banda */}
+        <Route
+          path="banda/panel"
+          element={
+            <ProtectedRoute allowedPanels={['gestor_banda']}>
+              <AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="informacion" element={<ProfileBanda />} />
+          <Route path="contratos" element={<ContratosBanda />} />
+        </Route>
 
-      {/* Rutas para el panel de administracion nuestro */}
-      <Route
-        path="/admin-panel"
-        element={<AdminLayout menuItems={adminMenu} />}
-      >
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="users" element={<UserList />} />
-        <Route path="users/create" element={<UserForm />} />
-        <Route path="bands" element={<BandList />} />
-        <Route path="bands/create" element={<BandForm />} />
-        <Route path="brotherhoods" element={<BrotherhoodList />} />
-        <Route path="brotherhoods/create" element={<BrotherhoodForm />} />
-        <Route path="contracts" element={<ContractList />} />
-        <Route path="contracts/create" element={<ContractForm />} />
-        <Route path="availabilities" element={<AvailabilityList />} />
-        <Route path="availabilities/create" element={<AvailabilityForm />} />
-        <Route path="processions" element={<ProcessionList />} />
-        <Route path="processions/create" element={<ProcessionForm />} />
-      </Route>
-    </Routes>
+        {/* Rutas para el panel de administracion nuestro */}
+        <Route
+          path="/admin-panel"
+          element={
+            <ProtectedRoute allowedPanels={['admin']}>
+              <AdminLayout menuItems={adminMenu} />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<UserList />} />
+          <Route path="users/create" element={<UserForm />} />
+          <Route path="bands" element={<BandList />} />
+          <Route path="bands/create" element={<BandForm />} />
+          <Route path="brotherhoods" element={<BrotherhoodList />} />
+          <Route path="brotherhoods/create" element={<BrotherhoodForm />} />
+          <Route path="contracts" element={<ContractList />} />
+          <Route path="contracts/create" element={<ContractForm />} />
+          <Route path="availabilities" element={<AvailabilityList />} />
+          <Route path="availabilities/create" element={<AvailabilityForm />} />
+          <Route path="processions" element={<ProcessionList />} />
+          <Route path="processions/create" element={<ProcessionForm />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 

@@ -1,46 +1,42 @@
 import { useState } from "react";
 import toast from 'react-hot-toast';
 
-export const useCreateEntity = () => {
-    const [data, setData] = useState(null);
+export const useUpdateEntity = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const create = async (url, body) => {
+    const update = async (url, body) => {
         setLoading(true);
         setError(null);
 
         try {
             const res = await fetch(url, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(body)
-            })
+            });
 
             const data = await res.json();
 
-            console.log("Respuesta del backend:", data);
-            if (!res.ok) throw new Error(data.details || 'Error al crear un registro')
+            if (!res.ok) throw new Error(data.message || 'Error al actualizar el registro');
             
-            setData(data)
-            toast.success("Registro creado correctamente");
+            toast.success("Registro actualizado correctamente");
             return data;
 
         } catch (error) {
-            setError(error.message)
-            toast.error(error.message || "Error al crear el registro");
+            setError(error.message);
+            toast.error(error.message || "Error al actualizar el registro");
             return null;
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
     return {
-        create,
-        data,
+        update,
         loading,
         error
     }

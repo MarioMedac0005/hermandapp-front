@@ -2,12 +2,21 @@ import { ArchiveBoxIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Modal from "./Modal";
 
-function Table({ columns, data, entity }) {
+function Table({ columns, data, entity, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleDeleteClick = (id) => {
+      setSelectedId(id);
+      setOpen(true);
+  }
 
   const handleConfirm = () => {
-    console.log("✅ Esto es lo que se ejecuta en el confirm");
+    if (onDelete && selectedId) {
+        onDelete(selectedId);
+    }
     setOpen(false);
+    setSelectedId(null);
   };
 
   return (
@@ -41,16 +50,19 @@ function Table({ columns, data, entity }) {
                       key={col.key}
                       className="px-2 py-2 border-r border-gray-200"
                     >
-                      {item[col.key]}
+                      {col.render ? col.render(item) : item[col.key]}
                     </td>
                   ))}
                   <td className="border-r border-gray-200 align-middle">
                     <div className="flex justify-center items-center gap-3">
                       <ArchiveBoxIcon
-                        onClick={() => setOpen(true)}
+                        onClick={() => handleDeleteClick(item.id)}
                         className="size-5 text-red-600 hover:cursor-pointer hover:scale-110 transition"
                       />
-                      <PencilSquareIcon className="size-5 text-green-600 hover:cursor-pointer hover:scale-110 transition" />
+                      <PencilSquareIcon 
+                        onClick={() => onEdit && onEdit(item)}
+                        className="size-5 text-green-600 hover:cursor-pointer hover:scale-110 transition" 
+                      />
                     </div>
                   </td>
                 </tr>

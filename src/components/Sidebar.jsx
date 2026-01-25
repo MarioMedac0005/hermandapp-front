@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon, ArrowLeftStartOnRectangleIcon, HomeIcon } from "@heroicons/react/24/outline";
 import Logo from "@assets/img/logo.svg";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 function Sidebar({ menuItems, profile }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const urlActive = useLocation();
+  const { logout } = useAuth();
 
   return (
     <>
@@ -73,7 +75,7 @@ function Sidebar({ menuItems, profile }) {
           {profile && !collapsed && (
             <div className="flex items-center gap-3 px-4 pt-3 pb-6 my-2">
               <img
-                src={profile.logo}
+                src={profile.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nombre)}&background=random`}
                 alt={profile.nombre}
                 className="size-14 rounded-full object-cover"
               />
@@ -109,6 +111,33 @@ function Sidebar({ menuItems, profile }) {
             );
           })}
         </nav>
+
+        {/* FOOTER ACTIONS */}
+        <div className="p-4 border-t border-[#e8e9ed] space-y-1">
+          {/* VOLVER A LA WEB */}
+          <Link
+            to="/"
+            className={`flex items-center gap-3 p-2 rounded-md transition w-full text-left text-gray-600 hover:bg-gray-100 ${
+              collapsed ? "justify-center" : ""
+            }`}
+            title="Volver a la web"
+          >
+            <HomeIcon className="w-5 h-5 shrink-0" />
+            {!collapsed && <span className="truncate font-medium">Volver a la web</span>}
+          </Link>
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className={`flex items-center gap-3 p-2 rounded-md transition w-full text-left text-red-600 hover:bg-red-50 ${
+              collapsed ? "justify-center" : ""
+            }`}
+            title="Cerrar Sesión"
+          >
+            <ArrowLeftStartOnRectangleIcon className="w-5 h-5 shrink-0" />
+            {!collapsed && <span className="truncate font-medium">Cerrar Sesión</span>}
+          </button>
+        </div>
       </div>
 
       {/* BACKDROP OSCURO MÓVIL */}

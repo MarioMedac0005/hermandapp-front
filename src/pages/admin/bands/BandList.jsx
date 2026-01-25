@@ -1,17 +1,43 @@
 import { useState } from "react";
 import Modal from "@components/Modal";
 import BandForm from "./BandForm";
-// import { Link } from "react-router-dom";
 import Table from "@components/Table";
 import { bandColumns } from "../../../config/tables/bandsColumns";
 import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function BandList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBand, setSelectedBand] = useState(null);
+
   const entidad = "banda";
   const columnas = bandColumns;
-  const { data, loading, error } = useFetchData(API_ENDPOINTS.bands);
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.bands);
+  const { destroy } = useDeleteEntity();
+
+  const handleCreate = () => {
+    setSelectedBand(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (band) => {
+    setSelectedBand(band);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.bands}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedBand(null);
+    refetch();
+  };
 
   if (loading) return <p>Cargando bandas...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -37,24 +63,34 @@ function BandList() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" />
+          <input type="search" placeholder="Buscar..." />
         </label>
         <button
           type="button"
-          className="btn btn-sm"
-          onClick={() => setIsModalOpen(true)}
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
         >
           Crear una banda
         </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title=""
+        title={selectedBand ? "Editar Banda" : "Crear Banda"}
       >
-        <BandForm />
+        <BandForm 
+            initialData={selectedBand}
+            onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );

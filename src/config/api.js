@@ -7,5 +7,8 @@ export const API_ENDPOINTS = {
   contracts: `${API_BASE_URL}/contracts`,
   availabilities: `${API_BASE_URL}/availabilities`,
   processions: `${API_BASE_URL}/processions`,
-  dashboard: `${API_BASE_URL}/dashboard/count`
+  dashboard: `${API_BASE_URL}/dashboard/count`,
+  login: `${API_BASE_URL}/login`,
+  logout: `${API_BASE_URL}/logout`,
+  profile: `${API_BASE_URL}/me`
 };
