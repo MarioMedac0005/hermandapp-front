@@ -69,8 +69,9 @@ function Busqueda() {
 	};
 
 	return (
-		<div className="mt-10 mx-5">
-			<div className="grid grid-cols-1 md:grid-cols-[0.6fr_2fr] gap-8">
+		<section className="mt-10 mx-10 pb-10">
+			{/* Contenido principal */}
+			<div className="grid grid-cols-1 md:grid-cols-[0.6fr_2fr] gap-8 items-start">
 				<SearchFilters
 					filters={formFilters}
 					onChange={updateFormFilter}
@@ -81,11 +82,13 @@ function Busqueda() {
 				<SearchResults results={results} loading={loading} />
 			</div>
 
-			<Pagination
-				pagination={pagination}
-				onPageChange={changePage}
-			/>
-		</div>
+			<div className="mt-5 flex justify-center">
+				<Pagination
+					pagination={pagination}
+					onPageChange={changePage}
+				/>
+			</div>
+		</section>
 	);
 }
 

@@ -10,7 +10,7 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const API_URL = "http://127.0.0.1:8000/api";
+    const API_URL = "https://daw23.arenadaw.com.es/api";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,45 +18,43 @@ export default function LoginForm() {
         setLoading(true);
 
         try {
-            const response = await fetch(API_URL + "/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                }
-            );
+            const response = await fetch(`${API_URL}/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-            // 🔒 Si no es OK, NO intentamos parsear JSON a ciegas
             if (!response.ok) {
-                let message = "Credenciales incorrectas";
-
-                try {
-                    const errorData = await response.json();
-                    if (errorData?.message) {
-                        message = errorData.message;
-                    }
-                } catch {
-                    // Si no hay JSON, usamos mensaje genérico
+                if (response.status === 401 || response.status === 422) {
+                    throw new Error("Credenciales incorrectas");
                 }
 
-                throw new Error(message);
+                if (response.status >= 500) {
+                    throw new Error("Error inesperado. Inténtalo más tarde.");
+                }
+
+                // Fallback
+                throw new Error("Error inesperado. Inténtalo más tarde.");
             }
 
-            // ✅ Aquí sí sabemos que hay JSON válido
             const data = await response.json();
-
             localStorage.setItem("token", data.access_token);
             navigate("/");
 
         } catch (err) {
-            setError(err.message || "Error inesperado");
+            if (err instanceof TypeError) {
+                setError("Error inesperado. Inténtalo más tarde.");
+            } else {
+                setError(err.message);
+            }
         } finally {
             setLoading(false);
         }
     };
+
 
 
     return (

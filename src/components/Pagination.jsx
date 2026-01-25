@@ -2,7 +2,7 @@ function Pagination({ pagination, onPageChange }) {
 	if (!pagination || pagination.lastPage <= 1) return null;
 
 	const { currentPage, lastPage } = pagination;
-	const delta = 1; // páginas a cada lado de la actual
+	const delta = 2; // páginas a cada lado de la actual
 
 	const pages = [];
 

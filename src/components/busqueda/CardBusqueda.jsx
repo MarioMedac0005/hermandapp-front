@@ -8,10 +8,15 @@ export default function CardBusqueda({ data }) {
 
 	const routeType = typeMap[data.type];
 
+	// Buscar banner
+	const banner =
+		data.media?.find(m => m.category === "banner")?.path
+		?? "/placeholder.jpg";
+
 	return (
 		<div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
 			<img
-				src={data.image ?? "/placeholder.jpg"}
+				src={data.banner}
 				alt={data.name}
 				className="w-full h-40 object-cover"
 			/>

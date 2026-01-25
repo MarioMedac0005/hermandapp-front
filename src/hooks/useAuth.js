@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "https://daw23.arenadaw.com.es/api";
 
 export default function useAuth() {
     const [user, setUser] = useState(null);

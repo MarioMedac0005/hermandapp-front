@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000/api/search";
+// const API_URL = "http://127.0.0.1:8000/api/search";
+const API_URL = "https://daw23.arenadaw.com.es/api/search";
 
 export async function searchEntities(params = {}) {
     const query = new URLSearchParams(params).toString();
