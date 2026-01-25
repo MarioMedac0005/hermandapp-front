@@ -30,11 +30,16 @@ import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
 
+import ResetPassword from "@pages/reset_password/ResetPassword";
+
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<GuestLayout />}>
         <Route index element={<LandingPage />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+
         <Route path="busqueda" element={<Busqueda />} />
         <Route
           path="hermandades/contratatos/crear"
