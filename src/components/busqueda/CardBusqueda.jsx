@@ -1,30 +1,43 @@
-import pruebaImagen from "../../pages/busqueda/prueba_virgen_paso.jpg";
+import { Link } from "react-router-dom";
 
-function CardBusqueda() {
-  return (
-    <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-      <img
-        src={pruebaImagen}
-        alt="Hermandad"
-        className="w-full h-40 object-cover"
-      />
-      <div className="p-4">
-        <span className="text-xs font-semibold text-purple-600">
-          HERMANDAD • SEVILLA
-        </span>
-        <h3 className="font-semibold text-lg mt-1">
-          Hermandad del Gran Poder
-        </h3>
+export default function CardBusqueda({ data }) {
+	const typeMap = {
+		band: "banda",
+		brotherhood: "hermandad",
+	};
 
-        <p className="text-gray-600 text-sm mt-1">
-          Pontificia y Real Hermandad y Cofradía de Nazarenos de Nuestro Padre Jesús...
-        </p>
-        <button className="mt-4 w-full bg-purple-100 text-purple-700 rounded-lg py-2 text-sm font-medium hover:bg-purple-200">
-          Ver más
-        </button>
-      </div>
-    </div>
-  );
+	const routeType = typeMap[data.type];
+
+	return (
+		<div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+			<img
+				src={data.image ?? "/placeholder.jpg"}
+				alt={data.name}
+				className="w-full h-40 object-cover"
+			/>
+
+			<div className="p-4">
+				<span className="text-xs font-semibold text-purple-600 uppercase">
+					{routeType} • {data.city}
+				</span>
+
+				<h3 className="font-semibold text-lg mt-1">
+					{data.name}
+				</h3>
+
+				{data.description && (
+					<p className="text-gray-600 text-sm mt-1 line-clamp-2">
+						{data.description}
+					</p>
+				)}
+
+				<Link
+					to={`/perfil/${routeType}/${data.id}`}
+					className="mt-4 block w-full bg-purple-100 text-purple-700 rounded-lg py-2 text-sm font-medium text-center hover:bg-purple-200 transition"
+				>
+					Ver más
+				</Link>
+			</div>
+		</div>
+	);
 }
-
-export default CardBusqueda;

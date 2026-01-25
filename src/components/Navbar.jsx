@@ -21,7 +21,7 @@ function Navbar() {
 
 	return (
 		<>
-			{/* <div className="drawer md:hidden">
+			<div className="drawer md:hidden">
 				<input id="main-drawer" type="checkbox" className="drawer-toggle" />
 
 				<div className="drawer-content">
@@ -73,13 +73,12 @@ function Navbar() {
 						)}
 
 						<ul className="menu gap-1 flex-1">
-							<li><Link to="/">Inicio</Link></li>
 							<li><Link to="/perfil">Perfil</Link></li>
 
 							{user?.permissions.can_access_admin && (
 								<li>
 									<Link to="/admin-panel/dashboard">
-										Panel Administración
+										Administración
 									</Link>
 								</li>
 							)}
@@ -95,14 +94,14 @@ function Navbar() {
 						)}
 					</aside>
 				</div>
-			</div> */}
+			</div>
 			{/* ===== MOBILE DRAWER ===== */}
 
 			{/* ===== DESKTOP NAVBAR ===== */}
 			<div className="navbar bg-base-100 shadow px-6 hidden md:flex">
 				<div className="navbar-start">
 					<Link to="/">
-						<img src={Logo} className="w-28" />
+						<img src={Logo} className="w-32" />
 					</Link>
 				</div>
 
@@ -119,45 +118,50 @@ function Navbar() {
 					) : (
 						<div className="dropdown dropdown-end">
 							<div tabIndex={0} className="btn btn-ghost btn-circle avatar">
-								<img
-									src={user.avatar}
-									className="w-10 rounded-full"
-								/>
+								<div className="w-10 rounded-full">
+									<img src={user.avatar} alt="Avatar" />
+								</div>
 							</div>
 
-							<ul className="menu dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-								<li className="px-3 py-2">
-									<p className="font-bold">{user.name}</p>
-									<p className="text-sm opacity-70">
+							<div className="dropdown-content mt-3 min-w-36 rounded-xl bg-base-100 shadow-lg border border-base-200">
+								{/* Header usuario */}
+								<div className="px-4 py-3">
+									<p className="text-sm font-semibold leading-tight">
+										{user.name}
+									</p>
+									<p className="text-xs text-base-content/70">
 										{user.organization}
 									</p>
-								</li>
+								</div>
 
-								<li><Link to="/perfil">Perfil</Link></li>
+								<div className="divider my-0"></div>
 
+								{/* Menú */}
+								<ul className="menu menu-compact w-auto">
+									<li>
+										<Link to="/perfil">Perfil</Link>
+									</li>
 
-								{/* REVISA, DA ERROR */}
+									{user?.permissions?.can_access_admin && (
+										<li>
+											<Link to="/admin-panel/dashboard">
+												Administración
+											</Link>
+										</li>
+									)}
 
-								{/* {user.permissions.can_access_admin && (
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Panel Administración
-									</Link>
-								</li>
-								)} */}
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Panel Administración
-									</Link>
-								</li>
-
-								<li>
-									<button onClick={handleLogout}>
-										Salir
-									</button>
-								</li>
-							</ul>
+									<li>
+										<button
+											onClick={handleLogout}
+											className="text-error hover:bg-error/10"
+										>
+											Salir
+										</button>
+									</li>
+								</ul>
+							</div>
 						</div>
+
 					)}
 				</div>
 			</div>

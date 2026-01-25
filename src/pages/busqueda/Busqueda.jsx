@@ -1,86 +1,92 @@
-import CardBusqueda from "../../components/busqueda/CardBusqueda";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import useSearch from "../../hooks/useSearch";
+import SearchFilters from "../../components/busqueda/SearchFilters";
+import SearchResults from "../../components/busqueda/SearchResults";
 import Pagination from "../../components/Pagination";
 
 function Busqueda() {
-  return (
-    <div className="mt-10 mx-5">
+	const [searchParams, setSearchParams] = useSearchParams();
 
-      {/* GRID PRINCIPAL */}
-      <div className="grid grid-cols-1 md:grid-cols-[0.6fr_2fr] gap-8">
+	const [searchFilters, setSearchFilters] = useState({
+		q: searchParams.get("q") ?? "",
+		city: searchParams.get("city") ?? "",
+		type: searchParams.get("type") ?? "",
+		page: Number(searchParams.get("page")) || 1,
+	});
 
-        {/* FILTER */}
-        <aside className="bg-white border border-gray-200 rounded-2xl p-6 h-fit">
-          <h2 className="text-lg font-semibold mb-6">Filtrar Resultados</h2>
+	const [formFilters, setFormFilters] = useState({
+		q: searchFilters.q,
+		city: searchFilters.city,
+		type: searchFilters.type,
+	});
 
-          <form className="space-y-4">
-            <div>
-              <label htmlFor="provincia" className="block text-sm font-medium text-gray-700">
-                Provincia
-              </label>
-              <select
-                id="provincia"
-                name="provincia"
-                className="mt-1 w-full border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm text-gray-700 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">Todas</option>
-                <option value="sevilla">Sevilla</option>
-                <option value="cadiz">Cádiz</option>
-                <option value="malaga">Málaga</option>
-              </select>
-            </div>
+	const { results, pagination, loading } = useSearch(searchFilters);
 
-            <div>
-              <label htmlFor="tipo" className="block text-sm font-medium text-gray-700">
-                Tipo
-              </label>
-              <select
-                id="tipo"
-                name="tipo"
-                className="mt-1 w-full border border-gray-300 rounded-lg py-2 pl3 pr-8 text-sm text-gray-700 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">Todos</option>
-                <option value="hermandad">Hermandad</option>
-                <option value="banda">Banda</option>
-              </select>
-            </div>
+	useEffect(() => {
+		const params = {};
 
-            <div>
-              <label htmlFor="estilo" className="block text-sm font-medium text-gray-700">
-                Estilo Musical
-              </label>
-              <select
-                id="estilo"
-                name="estilo"
-                className="mt-1 w-full border border-gray-300 rounded-lg py-2 pl3 pr-8 text-sm text-gray-700 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">Todos</option>
-                <option value="agrupacion">Agrupación Musical</option>
-                <option value="bct">BCT</option>
-                <option value="banda_musica">Banda de Música</option>
-              </select>
-            </div>
+		if (searchFilters.q) params.q = searchFilters.q;
+		if (searchFilters.city) params.city = searchFilters.city;
+		if (searchFilters.type) params.type = searchFilters.type;
+		if (searchFilters.page > 1) params.page = searchFilters.page;
 
-            <button
-              type="submit"
-              className="w-full mt-4 bg-purple-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-700 transition"
-            >
-              Aplicar Filtros
-            </button>
-          </form>
-        </aside>
+		setSearchParams(params);
+	}, [searchFilters, setSearchParams]);
 
-        {/* CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <CardBusqueda />
-          <CardBusqueda />
-          <CardBusqueda />
-          <CardBusqueda />
-          <CardBusqueda />
-        </div>
-      </div>
-      <Pagination />
-    </div>
-  );
+	const updateFormFilter = (key, value) => {
+		setFormFilters(prev => ({ ...prev, [key]: value }));
+	};
+
+	const submitFilters = e => {
+		e.preventDefault();
+
+		setSearchFilters({
+			...formFilters,
+			page: 1,
+		});
+	};
+
+	const resetFilters = () => {
+		setFormFilters({
+			q: "",
+			city: "",
+			type: "",
+		});
+
+		setSearchFilters({
+			q: "",
+			city: "",
+			type: "",
+			page: 1,
+		});
+
+		setSearchParams({});
+	};
+
+	const changePage = page => {
+		setSearchFilters(prev => ({ ...prev, page }));
+	};
+
+	return (
+		<div className="mt-10 mx-5">
+			<div className="grid grid-cols-1 md:grid-cols-[0.6fr_2fr] gap-8">
+				<SearchFilters
+					filters={formFilters}
+					onChange={updateFormFilter}
+					onSubmit={submitFilters}
+					onReset={resetFilters}
+				/>
+
+				<SearchResults results={results} loading={loading} />
+			</div>
+
+			<Pagination
+				pagination={pagination}
+				onPageChange={changePage}
+			/>
+		</div>
+	);
 }
 
 export default Busqueda;

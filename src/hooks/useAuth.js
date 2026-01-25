@@ -24,7 +24,7 @@ export default function useAuth() {
                 if (!res.ok) throw new Error();
                 return res.json();
             })
-            .then(data => setUser(data))
+            .then(response => setUser(response.data))
             .catch(() => {
                 localStorage.removeItem("token");
                 setUser(null);
