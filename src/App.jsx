@@ -40,6 +40,9 @@ import ScrollToTop from "@components/ScrollToTop";
 
 import { Toaster } from 'react-hot-toast';
 
+import ResetPassword from "@pages/reset_password/ResetPassword";
+
+
 function App() {
   return (
     <AuthProvider>
@@ -47,7 +50,8 @@ function App() {
       <ScrollToTop /> 
       <Routes>
         <Route path="login" element={<Login />} />
-        <Route path="/admon-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/admin-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
         <Route path="/" element={<GuestLayout />}>
           <Route index element={<LandingPage />} />
           <Route path="busqueda" element={<Busqueda />} />
