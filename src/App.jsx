@@ -50,7 +50,7 @@ function App() {
       <ScrollToTop /> 
       <Routes>
         <Route path="login" element={<Login />} />
-        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ResetPassword />} />
         <Route path="/admin-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
         <Route path="/" element={<GuestLayout />}>
           <Route index element={<LandingPage />} />
