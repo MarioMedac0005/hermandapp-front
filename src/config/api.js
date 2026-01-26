@@ -10,5 +10,8 @@ export const API_ENDPOINTS = {
   dashboard: `${API_BASE_URL}/dashboard/count`,
   login: `${API_BASE_URL}/login`,
   logout: `${API_BASE_URL}/logout`,
-  profile: `${API_BASE_URL}/me`
+  profile: `${API_BASE_URL}/me`,
+  addGestor: `${API_BASE_URL}/gestor`,
+  resetPassword: `${API_BASE_URL}/reset-password`,
+  forgotPassword: `${API_BASE_URL}/forgot-password`
 };

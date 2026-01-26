@@ -17,6 +17,7 @@ import AvailabilityList from "@pages/admin/availabilities/AvailabilityList";
 import AvailabilityForm from "@pages/admin/availabilities/AvailabilityForm";
 import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
+import GestorList from "@pages/admin/gestores/GestorList";
 import Dashboard from "@pages/admin/dashboard/Dashboard";
 import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
 import adminMenu from "./menus/admin";
@@ -51,6 +52,7 @@ function App() {
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="/forgot-password" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/admin-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
         <Route path="/" element={<GuestLayout />}>
           <Route index element={<LandingPage />} />
@@ -118,6 +120,7 @@ function App() {
           <Route path="availabilities/create" element={<AvailabilityForm />} />
           <Route path="processions" element={<ProcessionList />} />
           <Route path="processions/create" element={<ProcessionForm />} />
+          <Route path="gestores" element={<GestorList />} />
         </Route>
       </Routes>
     </AuthProvider>

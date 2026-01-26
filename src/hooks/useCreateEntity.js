@@ -14,6 +14,7 @@ export const useCreateEntity = () => {
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
@@ -23,13 +24,17 @@ export const useCreateEntity = () => {
             const data = await res.json();
 
             console.log("Respuesta del backend:", data);
-            if (!res.ok) throw new Error(data.details || 'Error al crear un registro')
+            if (!res.ok) {
+                console.error("Backend Error Data:", data);
+                throw new Error(data.details || data.message || JSON.stringify(data) || 'Error al crear un registro')
+            }
             
             setData(data)
             toast.success("Registro creado correctamente");
             return data;
 
         } catch (error) {
+            console.error("Error creating entity:", error);
             setError(error.message)
             toast.error(error.message || "Error al crear el registro");
             return null;

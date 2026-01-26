@@ -20,6 +20,11 @@ const adminMenu = [
     icon: MapPinIcon,
     href: "/admin-panel/processions",
   },
+  {
+    name: "Gestores",
+    icon: UserIcon,
+    href: "/admin-panel/gestores",
+  },
 ];
 
 export default adminMenu
