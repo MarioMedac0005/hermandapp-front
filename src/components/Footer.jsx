@@ -18,7 +18,7 @@ export default function Footer() {
                 <nav>
                     <h6 className="footer-title">Contacto</h6>
                     <a href="mailto:soporte@hermandapp.es" className="link link-hover">Email</a>
-                    <a href="tel:+34954123456" className="link link-hover">Teléfono</a>
+                    <a href="tel:+34685340922" className="link link-hover">Teléfono</a>
                 </nav>
                 <nav>
                     <h6 className="footer-title">Legal</h6>
