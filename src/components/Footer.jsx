@@ -1,4 +1,4 @@
-import Logo from "@assets/img/isotipo.png";
+import Logo from "@assets/img/logo.png";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
