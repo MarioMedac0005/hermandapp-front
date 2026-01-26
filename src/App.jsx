@@ -32,6 +32,11 @@ import LandingPage from "@pages/landing/LandingPage";
 import Login from "@pages/auth/Login";
 import { AuthProvider } from "@contexts/AuthContext";
 import ProtectedRoute from "@components/auth/ProtectedRoute";
+import Contacto from "@pages/contacto/Contacto";
+import TerminosUso from "@pages/legal/TerminosUso";
+import Privacidad from "@pages/legal/Privacidad";
+import Cookies from "@pages/legal/Cookies";
+import ScrollToTop from "@components/ScrollToTop";
 
 import { Toaster } from 'react-hot-toast';
 
@@ -39,8 +44,8 @@ function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" reverseOrder={false} />
+      <ScrollToTop /> 
       <Routes>
-
         <Route path="login" element={<Login />} />
         <Route path="/admon-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
         <Route path="/" element={<GuestLayout />}>
@@ -52,6 +57,12 @@ function App() {
           />
           <Route path="perfil/hermandad/:brotherhood" element={<HermandadPerfil />} />
           <Route path="perfil/banda/:band" element={<BandaPerfil />} />
+          <Route path="perfil/hermandad" element={<HermandadPerfil />} />
+          <Route path="perfil/banda" element={<BandaPerfil />} />
+          <Route path="contacto" element={<Contacto />} />
+          <Route path="terminos-uso" element={<TerminosUso />} />
+          <Route path="politica-privacidad" element={<Privacidad />} />
+          <Route path="politica-cookies" element={<Cookies />} />
         </Route>
         {/* Ruta para el panel de administracion de las hermandades */}
         <Route
