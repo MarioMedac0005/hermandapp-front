@@ -31,23 +31,19 @@ export default function LoginForm() {
                 }
             );
 
-            // 🔒 Si no es OK, NO intentamos parsear JSON a ciegas
             if (!response.ok) {
-                let message = "Credenciales incorrectas";
-
-                try {
-                    const errorData = await response.json();
-                    if (errorData?.message) {
-                        message = errorData.message;
-                    }
-                } catch {
-                    // Si no hay JSON, usamos mensaje genérico
+                if (response.status === 401 || response.status === 422) {
+                    throw new Error("Credenciales incorrectas");
                 }
 
-                throw new Error(message);
+                if (response.status >= 500) {
+                    throw new Error("Error inesperado. Inténtalo más tarde.");
+                }
+
+                // Fallback
+                throw new Error("Error inesperado. Inténtalo más tarde.");
             }
 
-            // ✅ Aquí sí sabemos que hay JSON válido
             const data = await response.json();
 
             // Esperar a que el contexto cargue el usuario y nos devuelva sus datos
@@ -71,11 +67,16 @@ export default function LoginForm() {
             }
 
         } catch (err) {
-            setError(err.message || "Error inesperado");
+            if (err instanceof TypeError) {
+                setError("Error inesperado. Inténtalo más tarde.");
+            } else {
+                setError(err.message);
+            }
         } finally {
             setLoading(false);
         }
     };
+
 
 
     return (

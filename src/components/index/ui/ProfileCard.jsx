@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+
 export default function ProfileCard({
 	image,
 	city,
 	name,
 	entityType,
 	actionText,
+	actionTo,
 }) {
 	return (
 		<div className="card bg-base-100 shadow-sm hover:shadow-lg transition">
@@ -25,9 +28,12 @@ export default function ProfileCard({
 					{entityType === "band" ? "Banda de Música" : "Hermandad"}
 				</p>
 
-				<button className="btn btn-outline btn-primary w-full">
+				<Link
+					to={actionTo}
+					className="btn btn-outline btn-primary w-full"
+				>
 					{actionText}
-				</button>
+				</Link>
 			</div>
 		</div>
 	);
