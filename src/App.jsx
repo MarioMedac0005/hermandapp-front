@@ -62,13 +62,11 @@ function App() {
           <Route index element={<LandingPage />} />
           <Route path="busqueda" element={<Busqueda />} />
           <Route
-            path="hermandades/contratatos/crear"
+            path="hermandades/contratos/crear"
             element={<HermandadesForm />}
           />
           <Route path="perfil/hermandad/:brotherhood" element={<HermandadPerfil />} />
           <Route path="perfil/banda/:band" element={<BandaPerfil />} />
-          <Route path="perfil/hermandad" element={<HermandadPerfil />} />
-          <Route path="perfil/banda" element={<BandaPerfil />} />
           <Route path="contacto" element={<Contacto />} />
           <Route path="terminos-uso" element={<TerminosUso />} />
           <Route path="politica-privacidad" element={<Privacidad />} />
