@@ -6,7 +6,9 @@ import {
   UserIcon,
   ArrowRightStartOnRectangleIcon,
   CommandLineIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  MusicalNoteIcon,
+  UserGroupIcon
 } from "@heroicons/react/24/outline";
 
 function Navbar() {
@@ -89,6 +91,22 @@ function Navbar() {
 									</Link>
 								</li>
 							)}
+
+              {user?.panel === 'gestor_banda' && (
+                <li>
+                  <Link to="/banda/panel/informacion">
+                    Panel de Banda
+                  </Link>
+                </li>
+              )}
+
+              {user?.panel === 'gestor_hermandad' && (
+                <li>
+                  <Link to="/hermandad/panel/informacion">
+                    Panel de Hermandad
+                  </Link>
+                </li>
+              )}
 						</ul>
 
 						{user && (
@@ -182,6 +200,36 @@ function Navbar() {
                           aria-hidden="true"
                         />
                         Panel Administración
+                      </Link>
+                    </MenuItem>
+                  )}
+
+                  {user?.panel === 'gestor_banda' && (
+                    <MenuItem>
+                      <Link
+                        to="/banda/panel/informacion"
+                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+                      >
+                        <MusicalNoteIcon
+                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+                          aria-hidden="true"
+                        />
+                        Panel de Banda
+                      </Link>
+                    </MenuItem>
+                  )}
+
+                  {user?.panel === 'gestor_hermandad' && (
+                    <MenuItem>
+                      <Link
+                        to="/hermandad/panel/informacion"
+                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+                      >
+                        <UserGroupIcon
+                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+                          aria-hidden="true"
+                        />
+                        Panel de Hermandad
                       </Link>
                     </MenuItem>
                   )}

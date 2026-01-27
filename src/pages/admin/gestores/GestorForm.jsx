@@ -49,7 +49,7 @@ function GestorForm({ onSuccess }) {
         brotherhood_id: form.type === 'brotherhood' ? form.brotherhood_id : null,
     };
 
-    const result = await create(API_ENDPOINTS.addGestor, payload);
+    const result = await create(API_ENDPOINTS.gestores, payload);
 
     if (result) {
         if (!result.mail_sent) {

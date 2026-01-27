@@ -13,6 +13,8 @@ export const useDeleteEntity = () => {
             const res = await fetch(url, {
                 method: 'DELETE',
                 headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });

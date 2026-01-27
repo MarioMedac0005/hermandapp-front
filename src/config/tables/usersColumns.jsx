@@ -21,7 +21,7 @@ export const userColumns = [
         const role = item.role || item.roles;
         if (!role) return "Sin rol";
         return (
-            <span className={`badge ${role === 'admin' ? 'badge-primary' : 'badge-ghost'}`}>
+            <span className={`badge badge-sm badge-soft ${role === 'admin' ? 'badge-secondary' : 'badge-info'}`}>
                 {role}
             </span>
         );
