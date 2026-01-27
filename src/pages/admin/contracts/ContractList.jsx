@@ -1,84 +1,46 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import ContractForm from "./ContractForm";
 import Table from "@components/Table";
+import { contractColumns } from "../../../config/tables/contractsColumns";
+import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function ContractList() {
-  const entidad = "contracts";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedContract, setSelectedContract] = useState(null);
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre del Contrato",
-    },
-    {
-      key: "type",
-      label: "Tipo de Contrato",
-    },
-    {
-      key: "itinerary",
-      label: "Itinerario",
-    },
-    {
-      key: "checkout_time",
-      label: "Hora de Salida",
-    },
-    {
-      key: "checkin_time",
-      label: "Hora de Entrada",
-    },
-    {
-      key: "brotherhood_id",
-      label: "ID Hermandad",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
+  const entidad = "contrato";
+  const columnas = contractColumns;
+  const { data, error, loading, refetch } = useFetchData(API_ENDPOINTS.contracts);
+  const { destroy } = useDeleteEntity();
 
-  const data = [
-    {
-      id: 1,
-      name: "Contrato de Procesión de Semana Santa",
-      type: "christ",
-      itinerary: "Calle Real, Plaza Mayor, Iglesia de San Juan",
-      checkout_time: "2024-04-05 18:00:00",
-      checkin_time: "2024-04-05 22:00:00",
-      brotherhood_id: 1,
-      created_at: "2024-01-15",
-    },
-    {
-      id: 2,
-      name: "Contrato de Procesión Virgen de la Esperanza",
-      type: "virgin",
-      itinerary:
-        "Avenida de la Constitución, Plaza del Sol, Iglesia de la Esperanza",
-      checkout_time: "2024-04-06 17:30:00",
-      checkin_time: "2024-04-06 21:30:00",
-      brotherhood_id: 2,
-      created_at: "2024-02-10",
-    },
-    {
-      id: 3,
-      name: "Contrato Procesión del Silencio",
-      type: "christ",
-      itinerary: "Calle de la Paz, Plaza del Mar, Iglesia del Silencio",
-      checkout_time: "2024-04-07 19:00:00",
-      checkin_time: "2024-04-07 23:00:00",
-      brotherhood_id: 3,
-      created_at: "2024-03-12",
-    },
-    {
-      id: 4,
-      name: "Contrato Procesión de Jesús Nazareno",
-      type: "christ",
-      itinerary:
-        "Avenida de Andalucía, Plaza de la Cruz, Iglesia de Jesús Nazareno",
-      checkout_time: "2024-04-08 18:45:00",
-      checkin_time: "2024-04-08 22:45:00",
-      brotherhood_id: 4,
-      created_at: "2024-04-01",
-    },
-  ];
+  const handleCreate = () => {
+    setSelectedContract(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (contract) => {
+    setSelectedContract(contract);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.contracts}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedContract(null);
+    refetch();
+  };
+
+  if (loading) return <p>Cargando contratos...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -103,18 +65,37 @@ function ContractList() {
           </svg>
           <input
             type="search"
-            required
-            placeholder="Search"
+            placeholder="Buscar..."
             className="placeholder:text-xs"
           />
         </label>
-        <Link to="/admin-panel/contracts/create">
-          <button type="button" className="btn btn-sm">
-            Crear un contrato
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
+        >
+          Crear un contrato
+        </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedContract ? "Editar Contrato" : "Crear Contrato"}
+      >
+        <ContractForm 
+            initialData={selectedContract}
+            onSuccess={handleSuccess}
+        />
+      </Modal>
     </div>
   );
 }

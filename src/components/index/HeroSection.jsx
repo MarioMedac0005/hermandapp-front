@@ -1,4 +1,4 @@
-import { InputText } from "primereact/inputtext";
+import HeroSearch from "@components/index/HeroSearch";
 import HeroImage from "@assets/img/HeroImage2.jpg";
 
 export default function Hero() {
@@ -47,10 +47,7 @@ export default function Hero() {
 				</p>
 
 				<div className="flex justify-center">
-					<InputText
-						placeholder="Busca una banda o una hermandad..."
-						className="w-full max-w-xl p-inputtext-md border! border-primary/60! focus:border-primary! focus:ring-2! focus:ring-primary/40! bg-white! text-base-content!"
-					/>
+					<HeroSearch />
 				</div>
 			</div>
 		</section>

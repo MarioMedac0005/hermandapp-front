@@ -1,74 +1,46 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Modal from "@components/Modal";
+import BrotherhoodForm from "./BrotherhoodForm";
 import Table from "@components/Table";
+import { brotherhoodsColumns } from "../../../config/tables/brotherhoodsColumns";
+import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function BrotherhoodList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBrotherhood, setSelectedBrotherhood] = useState(null);
+
   const entidad = "hermandad";
+  const columnas = brotherhoodsColumns;
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.brotherhoods);
+  const { destroy } = useDeleteEntity();
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "city",
-      label: "Ciudad",
-    },
-    {
-      key: "office",
-      label: "Sede",
-    },
-    {
-      key: "phone_number",
-      label: "Teléfono",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
+  const handleCreate = () => {
+    setSelectedBrotherhood(null);
+    setIsModalOpen(true);
+  };
 
-  const data = [
-    {
-      id: 1,
-      name: "Hermandad del Gran Poder",
-      city: "Sevilla",
-      office: "Calle Feria 12",
-      phone_number: "955-123-456",
-      email: "granpoder@gmail.com",
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      name: "Hermandad de la Macarena",
-      city: "Sevilla",
-      office: "Plaza de la Esperanza 5",
-      phone_number: "955-234-567",
-      email: "macarena@gmail.com",
-      created_at: "2024-02-22",
-    },
-    {
-      id: 3,
-      name: "Hermandad del Silencio",
-      city: "Córdoba",
-      office: "Calle de la Cruz 8",
-      phone_number: "957-345-678",
-      email: "silencio@gmail.com",
-      created_at: "2024-03-18",
-    },
-    {
-      id: 4,
-      name: "Hermandad de Jesús Nazareno",
-      city: "Málaga",
-      office: "Avenida de Andalucía 20",
-      phone_number: "952-456-789",
-      email: "jesusnazareno@gmail.com",
-      created_at: "2024-04-30",
-    },
-  ];
+  const handleEdit = (brotherhood) => {
+    setSelectedBrotherhood(brotherhood);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.brotherhoods}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedBrotherhood(null);
+    refetch();
+  };
+
+  if (loading) return <p>Cargando hermandades...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -91,18 +63,39 @@ function BrotherhoodList() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" className="placeholder:text-xs"/>
+          <input
+            type="search"
+            placeholder="Buscar..."
+            className="placeholder:text-xs"
+          />
         </label>
-        <Link to="/admin-panel/brotherhoods/create">
-          <button
-            type="button"
-            className="btn btn-sm"
-          >
-            Crear una hermandad
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
+        >
+          Crear una hermandad
+        </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedBrotherhood ? "Editar Hermandad" : "Crear Hermandad"}
+      >
+        <BrotherhoodForm 
+            initialData={selectedBrotherhood}
+            onSuccess={handleSuccess}
+        />
+      </Modal>
     </div>
   );
 }

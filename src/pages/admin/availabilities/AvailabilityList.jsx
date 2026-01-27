@@ -1,66 +1,46 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import AvailabilityForm from "./AvailabilityForm";
 import Table from "@components/Table";
+import { availabilitiesColumns } from '../../../config/tables/availabilitiesColumns'
+import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function AvailabilityList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAvailability, setSelectedAvailability] = useState(null);
+
   const entidad = "availabilities";
+  const columnas = availabilitiesColumns
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.availabilities)
+  const { destroy } = useDeleteEntity();
 
-  const columnas = [
-    {
-      key: "date",
-      label: "Fecha",
-    },
-    {
-      key: "status",
-      label: "Estado",
-    },
-    {
-      key: "description",
-      label: "Descripción",
-    },
-    {
-      key: "band_id",
-      label: "ID Banda",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
+  const handleCreate = () => {
+    setSelectedAvailability(null);
+    setIsModalOpen(true);
+  };
 
-  const data = [
-    {
-      id: 1,
-      date: "2024-04-05 10:00:00",
-      status: "free",
-      description: "Disponibilidad para la banda en la mañana",
-      band_id: 1,
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      date: "2024-04-06 14:00:00",
-      status: "occupied",
-      description: "Ocupada por evento especial",
-      band_id: 2,
-      created_at: "2024-02-15",
-    },
-    {
-      id: 3,
-      date: "2024-04-07 16:00:00",
-      status: "free",
-      description: "Disponible para cualquier evento",
-      band_id: 3,
-      created_at: "2024-03-05",
-    },
-    {
-      id: 4,
-      date: "2024-04-08 18:00:00",
-      status: "occupied",
-      description: "Ocupada por concierto de la banda",
-      band_id: 4,
-      created_at: "2024-04-01",
-    },
-  ];
+  const handleEdit = (item) => {
+    setSelectedAvailability(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.availabilities}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedAvailability(null);
+    refetch();
+  };
+
+  if (loading) return <p>Cargando disponibilidades...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -89,13 +69,33 @@ function AvailabilityList() {
             placeholder="Search"
           />
         </label>
-        <Link to="/admin-panel/availabilities/create">
-          <button type="button" className="btn btn-sm">
-            Crear una disponibilidad
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
+        >
+          Crear una disponibilidad
+        </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedAvailability ? "Editar Disponibilidad" : "Crear Disponibilidad"}
+      >
+        <AvailabilityForm 
+            initialData={selectedAvailability}
+            onSuccess={handleSuccess}
+        />
+      </Modal>
     </div>
   );
 }

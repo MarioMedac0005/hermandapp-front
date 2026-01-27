@@ -1,82 +1,46 @@
 import Table from "@components/Table";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import UserForm from "./UserForm";
+import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { userColumns } from "../../../config/tables/usersColumns.jsx";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function UserList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  
   const entidad = "usuario";
+  const columnas = userColumns;
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.users);
+  const { destroy } = useDeleteEntity();
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "surname",
-      label: "Apellidos",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "type",
-      label: "Rol",
-    },
-    {
-      key: "band_id",
-      label: "Banda",
-    },
-    {
-      key: "brotherhood_id",
-      label: "Hermandad",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
+  const handleCreate = () => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
 
-  const data = [
-    {
-      id: 1,
-      name: "Juan",
-      surname: "Pérez",
-      email: "juan.perez@example.com",
-      type: "band_admin",
-      band_id: 3,
-      brotherhood_id: 7,
-      created_at: "2024-01-10",
-    },
-    {
-      id: 2,
-      name: "Ana",
-      surname: "Gómez",
-      email: "ana.gomez@example.com",
-      type: "brotherhood_admin",
-      band_id: 2,
-      brotherhood_id: 5,
-      created_at: "2024-02-22",
-    },
-    {
-      id: 3,
-      name: "Carlos",
-      surname: "López",
-      email: "carlos.lopez@example.com",
-      type: "guest",
-      band_id: 1,
-      brotherhood_id: 1,
-      created_at: "2024-03-18",
-    },
-    {
-      id: 4,
-      name: "Lucía",
-      surname: "Rodríguez",
-      email: "lucia.rodriguez@example.com",
-      type: "guest",
-      band_id: 5,
-      brotherhood_id: 3,
-      created_at: "2024-04-30",
-    },
-  ];
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.users}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    refetch();
+  };
+
+  if (loading) return <div className="p-4 text-center">Cargando usuarios...</div>;
+  if (error) return <div className="p-4 text-center text-red-500">Error: {error}</div>;
 
   return (
     <div>
@@ -99,15 +63,35 @@ function UserList() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" />
+          <input type="search" placeholder="Buscar..." />
         </label>
-        <Link to="/admin-panel/users/create">
-          <button type="button" className="btn btn-sm">
-            Crear un usuario
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
+        >
+          Crear un usuario
+        </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedUser ? "Editar Usuario" : "Crear Usuario"}
+      >
+        <UserForm 
+            initialData={selectedUser} 
+            onSuccess={handleSuccess}
+        />
+      </Modal>
     </div>
   );
 }

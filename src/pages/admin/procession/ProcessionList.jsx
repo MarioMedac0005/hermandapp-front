@@ -1,82 +1,46 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import Modal from "@components/Modal";
+import ProcessionForm from "./ProcessionForm";
 import Table from "@components/Table";
+import { processionsColumns } from '../../../config/tables/processionsColumns'
+import { useFetchData } from "../../../hooks/useFetchData";
+import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function ProcessionList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProcession, setSelectedProcession] = useState(null);
+
   const entidad = "processions";
+  const columnas = processionsColumns
+  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.processions)
+  const { destroy } = useDeleteEntity();
 
-  const columnas = [
-    {
-      key: "name",
-      label: "Nombre",
-    },
-    {
-      key: "type",
-      label: "Tipo",
-    },
-    {
-      key: "itinerary",
-      label: "Itinerario",
-    },
-    {
-      key: "checkout_time",
-      label: "Hora de Salida",
-    },
-    {
-      key: "checkin_time",
-      label: "Hora de Entrada",
-    },
-    {
-      key: "brotherhood_id",
-      label: "ID Hermandad",
-    },
-    {
-      key: "created_at",
-      label: "Fecha de Creación",
-    },
-  ];
+  const handleCreate = () => {
+    setSelectedProcession(null);
+    setIsModalOpen(true);
+  };
 
-  const data = [
-    {
-      id: 1,
-      name: "Procesión del Gran Poder",
-      type: "christ",
-      itinerary: "Calle Feria, Plaza Mayor, Catedral",
-      checkout_time: "2024-03-28 18:00:00",
-      checkin_time: "2024-03-28 22:30:00",
-      brotherhood_id: 1,
-      created_at: "2024-01-12",
-    },
-    {
-      id: 2,
-      name: "Procesión de la Macarena",
-      type: "virgin",
-      itinerary: "Plaza de la Esperanza, Calle Real, Iglesia Mayor",
-      checkout_time: "2024-03-29 19:00:00",
-      checkin_time: "2024-03-29 23:45:00",
-      brotherhood_id: 2,
-      created_at: "2024-02-03",
-    },
-    {
-      id: 3,
-      name: "Procesión del Silencio",
-      type: "christ",
-      itinerary: "Calle de la Cruz, Plaza del Silencio, Parroquia Central",
-      checkout_time: "2024-03-30 21:00:00",
-      checkin_time: "2024-03-31 01:00:00",
-      brotherhood_id: 3,
-      created_at: "2024-03-01",
-    },
-    {
-      id: 4,
-      name: "Procesión de Jesús Nazareno",
-      type: "christ",
-      itinerary: "Avenida de Andalucía, Plaza Nueva, Santuario Nazareno",
-      checkout_time: "2024-03-31 18:45:00",
-      checkin_time: "2024-03-31 23:00:00",
-      brotherhood_id: 4,
-      created_at: "2024-03-15",
-    },
-  ];
+  const handleEdit = (item) => {
+    setSelectedProcession(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await destroy(`${API_ENDPOINTS.processions}/${id}`);
+    if (success) {
+        refetch();
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setSelectedProcession(null);
+    refetch();
+  };
+
+  if (loading) return <p>Cargando procesiones...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
@@ -106,13 +70,33 @@ function ProcessionList() {
             className="placeholder:text-xs"
           />
         </label>
-        <Link to="/admin-panel/processions/create">
-          <button type="button" className="btn btn-sm">
-            Crear una procesion
-          </button>
-        </Link>
+        <button
+          type="button"
+          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          onClick={handleCreate}
+        >
+          Crear una procesion
+        </button>
       </div>
-      <Table columns={columnas} data={data} entity={entidad} />
+      
+      <Table 
+        columns={columnas} 
+        data={data} 
+        entity={entidad} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedProcession ? "Editar Procesión" : "Crear Procesión"}
+      >
+        <ProcessionForm 
+            initialData={selectedProcession}
+            onSuccess={handleSuccess}
+        />
+      </Modal>
     </div>
   );
 }

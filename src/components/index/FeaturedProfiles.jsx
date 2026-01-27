@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ProfileCard from "./ui/ProfileCard";
 
 export default function FeaturedProfiles() {
 	const [profiles, setProfiles] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+
+	const entityTypeRouteMap = {
+		band: "banda",
+		brotherhood: "hermandad",
+	};
 
 	useEffect(() => {
 		async function fetchFeatured() {
@@ -51,22 +57,27 @@ export default function FeaturedProfiles() {
 			<div className="max-w-7xl mx-auto px-6">
 				<div className="flex justify-between items-center mb-10">
 					<h2 className="text-3xl font-bold">Perfiles Destacados</h2>
-					<span className="link link-primary font-bold">
+
+					<Link to="/busqueda" className="link link-primary font-bold">
 						Ver todos
-					</span>
+					</Link>
 				</div>
 
 				<div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-					{profiles.map(profile => (
-						<ProfileCard
-							key={`${profile.type}-${profile.id}`}
-							image={profile.image}
-							name={profile.name}
-							city={profile.city}
-							entityType={profile.type}
-							actionText="Próximamente"
-						/>
-					))}
+					{profiles.map(profile => {
+						const routeType = entityTypeRouteMap[profile.type] ?? profile.type;
+						return (
+							<ProfileCard
+								key={`${profile.type}-${profile.id}`}
+								image={profile.image}
+								name={profile.name}
+								city={profile.city}
+								entityType={profile.type}
+								actionText="Ver perfil"
+								actionTo={`/perfil/${routeType}/${profile.id}`}
+							/>
+						);
+					})}
 				</div>
 			</div>
 		</section>
