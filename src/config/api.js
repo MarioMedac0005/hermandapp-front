@@ -13,5 +13,6 @@ export const API_ENDPOINTS = {
   profile: `${API_BASE_URL}/me`,
   gestores: `${API_BASE_URL}/gestores`,
   resetPassword: `${API_BASE_URL}/reset-password`,
-  forgotPassword: `${API_BASE_URL}/forgot-password`
+  forgotPassword: `${API_BASE_URL}/forgot-password`,
+  register: `${API_BASE_URL}/register`,
 };
