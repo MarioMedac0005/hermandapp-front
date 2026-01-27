@@ -4,10 +4,14 @@ import SelectField from "./SelectField";
 
 export default function RegisterStep1Identity({ values, onChange }) {
   const cityOptions = [
-    { value: "sevilla", label: "Sevilla" },
-    { value: "malaga", label: "Málaga" },
+    { value: "almeria", label: "Almería" },
     { value: "cadiz", label: "Cádiz" },
+    { value: "cordoba", label: "Córdoba" },
     { value: "granada", label: "Granada" },
+    { value: "huelva", label: "Huelva" },
+    { value: "jaen", label: "Jaén" },
+    { value: "malaga", label: "Málaga" },
+    { value: "sevilla", label: "Sevilla" },
   ];
 
   const orgType = values?.orgType ?? "brotherhood";

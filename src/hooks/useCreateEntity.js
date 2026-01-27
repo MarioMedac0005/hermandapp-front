@@ -23,7 +23,7 @@ export const useCreateEntity = () => {
 
             const data = await res.json();
 
-            console.log("Respuesta del backend:", data);
+
             if (!res.ok) {
                 console.error("Backend Error Data:", data);
                 throw new Error(data.details || data.message || JSON.stringify(data) || 'Error al crear un registro')

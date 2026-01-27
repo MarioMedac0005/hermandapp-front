@@ -4,7 +4,7 @@ import { useDashboardCards } from "../../../hooks/useDashboardCards";
 function Dashboard() {
   const { cards, loading, error } = useDashboardCards();
 
-  console.log(cards);
+
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;

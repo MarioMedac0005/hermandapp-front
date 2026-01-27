@@ -2,8 +2,8 @@ import { CheckIcon } from "@heroicons/react/24/outline";
 
 export default function ProgressCard({ step = 1 }) {
   const items = [
-    { n: 1, title: "Paso 1", subtitle: "Identidad" },
-    { n: 2, title: "Paso 2", subtitle: "Datos de la Cuenta" },
+    { n: 1, title: "Paso 1", subtitle: "Datos de la organización" },
+    { n: 2, title: "Paso 2", subtitle: "Datos del usuario" },
     { n: 3, title: "Paso 3", subtitle: "Confirmación" },
   ];
 

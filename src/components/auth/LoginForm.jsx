@@ -49,7 +49,7 @@ export default function LoginForm() {
             // Esperar a que el contexto cargue el usuario y nos devuelva sus datos
             const user = await login(data.access_token, data.user);
             
-            console.log("Login exitoso, usuario:", user);
+
 
             switch (user.panel) {
                 case 'admin':

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import InputField from "@components/forms/InputField";
+import SelectField from "@components/forms/SelectField";
 import { useCreateEntity } from "../../../hooks/useCreateEntity";
 import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
 import { API_ENDPOINTS } from "../../../config/api";
@@ -14,17 +15,28 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
     const [form, setForm] = useState({
         name: "",
         city: "",
-        office_address: "",
+        office: "",
         phone: "",
         email: "",
     });
+
+    const cityOptions = [
+        { value: "almeria", label: "Almería" },
+        { value: "cadiz", label: "Cádiz" },
+        { value: "cordoba", label: "Córdoba" },
+        { value: "granada", label: "Granada" },
+        { value: "huelva", label: "Huelva" },
+        { value: "jaen", label: "Jaén" },
+        { value: "malaga", label: "Málaga" },
+        { value: "sevilla", label: "Sevilla" },
+    ];
 
     useEffect(() => {
         if (initialData) {
             setForm({
                 name: initialData.name || "",
                 city: initialData.city || "",
-                office_address: initialData.office_address || "",
+                office: initialData.office || "",
                 phone: initialData.phone || "",
                 email: initialData.email || "",
             });
@@ -33,6 +45,10 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSelectChange = (name, value) => {
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e) => {
@@ -61,21 +77,19 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
           onChange={handleChange}
         />
 
-        <InputField
+        <SelectField
           label="Ciudad"
-          name="city"
-          type="text"
-          placeholder="Ciudad"
+          options={cityOptions}
           value={form.city}
-          onChange={handleChange}
+          onChange={(val) => handleSelectChange("city", val)}
         />
 
         <InputField
           label="Oficina"
-          name="office_address"
+          name="office"
           type="text"
           placeholder="Dirección de la oficina"
-          value={form.office_address}
+          value={form.office}
           onChange={handleChange}
         />
 

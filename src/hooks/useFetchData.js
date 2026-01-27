@@ -23,9 +23,12 @@ export const useFetchData = (url) => {
         if (resp.status === 401) {
              throw new Error("No autorizado");
         }
-        if (!resp.ok) throw new Error("Error al cargar los datos");
-
         const result = await resp.json();
+        
+        if (!resp.ok) {
+           throw new Error(result.message || result.details || "Error al cargar los datos");
+        }
+
         setData(result.data);
       } catch (err) {
         if (err.name !== "AbortError") {

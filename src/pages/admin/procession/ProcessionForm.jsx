@@ -20,8 +20,8 @@ function ProcessionForm({ initialData = null, onSuccess }) {
         name: "",
         type: "christ", // valor por defecto
         itinerary: "",
-        start_time: "",
-        end_time: "",
+        checkout_time: "",
+        checkin_time: "",
         brotherhood_id: "",
     });
 
@@ -31,8 +31,8 @@ function ProcessionForm({ initialData = null, onSuccess }) {
                 name: initialData.name || "",
                 type: initialData.type || "christ",
                 itinerary: initialData.itinerary || "",
-                start_time: initialData.start_time || "",
-                end_time: initialData.end_time || "",
+                checkout_time: initialData.checkout_time || "",
+                checkin_time: initialData.checkin_time || "",
                 brotherhood_id: initialData.brotherhood_id || "",
             });
         }
@@ -96,17 +96,17 @@ function ProcessionForm({ initialData = null, onSuccess }) {
         <div className="grid grid-cols-2 gap-4">
             <InputField
               label="Hora de salida"
-              name="start_time"
+              name="checkout_time"
               type="datetime-local"
-              value={form.start_time}
+              value={form.checkout_time}
               onChange={handleChange} 
             />
 
             <InputField
               label="Hora de llegada"
-              name="end_time"
+              name="checkin_time"
               type="datetime-local"
-              value={form.end_time}
+              value={form.checkin_time}
               onChange={handleChange} 
             />
         </div>

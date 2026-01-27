@@ -52,7 +52,7 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      console.log("Cargando usuario con token...");
+
       const response = await fetch(API_ENDPOINTS.profile, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
       if (response.ok) {
         const responseData = await response.json();
         const userData = responseData.data || responseData; // Extract user from wrapped response
-        console.log("Usuario autenticado:", userData);
+
         
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));

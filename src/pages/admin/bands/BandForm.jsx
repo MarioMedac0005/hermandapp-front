@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import InputField from "@components/forms/InputField";
+import SelectField from "@components/forms/SelectField";
 import { useCreateEntity } from "../../../hooks/useCreateEntity";
 import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
 import { API_ENDPOINTS } from "../../../config/api";
@@ -13,16 +14,27 @@ function BandForm({ initialData = null, onSuccess }) {
 
   const [form, setForm] = useState({
     name: "",
-    country: "",
+    city: "",
     rehearsal_space: "",
     email: "",
   });
+
+  const cityOptions = [
+    { value: "almeria", label: "Almería" },
+    { value: "cadiz", label: "Cádiz" },
+    { value: "cordoba", label: "Córdoba" },
+    { value: "granada", label: "Granada" },
+    { value: "huelva", label: "Huelva" },
+    { value: "jaen", label: "Jaén" },
+    { value: "malaga", label: "Málaga" },
+    { value: "sevilla", label: "Sevilla" },
+  ];
 
   useEffect(() => {
     if (initialData) {
         setForm({
             name: initialData.name || "",
-            country: initialData.country || "",
+            city: initialData.city || "",
             rehearsal_space: initialData.rehearsal_space || "",
             email: initialData.email || "",
         });
@@ -31,6 +43,10 @@ function BandForm({ initialData = null, onSuccess }) {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSelectChange = (name, value) => {
+    setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -59,13 +75,11 @@ function BandForm({ initialData = null, onSuccess }) {
         onChange={handleChange}
       />
 
-      <InputField
-        label="País"
-        name="country"
-        type="text"
-        placeholder="País"
-        value={form.country}
-        onChange={handleChange}
+      <SelectField
+        label="Ciudad"
+        options={cityOptions}
+        value={form.city}
+        onChange={(val) => handleSelectChange("city", val)}
       />
 
       <InputField
