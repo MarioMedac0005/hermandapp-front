@@ -1,10 +1,12 @@
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+
 export default function RegisterFormCard({
   children,
   onPrimary,
   onSecondary,
   primaryText = (
     <>
-      Siguiente Paso <span aria-hidden="true">→</span>
+      Siguiente Paso <ArrowRightIcon className="w-4 h-4 ml-1" aria-hidden="true" />
     </>
   ),
   secondaryText = "Cancelar",

@@ -1,3 +1,5 @@
+import { CheckIcon } from "@heroicons/react/24/outline";
+
 export default function ProgressCard({ step = 1 }) {
   const items = [
     { n: 1, title: "Paso 1", subtitle: "Identidad" },
@@ -27,7 +29,7 @@ export default function ProgressCard({ step = 1 }) {
                     : "bg-base-200 text-base-content/50",
                 ].join(" ")}
               >
-                {isActive(it.n) ? "✓" : it.n}
+                {isActive(it.n) ? <CheckIcon className="w-5 h-5 text-white" /> : it.n}
               </div>
 
               {/* Texto */}

@@ -1,3 +1,5 @@
+import { UserGroupIcon, MusicalNoteIcon } from "@heroicons/react/24/outline";
+
 export default function SegmentedToggle({
   leftLabel,
   rightLabel,
@@ -20,7 +22,7 @@ export default function SegmentedToggle({
             : "text-base-content/60 hover:bg-base-100/60",
         ].join(" ")}
       >
-        <span aria-hidden="true">🏛️</span>
+        <UserGroupIcon className="w-5 h-5" aria-hidden="true" />
         {leftLabel}
       </button>
 
@@ -34,7 +36,7 @@ export default function SegmentedToggle({
             : "text-base-content/60 hover:bg-base-100/60",
         ].join(" ")}
       >
-        <span aria-hidden="true">🎵</span>
+        <MusicalNoteIcon className="w-5 h-5" aria-hidden="true" />
         {rightLabel}
       </button>
     </div>
