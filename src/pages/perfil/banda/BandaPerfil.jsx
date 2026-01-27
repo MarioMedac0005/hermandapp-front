@@ -18,8 +18,7 @@ function BandaPerfil() {
 		async function fetchBand() {
 			try {
 				const response = await fetch(
-					// `https://daw23.arenadaw.com.es/api/bands/${band}`
-					`http://127.0.0.1:8000/api/bands/${band}`
+					`https://daw23.arenadaw.com.es/api/bands/${band}`
 				);
 
 				if (!response.ok) {
