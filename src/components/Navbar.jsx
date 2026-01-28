@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "@assets/img/logo.svg";
+import Logo from "@assets/img/logo.png";
 import { useAuth } from "@contexts/AuthContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {

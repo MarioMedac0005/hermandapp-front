@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Bars3Icon, XMarkIcon, ArrowLeftStartOnRectangleIcon, HomeIcon } from "@heroicons/react/24/outline";
-import Logo from "@assets/img/logo.svg";
+import Logo from "@assets/img/logo.png";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
