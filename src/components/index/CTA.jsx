@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom";
+
 export default function CTA() {
 	return (
 		<section className="relative overflow-hidden py-24">
-			<div className="absolute inset-0 bg-primary z-0">
+			<div className="absolute inset-0 z-0" style={{ backgroundColor: '#8a01e5' }}>
 				{/* Abstract Pattern */}
 				<svg
 					className="absolute left-0 top-0 h-full w-full opacity-10"
@@ -21,12 +23,19 @@ export default function CTA() {
 						en las mejores procesiones de Andalucía, este es tu lugar.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
-						<button className="btn btn-lg bg-white text-primary">
-							Crear cuenta gratis
-						</button>
-						<button className="btn btn-lg btn-outline text-white hover:bg-white/10">
+						<Link
+							to="/register"
+							className="btn btn-lg bg-white transform transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
+							style={{ color: "#8a01e5" }}
+						>
+							Solicitar registro
+						</Link>
+						<Link
+							to="/contacto"
+							className="btn btn-lg btn-outline text-white transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:bg-white/10 active:scale-95"
+						>
 							Contactar soporte
-						</button>
+						</Link>
 					</div>
 				</div>
 			</div>
