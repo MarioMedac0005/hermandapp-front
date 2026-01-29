@@ -58,7 +58,7 @@ export default function FeaturedProfiles() {
 				<div className="flex justify-between items-center mb-10">
 					<h2 className="text-3xl font-bold">Perfiles Destacados</h2>
 
-					<Link to="/busqueda" className="link link-primary font-bold">
+					<Link to="/busqueda" className="text-[#8a01e5] font-bold hover:underline transition-all">
 						Ver todos
 					</Link>
 				</div>

@@ -5,6 +5,7 @@ import RegisterShell from "../../components/register/RegisterShell";
 import ProgressCard from "../../components/register/ProgressCard";
 import RegisterFormCard from "../../components/register/RegisterFormCard";
 import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 
 import RegisterStep1Identity from "../../components/register/RegisterStep1Identity";
 import Step2Account from "../../components/register/Step2Account";
@@ -119,8 +120,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex flex-col">
-      <div className="flex-1 flex justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex justify-center px-4 py-12">
         <RegisterShell
           left={
             <div className="grid gap-4">

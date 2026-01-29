@@ -18,7 +18,7 @@ export default function SegmentedToggle({
         className={[
           "rounded-lg px-3 py-2 text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer transition",
           leftActive
-            ? "bg-base-100 text-primary shadow"
+            ? "bg-base-100 text-[#8a01e5] shadow"
             : "text-base-content/60 hover:bg-base-100/60",
         ].join(" ")}
       >
@@ -32,7 +32,7 @@ export default function SegmentedToggle({
         className={[
           "rounded-lg px-3 py-2 text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer transition",
           rightActive
-            ? "bg-base-100 text-primary shadow"
+            ? "bg-base-100 text-[#8a01e5] shadow"
             : "text-base-content/60 hover:bg-base-100/60",
         ].join(" ")}
       >

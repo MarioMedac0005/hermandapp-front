@@ -25,7 +25,7 @@ export default function ProgressCard({ step = 1 }) {
                 className={[
                   "w-10 h-10 rounded-full flex items-center justify-center font-bold",
                   isActive(it.n) || isDone(it.n)
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-[#8a01e5] text-white"
                     : "bg-base-200 text-base-content/50",
                 ].join(" ")}
               >
@@ -38,7 +38,7 @@ export default function ProgressCard({ step = 1 }) {
                   className={[
                     "text-sm font-extrabold",
                     isActive(it.n) || isDone(it.n)
-                      ? "text-indigo-700"
+                      ? "text-[#8a01e5]"
                       : "text-base-content/40",
                   ].join(" ")}
                 >

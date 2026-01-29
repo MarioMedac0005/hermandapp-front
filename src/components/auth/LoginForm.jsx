@@ -48,7 +48,7 @@ export default function LoginForm() {
 
             // Esperar a que el contexto cargue el usuario y nos devuelva sus datos
             const user = await login(data.access_token, data.user);
-            
+
 
 
             switch (user.panel) {
@@ -87,7 +87,7 @@ export default function LoginForm() {
                 </label>
                 <input
                     type="email"
-                    className="input input-bordered w-full"
+                    className="w-full rounded-lg border border-gray-300 bg-white p-3 text-sm focus:border-[#8a01e5] focus:ring-1 focus:ring-[#8a01e5] transition-all outline-none"
                     placeholder="ejemplo@email.com"
                     autoComplete="email"
                     value={email}
@@ -105,7 +105,7 @@ export default function LoginForm() {
                 <div className="relative z-0">
                     <input
                         type={showPassword ? "text" : "password"}
-                        className="input input-bordered w-full pr-10"
+                        className="w-full rounded-lg border border-gray-300 bg-white p-3 text-sm focus:border-[#8a01e5] focus:ring-1 focus:ring-[#8a01e5] transition-all outline-none pr-10"
                         placeholder="Introduce tu contraseña"
                         autoComplete="current-password"
                         value={password}
@@ -144,10 +144,10 @@ export default function LoginForm() {
 
             <button
                 type="submit"
-                className="btn bg-purple-800 text-white w-full"
+                className="w-full bg-[#8a01e5] hover:bg-[#7000b8] text-white font-bold py-3 rounded-lg transition-all shadow-md active:scale-[0.98]"
                 disabled={loading}>
                 {loading ? "Entrando..." : "Entrar"}
             </button>
-        </form>
+        </form >
     );
 }
