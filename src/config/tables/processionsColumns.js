@@ -2,6 +2,7 @@ export const processionsColumns = [
     {
       key: "name",
       label: "Nombre",
+      className: "max-w-[150px] truncate",
     },
     {
       key: "type",
@@ -10,6 +11,7 @@ export const processionsColumns = [
     {
       key: "itinerary",
       label: "Itinerario",
+      className: "max-w-[150px] truncate",
     },
     {
       key: "checkout_time",

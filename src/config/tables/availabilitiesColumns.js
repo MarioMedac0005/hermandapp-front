@@ -10,6 +10,7 @@ export const availabilitiesColumns = [
   {
     key: "description",
     label: "Descripción",
+    className: "max-w-[150px] truncate",
   },
   {
     key: "band_id",

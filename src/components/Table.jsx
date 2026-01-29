@@ -48,7 +48,7 @@ function Table({ columns, data, entity, onEdit, onDelete }) {
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className="px-2 py-2 border-r border-gray-200"
+                      className={`px-2 py-2 border-r border-gray-200 ${col.className || ""}`}
                     >
                       {col.render ? col.render(item) : item[col.key]}
                     </td>
