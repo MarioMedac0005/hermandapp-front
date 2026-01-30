@@ -7,8 +7,6 @@ import RegisterShell from "../../components/register/RegisterShell";
 import ProgressCard from "../../components/register/ProgressCard";
 import RegisterFormCard from "../../components/register/RegisterFormCard";
 import Footer from "../../components/Footer";
-import Navbar from "../../components/Navbar";
-
 import RegisterStep1Identity from "../../components/register/RegisterStep1Identity";
 import Step2Account from "../../components/register/Step2Account";
 import Step3Confirm from "../../components/register/Step3Confirm";
