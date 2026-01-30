@@ -1,6 +1,8 @@
 import { useState } from "react";
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
+import Navbar from "../../components/Navbar";
 import RegisterShell from "../../components/register/RegisterShell";
 import ProgressCard from "../../components/register/ProgressCard";
 import RegisterFormCard from "../../components/register/RegisterFormCard";
@@ -60,6 +62,7 @@ export default function Register() {
 
   const handleSubmit = async () => {
     setLoading(true);
+
     const payload = {
       orgType: orgData.orgType,
       account: {
@@ -67,10 +70,10 @@ export default function Register() {
         lastName: accountData.lastName,
         email: accountData.userEmail,
       },
-      organization: {}
+      organization: {},
     };
 
-    if (orgData.orgType === 'brotherhood') {
+    if (orgData.orgType === "brotherhood") {
       payload.organization = {
         name: orgData.brotherhoodName,
         city: orgData.brotherhoodCity,
@@ -92,10 +95,10 @@ export default function Register() {
 
     try {
       const response = await fetch(API_ENDPOINTS.register, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -103,16 +106,14 @@ export default function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Error en el registro');
+        throw new Error(data.message || "Error en el registro");
       }
 
-      toast.success(data.message || 'Registro completado con éxito');
-      // Navigate to landing page
-      setTimeout(() => navigate('/'), 2000);
-
+      toast.success(data.message || "Registro completado con éxito");
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(error.message || 'Hubo un error al procesar el registro');
+      console.error("Registration error:", error);
+      toast.error(error.message || "Hubo un error al procesar el registro");
     } finally {
       setLoading(false);
     }
@@ -120,6 +121,10 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Contenido */}
       <div className="flex-1 flex justify-center px-4 py-8">
         <RegisterShell
           left={
@@ -131,7 +136,9 @@ export default function Register() {
             <RegisterFormCard
               secondaryText={step === 1 ? "Cancelar" : "Atrás"}
               primaryText={
-                step === 3 ? (loading ? "Enviando..." : "Finalizar registro") : (
+                step === 3 ? (
+                  loading ? "Enviando..." : "Finalizar registro"
+                ) : (
                   <>
                     Siguiente Paso <span aria-hidden="true">→</span>
                   </>
@@ -141,7 +148,7 @@ export default function Register() {
                 if (step > 1) {
                   setStep((s) => s - 1);
                 } else {
-                  navigate('/');
+                  navigate("/");
                 }
               }}
               onPrimary={() => {
@@ -153,7 +160,10 @@ export default function Register() {
               }}
             >
               {step === 1 && (
-                <RegisterStep1Identity values={orgData} onChange={handleOrgChange} />
+                <RegisterStep1Identity
+                  values={orgData}
+                  onChange={handleOrgChange}
+                />
               )}
 
               {step === 2 && (
@@ -161,16 +171,13 @@ export default function Register() {
               )}
 
               {step === 3 && (
-                <Step3Confirm
-                  org={orgData}
-                  account={accountData}
-                  cityLabels={cityLabels}
-                />
+                <Step3Confirm org={orgData} account={accountData} cityLabels={cityLabels} />
               )}
             </RegisterFormCard>
           }
         />
       </div>
+
       <Footer />
     </div>
   );
