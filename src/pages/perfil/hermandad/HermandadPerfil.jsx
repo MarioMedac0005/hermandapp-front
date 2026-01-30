@@ -55,30 +55,35 @@ function HermandadPerfil() {
 	const hasCortejos = processions.length > 0;
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-gray-50 pb-20">
 			<HermandadHeader hermandad={data} />
 
-			<HermandadNav
-				hasHistoria
-				hasGaleria={hasGaleria}
-				hasCortejos={hasCortejos}
-			/>
+			<div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mt-[-4rem]">
+				<HermandadNav
+					hasHistoria
+					hasGaleria={hasGaleria}
+					hasCortejos={hasCortejos}
+				/>
+			</div>
 
-			<main className="container mx-auto px-6 py-8 max-w-7xl">
+			<main className="container mx-auto px-6 py-12 max-w-6xl">
 				<div className="flex flex-col lg:flex-row gap-8">
-					<section className="lg:w-2/3">
-						<HermandadStats
-							stats={{
-								foundationYear: data.foundation_year,
-								nazarenos: data.nazarenos,
-								headquarters: data.office,
-							}}
-						/>
+					<section className="lg:w-2/3 space-y-16">
+						<div id="historia" className="scroll-mt-32 space-y-8">
+							<HermandadStats
+								stats={{
+									foundationYear: data.foundation_year,
+									nazarenos: data.nazarenos,
+									headquarters: data.office,
+								}}
+							/>
 
-						<HermandadHistory
-							name={data.name}
-							city={data.city}
-						/>
+							<HermandadHistory
+								name={data.name}
+								city={data.city}
+								description={data.description} // Assuming description exists in data if needed by History component, otherwise just name/city as before
+							/>
+						</div>
 					</section>
 
 					<aside className="lg:w-1/3 space-y-8">
@@ -87,8 +92,19 @@ function HermandadPerfil() {
 					</aside>
 				</div>
 
-				<HermandadGallery media={data.media} />
-				<HermandadCortejos cortejos={processions} />
+				<div className="mt-16 space-y-16">
+					{hasGaleria && (
+						<section id="galeria" className="scroll-mt-32">
+							<HermandadGallery media={data.media} />
+						</section>
+					)}
+					
+					{hasCortejos && (
+						<section id="cortejos" className="scroll-mt-32">
+							<HermandadCortejos cortejos={processions} />
+						</section>
+					)}
+				</div>
 			</main>
 		</div>
 	);

@@ -21,8 +21,8 @@ export default function HermandadNav({
 	};
 
 	return (
-		<nav className="mt-8 bg-white rounded-xl shadow-md container mx-auto px-6 max-w-7xl">
-			<div className="py-3 flex gap-x-8 text-gray-700">
+		<nav className="container mx-auto px-6 max-w-6xl">
+			<div className="flex gap-x-8 text-gray-500 overflow-x-auto no-scrollbar">
 				{hasHistoria && (
 					<Item
 						icon={NewspaperIcon}
@@ -56,16 +56,16 @@ export default function HermandadNav({
 
 function Item({ icon: Icon, text, onClick, active }) {
 	return (
-		<div
+		<button
 			onClick={onClick}
-			className={`flex items-center gap-2 pb-2 cursor-pointer
+			className={`flex items-center gap-2 py-4 px-2 cursor-pointer transition-all duration-300 border-b-2 whitespace-nowrap
 			${active
-					? "border-b-2 border-purple-600 text-purple-600"
-					: "hover:text-purple-600"
+					? "border-purple-600 text-purple-600 font-medium"
+					: "border-transparent hover:text-purple-600 hover:border-purple-200"
 				}`}
 		>
 			<Icon className="size-5" />
 			<span>{text}</span>
-		</div>
+		</button>
 	);
 }

@@ -57,26 +57,28 @@ function BandaPerfil() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-gray-50 pb-20">
 			<BandaHeader banda={banda} />
 
-			<BandaNav
-				hasGaleria={banda.media?.some(m => m.category === "gallery")}
-			/>
+			<div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mt-[-4rem]">
+				<BandaNav
+					hasGaleria={banda.media?.some(m => m.category === "gallery")}
+				/>
+			</div>
 
-			<main className="container mx-auto px-6 py-8 max-w-7xl">
-				<div className="flex flex-col space-y-10">
-					<section id="historia">
+			<main className="container mx-auto px-6 py-12 max-w-6xl">
+				<div className="flex flex-col gap-16">
+					<section id="historia" className="scroll-mt-32">
 						<BandaInfo banda={banda} />
 					</section>
 
 					{banda.media?.some(m => m.category === "gallery") && (
-						<section id="galeria">
+						<section id="galeria" className="scroll-mt-32">
 							<BandaGaleria media={banda.media} />
 						</section>
 					)}
 
-					<section id="disponibilidad">
+					<section id="disponibilidad" className="scroll-mt-32">
 						<BandaDisponibilidad bookedDates={bookedDates} />
 					</section>
 				</div>
