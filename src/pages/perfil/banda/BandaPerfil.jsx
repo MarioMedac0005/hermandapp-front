@@ -11,22 +11,32 @@ function BandaPerfil() {
 	const { band } = useParams();
 
 	const [banda, setBanda] = useState(null);
+	const [bookedDates, setBookedDates] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		async function fetchBand() {
 			try {
-				const response = await fetch(
-					`https://daw23.arenadaw.com.es/api/bands/${band}`
-				);
+				const [bandResponse, datesResponse] = await Promise.all([
+					fetch(`https://daw23.arenadaw.com.es/api/bands/${band}`),
+					fetch(`https://daw23.arenadaw.com.es/api/bands/${band}/booked-dates`)
+				]);
 
-				if (!response.ok) {
+				if (!bandResponse.ok) {
 					throw new Error("Error al obtener la banda");
 				}
 
-				const json = await response.json();
-				setBanda(json.data);
+				const bandJson = await bandResponse.json();
+				setBanda(bandJson.data);
+
+				if (datesResponse.ok) {
+					const datesJson = await datesResponse.json();
+					if (datesJson.success && Array.isArray(datesJson.data)) {
+						const dates = datesJson.data.map(d => new Date(d));
+						setBookedDates(dates);
+					}
+				}
 			} catch (err) {
 				console.error(err);
 				setError("No se pudo cargar la banda");
@@ -67,7 +77,7 @@ function BandaPerfil() {
 					)}
 
 					<section id="disponibilidad">
-						<BandaDisponibilidad />
+						<BandaDisponibilidad bookedDates={bookedDates} />
 					</section>
 				</div>
 			</main>
