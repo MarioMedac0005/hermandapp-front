@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "@assets/img/logo.svg";
+import Logo from "@assets/img/logo.png";
 import { useAuth } from "@contexts/AuthContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
@@ -135,7 +135,7 @@ function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-[#E9D5FF] rounded-lg transition-colors"
               >
                 Iniciar sesión
               </Link>
@@ -143,7 +143,7 @@ function Navbar() {
                 to="/register"
                 className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-all shadow-sm hover:shadow"
               >
-                Registrarse
+                Solicitud de Registro
               </Link>
             </div>
           ) : (

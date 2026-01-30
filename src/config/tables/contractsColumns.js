@@ -14,6 +14,7 @@ export const contractColumns = [
   {
     key: "description",
     label: "Descripcion",
+    className: "max-w-[150px] truncate",
   },
   {
     key: "band_id",

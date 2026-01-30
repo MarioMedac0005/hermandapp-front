@@ -2,16 +2,19 @@ export const userColumns = [
   {
     key: "name",
     label: "Nombre",
+    className: "max-w-[150px] truncate",
     render: (item) => item.name || "Sin nombre",
   },
   {
     key: "surname",
     label: "Apellidos",
+    className: "max-w-[150px] truncate",
     render: (item) => item.surname || "Sin apellidos",
   },
   {
     key: "email",
     label: "Email",
+    className: "max-w-[150px] truncate",
     render: (item) => item.email || "Sin email",
   },
   {
