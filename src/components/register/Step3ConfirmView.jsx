@@ -14,10 +14,6 @@ export default function Step3ConfirmView() {
             <h3 className="text-lg font-semibold text-base-content">
               Resumen de la organización
             </h3>
-
-            <button type="button" className="btn btn-ghost btn-sm">
-              Editar
-            </button>
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">

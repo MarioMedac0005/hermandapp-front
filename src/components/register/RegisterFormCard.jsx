@@ -27,7 +27,7 @@ export default function RegisterFormCard({
           <button type="button" className="btn btn-ghost" onClick={onSecondary}>
             {secondaryText}
           </button>
-          <button type="button" className="bg-[#8a01e5] hover:bg-[#7000b8] text-white font-bold py-2.5 px-6 rounded-lg transition-all shadow-md active:scale-95" onClick={onPrimary}>
+          <button type="button" className="bg-[#8a01e5] hover:bg-[#7000b8] text-white font-bold py-2.5 px-6 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer" onClick={onPrimary}>
             {primaryText}
           </button>
         </div>
