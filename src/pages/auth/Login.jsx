@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import LoginForm from "@components/auth/LoginForm";
 import Footer from "@components/Footer";
+import Navbar from "@components/Navbar";
 
 export default function Login() {
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
+            <Navbar />
             <div className="flex-1 flex items-center justify-center px-4 py-10">
                 <div className="w-full max-w-md">
                     <div className="text-center mb-6">
@@ -24,7 +26,7 @@ export default function Login() {
 
                                 <p className="text-center">
                                     ¿No tienes cuenta?{" "}
-                                    <Link to="/register" className="link link-primary">
+                                    <Link to="/register" className="text-[#8a01e5] hover:underline font-bold transition-all">
                                         Crear cuenta
                                     </Link>
                                 </p>

@@ -11,7 +11,7 @@ export default function SelectField({
       <div className="text-xs font-bold text-base-content/80 mb-2">{label}</div>
 
       <select
-        className="select select-bordered w-full"
+        className="w-full rounded-lg border border-gray-300 bg-white p-3 text-sm focus:border-[#8a01e5] focus:ring-1 focus:ring-[#8a01e5] transition-all outline-none"
         name={name}
         value={value ?? ""}
         onChange={onChange}

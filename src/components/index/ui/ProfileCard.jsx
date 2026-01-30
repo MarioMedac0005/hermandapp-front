@@ -16,7 +16,7 @@ export default function ProfileCard({
 					alt={name}
 					className="w-full h-full object-cover"
 				/>
-				<span className="absolute top-3 right-3 badge badge-primary">
+				<span className="absolute top-3 right-3 badge bg-[#8a01e5] text-white border-none">
 					{city}
 				</span>
 			</figure>
@@ -30,7 +30,7 @@ export default function ProfileCard({
 
 				<Link
 					to={actionTo}
-					className="btn btn-outline btn-primary w-full"
+					className="btn btn-outline border-[#8a01e5] text-[#8a01e5] hover:bg-[#8a01e5] hover:border-[#8a01e5] hover:text-white w-full rounded-lg transition-all duration-300"
 				>
 					{actionText}
 				</Link>
