@@ -46,9 +46,6 @@ export default function Step3Confirm({ org, account, cityLabels }) {
           <h3 className="text-base font-extrabold tracking-tight text-base-content">
             Resumen de la organización
           </h3>
-          <button type="button" className="btn btn-ghost btn-sm">
-            Editar
-          </button>
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">

@@ -7,6 +7,7 @@ export default function TextField({
   onChange,
   type = "text",
   name,
+  error,
 }) {
   return (
     <div>
@@ -26,9 +27,10 @@ export default function TextField({
           onChange={onChange}
           placeholder={placeholder}
           className={[
-            "w-full rounded-lg border border-gray-300 bg-white p-3 text-sm focus:border-[#8a01e5] focus:ring-1 focus:ring-[#8a01e5] transition-all outline-none",
+            "input input-bordered w-full",
             leftAdornment ? "pl-10" : "",
             rightAdornment ? "pr-10" : "",
+            error ? "input-error" : "",
           ].join(" ")}
         />
 
@@ -38,6 +40,8 @@ export default function TextField({
           </span>
         ) : null}
       </div>
+
+      {error ? <p className="mt-2 text-xs text-error">{error}</p> : null}
     </div>
   );
 }

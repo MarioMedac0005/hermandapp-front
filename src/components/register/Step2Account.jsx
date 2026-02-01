@@ -1,22 +1,25 @@
 import TextField from "./TextField";
 
-export default function Step2Account({ values, onChange }) {
+export default function Step2Account({ values, onChange, errors = {} }) {
   return (
     <>
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TextField
           label="Nombre"
-          placeholder="Ej. Juan"
+          placeholder="Ej. Gonchalo"
           name="firstName"
           value={values?.firstName}
           onChange={onChange}
+          error={errors.firstName}
         />
+
         <TextField
           label="Apellidos"
-          placeholder="Ej. García López"
+          placeholder="Ej. Martinez de la torre"
           name="lastName"
           value={values?.lastName}
           onChange={onChange}
+          error={errors.lastName}
         />
       </div>
 
@@ -27,6 +30,7 @@ export default function Step2Account({ values, onChange }) {
           name="userEmail"
           value={values?.userEmail}
           onChange={onChange}
+          error={errors.userEmail}
           type="email"
         />
       </div>
