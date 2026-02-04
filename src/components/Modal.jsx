@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@
 import { Fragment } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-export default function Modal({ open, onClose, title, children }) {
+export default function Modal({ open, onClose, title, children, maxWidth = "max-w-2xl" }) {
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -29,7 +29,7 @@ export default function Modal({ open, onClose, title, children }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-2xl transform overflow-visible rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all relative">
+              <DialogPanel className={`w-full ${maxWidth} transform overflow-visible rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all relative`}>
                 <div className="flex justify-between items-center mb-4">
                   <DialogTitle
                     as="h3"
@@ -44,7 +44,7 @@ export default function Modal({ open, onClose, title, children }) {
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-                
+
                 <div className="mt-2">
                   {children}
                 </div>

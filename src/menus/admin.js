@@ -25,6 +25,11 @@ const adminMenu = [
     icon: UserIcon,
     href: "/admin-panel/gestores",
   },
+  {
+    name: "Solicitudes",
+    icon: DocumentTextIcon,
+    href: "/admin-panel/solicitudes",
+  },
 ];
 
 export default adminMenu
