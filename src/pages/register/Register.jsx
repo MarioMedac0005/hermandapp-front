@@ -93,10 +93,14 @@ export default function Register() {
   };
 
   const cityLabels = {
-    sevilla: "Sevilla",
-    malaga: "Málaga",
-    cadiz: "Cádiz",
-    granada: "Granada",
+    Sevilla: "Sevilla",
+    Malaga: "Málaga",
+    Cadiz: "Cádiz",
+    Granada: "Granada",
+    Almeria: "Almería",
+    Cordoba: "Córdoba",
+    Huelva: "Huelva",
+    Jaen: "Jaén",
   };
 
   const validateStep = (currentStep) => {
@@ -196,10 +200,10 @@ export default function Register() {
     setLoading(true);
 
     const payload = {
-      orgType: orgData.orgType,
-      account: {
-        firstName: accountData.firstName,
-        lastName: accountData.lastName,
+      type: orgData.orgType,
+      user: {
+        name: accountData.firstName,
+        surname: accountData.lastName,
         email: accountData.userEmail,
       },
       organization: {},

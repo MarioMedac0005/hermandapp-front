@@ -19,6 +19,7 @@ import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
 import GestorList from "@pages/admin/gestores/GestorList";
 import Dashboard from "@pages/admin/dashboard/Dashboard";
+import OrganizationRequestList from "@pages/admin/requests/OrganizationRequestList";
 import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
 import adminMenu from "./menus/admin";
 import hermandadMenu from "./menus/hermandad";
@@ -51,7 +52,7 @@ function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" reverseOrder={false} />
-      <ScrollToTop /> 
+      <ScrollToTop />
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -123,6 +124,7 @@ function App() {
           <Route path="processions" element={<ProcessionList />} />
           <Route path="processions/create" element={<ProcessionForm />} />
           <Route path="gestores" element={<GestorList />} />
+          <Route path="solicitudes" element={<OrganizationRequestList />} />
         </Route>
       </Routes>
     </AuthProvider>
