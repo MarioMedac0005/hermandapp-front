@@ -1,10 +1,10 @@
 import Sidebar from "@components/Sidebar";
 import { Outlet } from "react-router-dom";
 
-function AdminLayout({ menuItems, profile }) {
+function AdminLayout({ menuItems, profile, children }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      <Sidebar menuItems={menuItems} profile={profile}/>
+      <Sidebar menuItems={menuItems} profile={profile} />
 
       <main
         className="
@@ -18,7 +18,7 @@ function AdminLayout({ menuItems, profile }) {
         "
       >
         <div className="max-w-6xl mx-auto w-full">
-          <Outlet />
+          {children || <Outlet />}
         </div>
       </main>
     </div>

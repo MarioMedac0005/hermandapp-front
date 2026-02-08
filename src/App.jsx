@@ -45,13 +45,14 @@ import ResetPassword from "@pages/reset_password/ResetPassword";
 
 
 import Register from "@pages/register/Register";
+import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 
 
 function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" reverseOrder={false} />
-      <ScrollToTop /> 
+      <ScrollToTop />
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -124,6 +125,15 @@ function App() {
           <Route path="processions/create" element={<ProcessionForm />} />
           <Route path="gestores" element={<GestorList />} />
         </Route>
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute allowedPanels={['gestor_hermandad', 'gestor_banda', 'admin']}>
+              <PerfilUsuario />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthProvider>
   );
