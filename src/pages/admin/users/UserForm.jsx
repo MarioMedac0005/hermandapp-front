@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
 import InputField from "@components/forms/InputField";
-import SelectField from "@components/forms/SelectField";
 import { useCreateEntity } from "../../../hooks/useCreateEntity";
 import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
-import { useFetchData } from "../../../hooks/useFetchData";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function UserForm({ initialData = null, onSuccess }) {
   const { create, loading: creating, error: createError } = useCreateEntity();
   const { update, loading: updating, error: updateError } = useUpdateEntity();
-  const { data: bands } = useFetchData(API_ENDPOINTS.bands);
-  const { data: brotherhoods } = useFetchData(API_ENDPOINTS.brotherhoods);
   
   const loading = creating || updating;
   const error = createError || updateError;
@@ -21,9 +17,6 @@ function UserForm({ initialData = null, onSuccess }) {
     email: "",
     password: "",
     password_confirmation: "",
-    user_type: "guest",
-    band_id: "",
-    brotherhood_id: "",
   });
 
   useEffect(() => {
@@ -34,9 +27,6 @@ function UserForm({ initialData = null, onSuccess }) {
             email: initialData.email || "",
             password: "", // Don't prefill password
             password_confirmation: "",
-            user_type: initialData.user_type || (initialData.band_id ? "band_admin" : (initialData.brotherhood_id ? "brotherhood_admin" : "guest")),
-            band_id: initialData.band_id || "",
-            brotherhood_id: initialData.brotherhood_id || "",
         });
     }
   }, [initialData]);
@@ -45,25 +35,12 @@ function UserForm({ initialData = null, onSuccess }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSelectChange = (field, value) => {
-    setForm({ ...form, [field]: value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     let result;
     const payload = { ...form };
     
-    // Clean up payload based on user_type
-    if (payload.user_type !== "band_admin") delete payload.band_id;
-    if (payload.user_type !== "brotherhood_admin") delete payload.brotherhood_id;
-    
-    // We don't send user_type to the backend as per the required fields shown in user request, 
-    // but maybe it's inferred from band_id/brotherhood_id or handled by a separate logic.
-    // The requirement only showed name, surname, email, password, confirmed, band_id, brotherhood_id.
-    // We will send band_id/brotherhood_id if set.
-
     if (initialData) {
         // Update
         if (!payload.password) {
@@ -81,17 +58,6 @@ function UserForm({ initialData = null, onSuccess }) {
         onSuccess();
     }
   };
-
-  const userTypeOptions = [
-    { id: "band_admin", name: "Administrador de Banda" },
-    { id: "brotherhood_admin", name: "Administrador de Hermandad" },
-    { id: "guest", name: "Invitado" },
-  ];
-
-  // Map bands and brotherhoods to options format {id, name}
-  // Assuming the API returns an array of objects with id and name
-  const bandOptions = bands ? bands.map(b => ({ id: b.id, name: b.name })) : [];
-  const brotherhoodOptions = brotherhoods ? brotherhoods.map(b => ({ id: b.id, name: b.name })) : [];
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -144,33 +110,6 @@ function UserForm({ initialData = null, onSuccess }) {
             required={!initialData || form.password.length > 0} 
             />
         </div>
-
-        <SelectField
-          label="Tipo de Usuario"
-          options={userTypeOptions}
-          value={form.user_type}
-          onChange={(val) => handleSelectChange('user_type', val)}
-        />
-
-        {(form.user_type === "band_admin" ) && ( 
-           <SelectField
-            label="Banda"
-            options={bandOptions}
-            value={form.band_id}
-            onChange={(val) => handleSelectChange('band_id', val)}
-            description="Selecciona la banda asociada"
-          />
-        )}
-
-        {(form.user_type === "brotherhood_admin" ) && (
-           <SelectField
-            label="Hermandad"
-            options={brotherhoodOptions}
-            value={form.brotherhood_id}
-            onChange={(val) => handleSelectChange('brotherhood_id', val)}
-            description="Selecciona la hermandad asociada"
-          />
-        )}
       </div>
 
       <div className="mt-6 flex justify-end">
