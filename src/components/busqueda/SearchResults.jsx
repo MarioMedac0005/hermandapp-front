@@ -5,7 +5,7 @@ export default function SearchResults({ results, loading }) {
         return <p className="text-gray-500">Cargando resultados...</p>;
     }
 
-    if (!results.length) {
+    if (results.length === 0) {
         return <p className="text-gray-500">No se han encontrado resultados.</p>;
     }
 
