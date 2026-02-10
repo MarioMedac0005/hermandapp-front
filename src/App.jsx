@@ -46,6 +46,7 @@ import ResetPassword from "@pages/reset_password/ResetPassword";
 
 
 import Register from "@pages/register/Register";
+import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 
 
 function App() {
@@ -126,6 +127,15 @@ function App() {
           <Route path="gestores" element={<GestorList />} />
           <Route path="solicitudes" element={<OrganizationRequestList />} />
         </Route>
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute allowedPanels={['gestor_hermandad', 'gestor_banda', 'admin']}>
+              <PerfilUsuario />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthProvider>
   );
