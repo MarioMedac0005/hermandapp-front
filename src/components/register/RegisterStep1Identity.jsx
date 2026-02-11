@@ -58,7 +58,7 @@ export default function RegisterStep1Identity({ values, onChange, errors = {} })
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="NIF/CIF"
-              placeholder="G12345678"
+              placeholder="12345678G"
               name="brotherhoodNifCif"
               value={values?.brotherhoodNifCif}
               onChange={onChange}
@@ -77,14 +77,14 @@ export default function RegisterStep1Identity({ values, onChange, errors = {} })
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="Teléfono"
-              placeholder="600 000 000"
+              placeholder="650 360 452"
               name="brotherhoodPhone"
               value={values?.brotherhoodPhone}
               onChange={onChange}
               error={errors.brotherhoodPhone}
             />
             <TextField
-              label="Email"
+              label="Email de la hermandad"
               placeholder="contacto@hermandad.com"
               name="brotherhoodEmail"
               value={values?.brotherhoodEmail}
@@ -147,7 +147,7 @@ export default function RegisterStep1Identity({ values, onChange, errors = {} })
               error={errors.bandNifCif}
             />
             <TextField
-              label="Email"
+              label="Email de la banda "
               placeholder="contacto@banda.com"
               name="bandEmail"
               value={values?.bandEmail}

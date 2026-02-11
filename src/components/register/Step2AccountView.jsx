@@ -8,7 +8,7 @@ export default function Step2AccountView() {
       {/* Encabezado: lo mantienes como el paso 1 (luego cambias textos si quieres) */}
       <h1 className="text-4xl font-bold text-base-content">Comencemos</h1>
       <p className="mt-2 text-base-content/60">
-        Introduce los datos básicos para identificar tu organización en la plataforma.
+        Introduce los datos básicos para identificar a tu usuario.
       </p>
 
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -19,7 +19,7 @@ export default function Step2AccountView() {
           </label>
           <input
             className="input input-bordered w-full rounded-xl"
-            placeholder="Ej. Juan Pérez"
+            placeholder="Juan Pérez"
             type="text"
           />
         </div>
@@ -31,7 +31,7 @@ export default function Step2AccountView() {
           </label>
           <input
             className="input input-bordered w-full rounded-xl"
-            placeholder="Ej. 600 000 000"
+            placeholder="600 000 000"
             type="tel"
           />
         </div>
@@ -39,11 +39,11 @@ export default function Step2AccountView() {
         {/* Email */}
         <div className="md:col-span-2">
           <label className="label">
-            <span className="label-text font-semibold">Email</span>
+            <span className="label-text font-semibold">Email de el usuario</span>
           </label>
           <input
             className="input input-bordered w-full rounded-xl"
-            placeholder="Ej. usuario@dominio.com"
+            placeholder="usuario@dominio.com"
             type="email"
           />
         </div>
