@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useAuth } from "../../contexts/AuthContext";
+import { API_ENDPOINTS } from "@config/api";
 
 import RegisterShell from "../../components/register/RegisterShell";
 import ProposalProgress from "../../components/form/ProposalProgress";
@@ -12,12 +14,36 @@ import ProcessionDetails from "@components/form/ProcessionDetails";
 import OfferMessage from "@components/form/OfferMessage";
 
 export default function ProposalPage() {
+	const { bandId } = useParams();
+	const { user } = useAuth();
 	const [step, setStep] = useState(1);
 	const [loading, setLoading] = useState(false);
+	const [fetchingBand, setFetchingBand] = useState(true);
+	const [band, setBand] = useState(null);
 	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
 
-	const bandName = "Agrupación Musical Virgen de los Reyes";
+	useEffect(() => {
+		const fetchBand = async () => {
+			try {
+				const response = await fetch(`${API_ENDPOINTS.bands}/${bandId}`);
+				if (response.ok) {
+					const data = await response.json();
+					setBand(data.data);
+				} else {
+					toast.error("No se pudo cargar la información de la banda");
+					navigate(-1);
+				}
+			} catch (error) {
+				console.error("Error fetching band:", error);
+				toast.error("Error de conexión");
+			} finally {
+				setFetchingBand(false);
+			}
+		};
+
+		fetchBand();
+	}, [bandId, navigate]);
 
 	const [formData, setFormData] = useState({
 		serviceType: "",
@@ -79,19 +105,47 @@ export default function ProposalPage() {
 	};
 
 	const handleFinalSubmit = async () => {
+		if (!user?.brotherhood_id) {
+			toast.error("Debes ser gestor de una hermandad para enviar propuestas");
+			return;
+		}
+
 		setLoading(true);
 		try {
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			toast.success("¡Propuesta enviada con éxito!", {
-				style: {
-					borderRadius: '12px',
-					background: '#1e1b4b',
-					color: '#fff',
-					fontWeight: 'bold',
+			const token = localStorage.getItem("token");
+			const response = await fetch(API_ENDPOINTS.contracts, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`,
+					"Accept": "application/json",
 				},
+				body: JSON.stringify({
+					date: formData.date.toISOString().split('T')[0],
+					amount: formData.offer,
+					description: `Tipo: ${formData.serviceType}. Horario: ${formData.moment}. Recorrido: ${formData.processionDetails}. Duración: ${formData.duration}. Mensaje: ${formData.message}`,
+					band_id: bandId,
+					brotherhood_id: user.brotherhood_id,
+					status: 'pending'
+				}),
 			});
-			navigate("/");
+
+			if (response.ok) {
+				toast.success("¡Propuesta enviada con éxito!", {
+					style: {
+						borderRadius: '12px',
+						background: '#1e1b4b',
+						color: '#fff',
+						fontWeight: 'bold',
+					},
+				});
+				navigate("/hermandad/panel/contratos");
+			} else {
+				const errorData = await response.json();
+				toast.error(errorData.message || "Error al enviar la propuesta");
+			}
 		} catch (error) {
+			console.error("Submit error:", error);
 			toast.error("Error al enviar la propuesta");
 		} finally {
 			setLoading(false);
@@ -120,10 +174,10 @@ export default function ProposalPage() {
 								<div className="flex flex-col gap-2">
 									<div className="flex flex-col gap-0.5">
 										<p className="text-[#8a01e5] font-black uppercase tracking-[0.2em] text-[11px]">
-											Propuesta para:
+											Propuesta de {user?.organization || "Hermandad"} para:
 										</p>
 										<h2 className="text-2xl sm:text-4xl font-black text-base-content tracking-tight">
-											{bandName}
+											{fetchingBand ? "Cargando..." : (band?.name || "Banda")}
 										</h2>
 									</div>
 									<p className="mt-2 text-base-content/40 font-medium">

@@ -8,7 +8,6 @@ import HermandadHistory from "../../../components/hermandad/HermandadHistory";
 import HermandadContact from "../../../components/hermandad/HermandadContact";
 import HermandadGallery from "../../../components/hermandad/HermandadGallery";
 import HermandadCortejos from "../../../components/hermandad/HermandadCortejos";
-import HermandadBandaCTA from "../../../components/hermandad/HermandadBandaCTA";
 
 
 function HermandadPerfil() {
@@ -83,7 +82,6 @@ function HermandadPerfil() {
 
 					<aside className="lg:w-1/3 space-y-8">
 						<HermandadContact hermandad={data} />
-						<HermandadBandaCTA />
 					</aside>
 				</div>
 

@@ -64,7 +64,7 @@ function App() {
           <Route index element={<LandingPage />} />
           <Route path="busqueda" element={<Busqueda />} />
           <Route
-            path="hermandades/contratos/crear"
+            path="hermandades/contratos/crear/:bandId"
             element={<HermandadesForm />}
           />
           <Route path="perfil/hermandad/:brotherhood" element={<HermandadPerfil />} />
