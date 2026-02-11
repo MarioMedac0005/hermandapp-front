@@ -27,7 +27,7 @@ export default function Login() {
                                 <p className="text-center">
                                     ¿No tienes cuenta?{" "}
                                     <Link to="/register" className="text-[#8a01e5] hover:underline font-bold transition-all">
-                                        Crear cuenta
+                                        Crear registro de solicitud
                                     </Link>
                                 </p>
                             </div>
