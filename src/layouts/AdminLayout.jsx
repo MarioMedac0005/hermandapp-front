@@ -1,8 +1,36 @@
 import Sidebar from "@components/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-function AdminLayout({ menuItems, profile, children }) {
+function AdminLayout({ menuItems, profile: staticProfile, children }) {
   const location = useLocation();
+  const { user } = useAuth();
+
+  let profile = staticProfile;
+
+  // If no static profile is provided, or if we want to prefer user entity data:
+  // We can check the route or the user roles to decide what to show.
+  // The user asked: "when I am manager of a band or brotherhood, show band/brotherhood name and photo"
+  
+  if (user) {
+      if (user.band) {
+          profile = {
+              nombre: user.band.name, 
+              logo: user.band.profile_image?.url || user.avatar || null
+          };
+      } else if (user.brotherhood) {
+          profile = {
+              nombre: user.brotherhood.name,
+              logo: user.brotherhood.profile_image?.url || user.avatar || null
+          };
+      } else if (!profile) {
+          // Fallback to user if no entity and no static profile
+           profile = {
+              nombre: user.name,
+              logo: user.avatar || null
+          };
+      }
+  }
 
   if (location.pathname === '/perfil') {
     return children || <Outlet />;

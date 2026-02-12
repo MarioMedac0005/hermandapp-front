@@ -6,11 +6,11 @@ import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
 import { useFetchData } from "../../../hooks/useFetchData";
 import { API_ENDPOINTS } from "../../../config/api";
 
-function AvailabilityForm({ initialData = null, onSuccess }) {
+function AvailabilityForm({ initialData = null, onSuccess, preselectedBandId = null }) {
     const { create, loading: creating, error: createError } = useCreateEntity();
     const { update, loading: updating, error: updateError } = useUpdateEntity();
     
-    // Fetch dependencies for selects
+    // Fetch dependencies for selects only if we don't have a preselected band
     const { data: bands } = useFetchData(API_ENDPOINTS.bands);
 
     const loading = creating || updating;
@@ -20,7 +20,7 @@ function AvailabilityForm({ initialData = null, onSuccess }) {
         date: "",
         status: "free",
         description: "",
-        band_id: "",
+        band_id: preselectedBandId || "",
     });
 
     useEffect(() => {
@@ -29,10 +29,10 @@ function AvailabilityForm({ initialData = null, onSuccess }) {
                 date: initialData.date || "",
                 status: initialData.status || "free",
                 description: initialData.description || "",
-                band_id: initialData.band_id || "",
+                band_id: initialData.band_id || preselectedBandId || "",
             });
         }
-    }, [initialData]);
+    }, [initialData, preselectedBandId]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -88,12 +88,14 @@ function AvailabilityForm({ initialData = null, onSuccess }) {
           onChange={handleChange} 
         />
 
-        <SelectField
-          label="Banda"
-          options={bands || []} // Usa las bandas reales
-          value={form.band_id}
-          onChange={(val) => handleSelectChange("band_id", val)}
-        />
+        {!preselectedBandId && (
+            <SelectField
+              label="Banda"
+              options={bands || []} // Usa las bandas reales
+              value={form.band_id}
+              onChange={(val) => handleSelectChange("band_id", val)}
+            />
+        )}
 
       <div className="mt-6 flex justify-end">
         <button

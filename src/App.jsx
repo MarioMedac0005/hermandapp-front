@@ -26,8 +26,7 @@ import hermandadMenu from "./menus/hermandad";
 import bandaMenu from "./menus/banda";
 import Contratos from "@pages/hermandades/panel/Contratos";
 import ContratosBanda from "@pages/banda/panel/Contratos";
-import HermandadProfile from "../src/services/HermandadProfile";
-import BandaProfile from "../src/services/BandaProfile";
+import DisponibilidadBanda from "@pages/banda/panel/Disponibilidad";
 import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
 import LandingPage from "@pages/landing/LandingPage";
@@ -79,7 +78,7 @@ function App() {
           path="hermandad/panel"
           element={
             <ProtectedRoute allowedPanels={['gestor_hermandad']}>
-              <AdminLayout menuItems={hermandadMenu} profile={HermandadProfile()} />
+              <AdminLayout menuItems={hermandadMenu} />
             </ProtectedRoute>
           }
         >
@@ -93,12 +92,13 @@ function App() {
           path="banda/panel"
           element={
             <ProtectedRoute allowedPanels={['gestor_banda']}>
-              <AdminLayout menuItems={bandaMenu} profile={BandaProfile()} />
+              <AdminLayout menuItems={bandaMenu} />
             </ProtectedRoute>
           }
         >
           <Route path="informacion" element={<ProfileBanda />} />
           <Route path="contratos" element={<ContratosBanda />} />
+          <Route path="disponibilidad" element={<DisponibilidadBanda />} />
         </Route>
 
         {/* Rutas para el panel de administracion nuestro */}

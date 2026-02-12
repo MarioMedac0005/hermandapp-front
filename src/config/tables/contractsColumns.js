@@ -1,31 +1,41 @@
 export const contractColumns = [
   {
     key: "date",
-    label: "Fecha del contracto",
+    label: "Fecha",
+    format: (value) => {
+      if (!value) return "-";
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? "Fecha inválida" : date.toLocaleDateString("es-ES");
+    },
   },
   {
     key: "status",
     label: "Estado",
+    type: "status",
   },
   {
     key: "amount",
-    label: "Cantidad",
+    label: "Importe",
+    format: (value) => (value ? `${parseFloat(value).toFixed(2)}\u00A0€` : "-"),
   },
   {
     key: "description",
-    label: "Descripcion",
-    className: "max-w-[150px] truncate",
+    label: "Descripción",
+    className: "max-w-[200px] truncate",
   },
   {
-    key: "band_id",
+    key: "band",
     label: "Banda",
+    format: (value) => value?.name || "-",
   },
   {
-    key: "procession_id",
+    key: "brotherhood",
+    label: "Hermandad",
+    format: (value) => value?.name || "-",
+  },
+  {
+    key: "procession",
     label: "Procesión",
-  },
-  {
-    key: "created_at",
-    label: "Fecha de Creación",
+    format: (value) => value?.name || "-",
   },
 ];

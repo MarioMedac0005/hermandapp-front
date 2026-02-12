@@ -28,7 +28,7 @@ function Sidebar({ menuItems, profile }) {
       {/* SIDEBAR PRINCIPAL */}
       <div
         className={`
-          fixed md:static top-0 left-0 h-screen z-40 flex flex-col bg-white border-r border-[#e8e9ed] text-gray-800
+          fixed md:sticky top-0 left-0 h-screen z-40 flex flex-col bg-white border-r border-[#e8e9ed] text-gray-800
           transition-all duration-300
           ${collapsed ? "md:w-20" : "md:w-56"}
           ${

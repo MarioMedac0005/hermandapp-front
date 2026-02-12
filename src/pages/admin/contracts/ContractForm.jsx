@@ -65,9 +65,13 @@ function ContractForm({ initialData = null, onSuccess }) {
     };
 
     const statusOptions = [
-        { id: "expired", name: "Expirado" },
         { id: "pending", name: "Pendiente" },
-        { id: "active", name: "Activo" },
+        { id: "rejected", name: "Rechazado" },
+        { id: "accepted", name: "Aceptado" },
+        { id: "signed_by_band", name: "Firmado por Banda" },
+        { id: "signed_by_brotherhood", name: "Firmado por Hermandad" },
+        { id: "completed", name: "Completado" },
+        { id: "expired", name: "Expirado" },
     ];
     
   return (

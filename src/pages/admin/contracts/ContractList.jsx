@@ -10,10 +10,11 @@ import { API_ENDPOINTS } from "../../../config/api";
 function ContractList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
+  const [page, setPage] = useState(1);
 
   const entidad = "contrato";
   const columnas = contractColumns;
-  const { data, error, loading, refetch } = useFetchData(API_ENDPOINTS.contracts);
+  const { data, error, loading, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
   const { destroy } = useDeleteEntity();
 
   const handleCreate = () => {
@@ -84,6 +85,8 @@ function ContractList() {
         entity={entidad} 
         onEdit={handleEdit}
         onDelete={handleDelete}
+        pagination={pagination}
+        onPageChange={setPage}
       />
 
       <Modal

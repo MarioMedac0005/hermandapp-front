@@ -5,13 +5,7 @@ import {
 
 const hermandadMenu = [
   { name: "Mi Perfil", icon: UserIcon, href: "/hermandad/panel/informacion" },
-  { name: "Perfil de Usuario", icon: UserIcon, href: "/perfil" },
   { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
-  {
-    name: "Buscar Banda",
-    icon: MagnifyingGlassIcon,
-    href: "/hermandad/panel/buscar-banda",
-  },
 ];
 
 export default hermandadMenu;

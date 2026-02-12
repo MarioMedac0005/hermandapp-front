@@ -121,8 +121,8 @@ export default function ProposalPage() {
 					"Accept": "application/json",
 				},
 				body: JSON.stringify({
-					date: formData.date.toISOString().split('T')[0],
-					amount: formData.offer,
+					date: formData.date.toISOString().slice(0, 19).replace('T', ' '), // MySQL datetime format
+					amount: parseFloat(formData.offer),
 					description: `Tipo: ${formData.serviceType}. Horario: ${formData.moment}. Recorrido: ${formData.processionDetails}. Duración: ${formData.duration}. Mensaje: ${formData.message}`,
 					band_id: bandId,
 					brotherhood_id: user.brotherhood_id,
