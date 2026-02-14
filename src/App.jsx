@@ -41,6 +41,8 @@ import TerminosUso from "@pages/legal/TerminosUso";
 import Privacidad from "@pages/legal/Privacidad";
 import Cookies from "@pages/legal/Cookies";
 import ScrollToTop from "@components/ScrollToTop";
+import ProcesionEditor from "@pages/hermandades/panel/ProcesionEditor";
+import ProcessionsManager from "@pages/hermandades/panel/ProcessionsManager";
 
 import { Toaster } from 'react-hot-toast';
 
@@ -92,6 +94,9 @@ function App() {
           <Route path="buscar-banda" element={<BuscarBanda />} />
           <Route path="contratos" element={<Contratos />} />
           <Route path="contratos/:id/firmar" element={<SignContract />} />
+          <Route path="procesiones" element={<ProcessionsManager />} />
+          <Route path="crear-procesion" element={<ProcesionEditor />} />
+          <Route path="editar-procesion/:id" element={<ProcesionEditor />} />
         </Route>
 
         {/* Rutas para el panel de administracion de la banda */}
