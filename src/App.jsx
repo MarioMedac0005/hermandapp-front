@@ -29,6 +29,9 @@ import ContratosBanda from "@pages/banda/panel/Contratos";
 import DisponibilidadBanda from "@pages/banda/panel/Disponibilidad";
 import HermandadPerfil from "./pages/perfil/hermandad/HermandadPerfil";
 import BandaPerfil from "./pages/perfil/banda/BandaPerfil";
+import PendingContracts from "@pages/banda/panel/PendingContracts";
+import SignContract from "@pages/banda/panel/SignContract";
+import ContractsToSign from "@pages/banda/panel/ContractsToSign";
 import LandingPage from "@pages/landing/LandingPage";
 import Login from "@pages/auth/Login";
 import { AuthProvider } from "@contexts/AuthContext";
@@ -85,6 +88,7 @@ function App() {
           <Route path="informacion" element={<Informacion />} />
           <Route path="buscar-banda" element={<BuscarBanda />} />
           <Route path="contratos" element={<Contratos />} />
+          <Route path="contratos/:id/firmar" element={<SignContract />} />
         </Route>
 
         {/* Rutas para el panel de administracion de la banda */}
@@ -98,6 +102,9 @@ function App() {
         >
           <Route path="informacion" element={<ProfileBanda />} />
           <Route path="contratos" element={<ContratosBanda />} />
+          <Route path="contratos-pendientes" element={<PendingContracts />} />
+          <Route path="contratos-por-firmar" element={<ContractsToSign />} />
+          <Route path="contratos/:id/firmar" element={<SignContract />} />
           <Route path="disponibilidad" element={<DisponibilidadBanda />} />
         </Route>
 

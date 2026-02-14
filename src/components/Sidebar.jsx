@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bars3Icon, XMarkIcon, ArrowLeftStartOnRectangleIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon, ArrowLeftStartOnRectangleIcon, HomeIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import Logo from "@assets/img/logo.png";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,8 +7,29 @@ import { useAuth } from "../contexts/AuthContext";
 function Sidebar({ menuItems, profile }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState({});
   const urlActive = useLocation();
   const { logout } = useAuth();
+
+  const toggleSubmenu = (name) => {
+    setOpenSubmenus(prev => ({
+      ...prev,
+      [name]: !prev[name]
+    }));
+  };
+
+  const isLinkActive = (href) => {
+      // Exact match for root or specific paths
+      if (href === "/admin-panel") return urlActive.pathname === href;
+      // Prevent /contratos from matching /contratos-pendientes by checking matching segment
+      if (href === urlActive.pathname) return true;
+      return urlActive.pathname.startsWith(href + '/');
+  };
+
+  // Helper handling legacy flat structure if necessary (though we migrated all)
+  const standardizedMenu = Array.isArray(menuItems) && menuItems[0]?.items 
+    ? menuItems 
+    : [{ title: "", items: menuItems }];
 
   return (
     <>
@@ -30,10 +51,10 @@ function Sidebar({ menuItems, profile }) {
         className={`
           fixed md:sticky top-0 left-0 h-screen z-40 flex flex-col bg-white border-r border-[#e8e9ed] text-gray-800
           transition-all duration-300
-          ${collapsed ? "md:w-20" : "md:w-56"}
+          ${collapsed ? "md:w-20" : "md:w-64"}
           ${
             mobileOpen
-              ? "w-56 translate-x-0"
+              ? "w-64 translate-x-0"
               : "-translate-x-full md:translate-x-0"
           }
         `}
@@ -70,46 +91,102 @@ function Sidebar({ menuItems, profile }) {
         </div>
 
         {/* NAVIGATION */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
           {/* PERFIL */}
           {profile && !collapsed && (
-            <div className="flex items-center gap-3 px-4 pt-3 pb-6 my-2">
+            <div className="flex items-center gap-3 px-4 pt-3 pb-6 my-2 border-b border-gray-100">
               <img
                 src={profile.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nombre)}&background=random`}
                 alt={profile.nombre}
                 className="size-14 rounded-full object-cover"
               />
               <div className="flex flex-col gap-2">
-                <span>{profile.nombre}</span>
-                <span className="text-gray-600 text-[10px]">
-                  Panel de Administración
+                <span className="font-medium text-sm">{profile.nombre}</span>
+                <span className="text-gray-500 text-[10px] uppercase tracking-wider">
+                  Panel de Gestión
                 </span>
               </div>
             </div>
           )}
 
-          {menuItems.map(({ name, icon: Icon, href }) => {
-            const isActive =
-              href === "/admin-panel"
-                ? urlActive.pathname === href
-                : urlActive.pathname.startsWith(href);
+          {standardizedMenu.map((section, sectionIdx) => (
+             <div key={sectionIdx}>
+                {section.title && !collapsed && (
+                    <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        {section.title}
+                    </h3>
+                )}
+                <ul className="space-y-1">
+                    {section.items?.map((item, itemIdx) => {
+                         const hasSubmenu = item.submenu && item.submenu.length > 0;
+                         const Icon = item.icon;
+                         // Check if any child is active
+                         const isChildActive = hasSubmenu && item.submenu.some(sub => isLinkActive(sub.href));
+                         const isActive = item.href ? isLinkActive(item.href) : false;
+                         const isOpen = openSubmenus[item.name] || isChildActive; // Auto-open if active
 
-            return (
-              <Link
-                key={name}
-                to={href}
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 p-2 rounded-md transition ${
-                  isActive
-                    ? "bg-purple-100 text-purple-700 font-medium"
-                    : "hover:bg-gray-100"
-                } ${collapsed ? "justify-center" : ""}`}
-              >
-                <Icon className="w-5 h-5 shrink-0" />
-                {!collapsed && <span className="truncate">{name}</span>}
-              </Link>
-            );
-          })}
+                         if (hasSubmenu) {
+                             return (
+                                 <li key={itemIdx}>
+                                     <button
+                                        onClick={() => toggleSubmenu(item.name)}
+                                        className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${
+                                            isChildActive ? 'bg-purple-50 text-purple-700' : 'text-gray-700'
+                                        }`}
+                                     >
+                                        <div className="flex items-center gap-3">
+                                            {Icon && <Icon className="w-5 h-5 shrink-0" />}
+                                            {!collapsed && <span className="text-[13px] font-normal">{item.name}</span>}
+                                        </div>
+                                        {!collapsed && (
+                                            isOpen ? <ChevronUpIcon className="w-3 h-3" /> : <ChevronDownIcon className="w-3 h-3" />
+                                        )}
+                                     </button>
+                                     
+                                     {/* SUBMENU */}
+                                     {isOpen && !collapsed && (
+                                         <ul className="mt-1 ml-9 space-y-1">
+                                             {item.submenu.map((sub, subIdx) => (
+                                                 <li key={subIdx}>
+                                                     <Link
+                                                        to={sub.href}
+                                                        onClick={() => setMobileOpen(false)}
+                                                        className={`block p-2 text-[13px] rounded-md transition ${
+                                                            isLinkActive(sub.href) 
+                                                                ? "text-purple-700 bg-purple-100 font-normal" 
+                                                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-normal"
+                                                        }`}
+                                                     >
+                                                         {sub.name}
+                                                     </Link>
+                                                 </li>
+                                             ))}
+                                         </ul>
+                                     )}
+                                 </li>
+                             );
+                         }
+
+                         return (
+                            <li key={itemIdx}>
+                                <Link
+                                    to={item.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className={`flex items-center gap-3 p-2 rounded-md transition text-[13px] font-normal ${
+                                    isActive
+                                        ? "bg-purple-100 text-purple-700"
+                                        : "hover:bg-gray-100 text-gray-700"
+                                    } ${collapsed ? "justify-center" : ""}`}
+                                >
+                                    {Icon && <Icon className="w-5 h-5 shrink-0" />}
+                                    {!collapsed && <span className="truncate">{item.name}</span>}
+                                </Link>
+                            </li>
+                         );
+                    })}
+                </ul>
+             </div>
+          ))}
         </nav>
 
         {/* FOOTER ACTIONS */}
@@ -123,7 +200,7 @@ function Sidebar({ menuItems, profile }) {
             title="Volver a la web"
           >
             <HomeIcon className="w-5 h-5 shrink-0" />
-            {!collapsed && <span className="truncate font-medium">Volver a la web</span>}
+            {!collapsed && <span className="truncate font-normal text-[13px]">Volver a la web</span>}
           </Link>
 
           {/* LOGOUT */}
@@ -135,7 +212,7 @@ function Sidebar({ menuItems, profile }) {
             title="Cerrar Sesión"
           >
             <ArrowLeftStartOnRectangleIcon className="w-5 h-5 shrink-0" />
-            {!collapsed && <span className="truncate font-medium">Cerrar Sesión</span>}
+            {!collapsed && <span className="truncate font-normal text-[13px]">Cerrar Sesión</span>}
           </button>
         </div>
       </div>

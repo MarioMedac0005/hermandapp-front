@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ContractCard from "../../../components/ContractCard";
 import ContractDetailModal from "../../../components/ContractDetailModal";
 import ContractForm from "../../admin/contracts/ContractForm"; // Reusing admin form
@@ -12,6 +13,7 @@ function Contratos() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
 
   const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
 
@@ -26,14 +28,25 @@ function Contratos() {
             }
         });
         
-        const data = await response.json();
+        const resData = await response.json();
 
         if (response.ok) {
-             toast.success(data.message || `Contrato ${action === 'accept' ? 'aceptado' : 'rechazado'} correctamente`, { id: loadingToast });
-             refetch();
+             toast.success(resData.message || `Contrato ${action === 'accept' ? 'aceptado' : 'rechazado'} correctamente`, { id: loadingToast });
              setIsDetailModalOpen(false);
+
+             if (action === 'accept') {
+                 const pdfPath = resData.data?.pdf_path;
+                 if (pdfPath) {
+                     navigate(`/banda/panel/contratos/${id}/firmar`, { state: { pdf_path: pdfPath } });
+                 } else {
+                     toast.error("Ruta del PDF no recibida, no se puede redirigir a la firma.");
+                     refetch();
+                 }
+             } else {
+                 refetch();
+             }
         } else {
-             toast.error(data.message || 'Error al procesar la solicitud', { id: loadingToast });
+             toast.error(resData.message || 'Error al procesar la solicitud', { id: loadingToast });
         }
       } catch (error) {
           console.error(error);
