@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, UserIcon, MapIcon } from "@heroicons/react/24/outline";
 import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
@@ -11,6 +11,11 @@ const hermandadMenu = [
     name: "Buscar Banda",
     icon: MagnifyingGlassIcon,
     href: "/hermandad/panel/buscar-banda",
+  },
+  {
+    name: "Procesiones",
+    icon: MapIcon,
+    href: "/hermandad/panel/procesiones",
   },
 ];
 
