@@ -1,30 +1,30 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ContractCard from "../../../components/ContractCard";
 import ContractDetailModal from "../../../components/ContractDetailModal";
 import ContractForm from "../../admin/contracts/ContractForm"; // Reusing admin form
 import Modal from "../../../components/Modal"; // Needed for edit modal
 import { useFetchData } from "../../../hooks/useFetchData";
-import { useUpdateEntity } from "../../../hooks/useUpdateEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 import toast from "react-hot-toast";
+import { paymentService } from "../../../services/paymentService";
 
 function Contratos() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'pending_signature'
 
   const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
-  const { update } = useUpdateEntity();
+  const navigate = useNavigate();
 
-  const handleUpdateStatus = async (id, newStatus) => {
-    const success = await update(`${API_ENDPOINTS.contracts}/${id}`, { status: newStatus });
-    if (success) {
-      toast.success(`Contrato ${newStatus === 'accepted' ? 'aceptado' : 'rechazado'} correctamente`);
-      refetch();
-      setIsDetailModalOpen(false);
-    }
-  };
+  // Filter contracts based on active tab
+  const filteredData = data.filter(contract => {
+      if (activeTab === 'all') return true;
+      if (activeTab === 'pending_signature') return contract.status === 'signed_by_band';
+      return true;
+  });
 
   const handleEdit = () => {
     // Open edit modal, close detail modal
@@ -43,10 +43,32 @@ function Contratos() {
     refetch();
   };
 
+  const handleSignRedirect = () => {
+      if (selectedContract && selectedContract.id) {
+          navigate(`/hermandad/panel/contratos/${selectedContract.id}/firmar`);
+      }
+  };
+
+  const handlePayContract = async () => {
+    if (!selectedContract || !selectedContract.id) return;
+
+    try {
+        const { url } = await paymentService.createPaymentSession(selectedContract.id);
+        if (url) {
+            window.location.href = url;
+        } else {
+            toast.error("No se pudo obtener la URL de pago");
+        }
+    } catch (error) {
+        toast.error(error.message || "Error al iniciar el pago");
+    }
+  };
   const renderModalActions = () => {
       if (!selectedContract) return null;
       
-      const isPending = selectedContract.status === 'pending';
+      
+      const isReadyToSign = selectedContract.status === 'signed_by_band';
+      const isReadyToPay = selectedContract.status === 'completed';
 
       return (
           <>
@@ -62,21 +84,21 @@ function Contratos() {
             >
                 Editar
             </button>
-            {isPending && (
-                <>
-                    <button
-                        onClick={() => handleUpdateStatus(selectedContract.id, 'rejected')}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer"
-                    >
-                        Rechazar
-                    </button>
-                    <button
-                        onClick={() => handleUpdateStatus(selectedContract.id, 'accepted')}
-                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
-                    >
-                        Aceptar
-                    </button>
-                </>
+            {isReadyToSign && (
+                <button
+                    onClick={handleSignRedirect}
+                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
+                >
+                    Firmar
+                </button>
+            )}
+            {isReadyToPay && (
+                <button
+                    onClick={handlePayContract}
+                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
+                >
+                    Pagar contrato
+                </button>
             )}
           </>
       );
@@ -88,6 +110,31 @@ function Contratos() {
   return (
     <div>
       <h1 className="text-2xl font-bold -mt-3 mb-6">Contratos</h1>
+      
+      {/* Tabs */}
+      <div className="flex space-x-4 border-b border-gray-200 mb-6">
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
+            activeTab === 'all'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => setActiveTab('all')}
+        >
+          Todos
+        </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
+            activeTab === 'pending_signature'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => setActiveTab('pending_signature')}
+        >
+          Pendientes de firmar
+        </button>
+      </div>
+
       <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
         <label className="input input-sm">
           <svg
@@ -110,13 +157,17 @@ function Contratos() {
         </label>
       </div>
       
-      {data.length === 0 ? (
+      {filteredData.length === 0 ? (
            <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-               <p className="text-gray-500">No hay contratos disponibles.</p>
+               <p className="text-gray-500">
+                   {activeTab === 'all' 
+                    ? "No hay contratos disponibles." 
+                    : "No tienes contratos pendientes de firmar."}
+               </p>
            </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.map(contract => (
+            {filteredData.map(contract => (
                 <ContractCard 
                     key={contract.id} 
                     contract={contract} 

@@ -13,16 +13,15 @@ class SignatureService {
         this.isLoading = true;
         
         try {
-             // Try load autoscript.js and miniapplet.js from window if they are globally available
-             // For now we assume they are added to index.html manually by the user or 
-             // we can try to dynamically inject them if we had a CDN source, but AutoFirma doesn't have a reliable public CDN.
-             // We will check if `AutoScript` is defined.
              if (typeof window.AutoScript === 'undefined') {
-                 // Creating a dummy AutoScript object for development if not present, or throwing error.
-                 // For now, throw error explaining it needs to be installed.
                  console.warn("AutoScript library not found. Ensure autoscript.js is loaded.");
                  throw new Error("La librería de AutoFirma (autoscript.js) no está cargada en la aplicación.");
              }
+
+             // Initialize AutoFirma
+             // Values for clientAddress and keystore can be null/undefined to use defaults
+             window.AutoScript.cargarAppAfirma();
+
              this.scriptsLoaded = true;
         } catch (error) {
              console.error("Failed to load AutoFirma scripts:", error);
@@ -57,11 +56,15 @@ class SignatureService {
                 };
 
                 // Invoke AutoScript.sign
-                // signature: sign(source, format, params, successCallback, errorCallback)
+                // signature: sign(source, algorithm, format, params, successCallback, errorCallback)
+                const algorithm = "SHA256withRSA";
+                const params = "mode=explicit"; 
+
                 window.AutoScript.sign(
                     base64Data, 
+                    algorithm, 
                     "PAdES", 
-                    "extraParams=mode=explicit", // Sometimes needed
+                    params, 
                     successCallback, 
                     errorCallback
                 ); 

@@ -49,6 +49,7 @@ import ResetPassword from "@pages/reset_password/ResetPassword";
 
 import Register from "@pages/register/Register";
 import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
+import PaymentSuccess from "@pages/PaymentSuccess";
 
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
           <Route path="terminos-uso" element={<TerminosUso />} />
           <Route path="politica-privacidad" element={<Privacidad />} />
           <Route path="politica-cookies" element={<Cookies />} />
+          <Route path="payment-success" element={<PaymentSuccess />} />
         </Route>
         {/* Ruta para el panel de administracion de las hermandades */}
         <Route
