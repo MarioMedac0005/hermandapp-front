@@ -7,7 +7,7 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="flex flex-col">
-                        <Link to="/" className="inline-block mt-[-20px]">
+                        <Link to="/" className="inline-block mt-2">
                             <img src={Logo} alt="HermandApp Logo" className="w-32" />
                         </Link>
                     </div>

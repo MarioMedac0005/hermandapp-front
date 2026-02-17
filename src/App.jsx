@@ -19,6 +19,7 @@ import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
 import GestorList from "@pages/admin/gestores/GestorList";
 import Dashboard from "@pages/admin/dashboard/Dashboard";
+import OrganizationRequestList from "@pages/admin/requests/OrganizationRequestList";
 import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
 import adminMenu from "./menus/admin";
 import hermandadMenu from "./menus/hermandad";
@@ -45,13 +46,14 @@ import ResetPassword from "@pages/reset_password/ResetPassword";
 
 
 import Register from "@pages/register/Register";
+import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 
 
 function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" reverseOrder={false} />
-      <ScrollToTop /> 
+      <ScrollToTop />
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -62,7 +64,7 @@ function App() {
           <Route index element={<LandingPage />} />
           <Route path="busqueda" element={<Busqueda />} />
           <Route
-            path="hermandades/contratos/crear"
+            path="hermandades/contratos/crear/:bandId"
             element={<HermandadesForm />}
           />
           <Route path="perfil/hermandad/:brotherhood" element={<HermandadPerfil />} />
@@ -123,7 +125,17 @@ function App() {
           <Route path="processions" element={<ProcessionList />} />
           <Route path="processions/create" element={<ProcessionForm />} />
           <Route path="gestores" element={<GestorList />} />
+          <Route path="solicitudes" element={<OrganizationRequestList />} />
         </Route>
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute allowedPanels={['gestor_hermandad', 'gestor_banda', 'admin']}>
+              <PerfilUsuario />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthProvider>
   );

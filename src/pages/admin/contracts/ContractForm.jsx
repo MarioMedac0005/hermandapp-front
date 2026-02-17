@@ -100,6 +100,7 @@ function ContractForm({ initialData = null, onSuccess }) {
         <InputField
           label="Descripción"
           name="description"
+          as="textarea"
           type="text"
           placeholder="Descripción del contrato"
           value={form.description}

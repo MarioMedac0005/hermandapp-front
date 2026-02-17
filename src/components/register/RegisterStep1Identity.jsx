@@ -2,20 +2,19 @@ import SegmentedToggle from "./SegmentedToggle";
 import TextField from "./TextField";
 import SelectField from "./SelectField";
 
-export default function RegisterStep1Identity({ values, onChange }) {
+export default function RegisterStep1Identity({ values, onChange, errors = {} }) {
   const cityOptions = [
-    { value: "almeria", label: "Almería" },
-    { value: "cadiz", label: "Cádiz" },
-    { value: "cordoba", label: "Córdoba" },
-    { value: "granada", label: "Granada" },
-    { value: "huelva", label: "Huelva" },
-    { value: "jaen", label: "Jaén" },
-    { value: "malaga", label: "Málaga" },
-    { value: "sevilla", label: "Sevilla" },
+    { value: "Sevilla", label: "Sevilla" },
+    { value: "Malaga", label: "Málaga" },
+    { value: "Cadiz", label: "Cádiz" },
+    { value: "Granada", label: "Granada" },
+    { value: "Huelva", label: "Huelva" },
+    { value: "Cordoba", label: "Córdoba" },
+    { value: "Almeria", label: "Almería" },
+    { value: "Jaen", label: "Jaén" },
   ];
 
   const orgType = values?.orgType ?? "brotherhood";
-
   const setOrgType = (t) => onChange({ target: { name: "orgType", value: t } });
 
   return (
@@ -34,16 +33,16 @@ export default function RegisterStep1Identity({ values, onChange }) {
         />
       </div>
 
-      {/* HERMANDAD */}
       {orgType === "brotherhood" && (
         <>
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
-              label="Nombre de la Hermandad"
-              placeholder="Ej. Hermandad del Gran Poder"
+              label="Nombre"
+              placeholder=" Hermandad del Gran Poder.."
               name="brotherhoodName"
               value={values?.brotherhoodName}
               onChange={onChange}
+              error={errors.brotherhoodName}
             />
             <SelectField
               label="Ciudad"
@@ -52,62 +51,69 @@ export default function RegisterStep1Identity({ values, onChange }) {
               name="brotherhoodCity"
               value={values?.brotherhoodCity}
               onChange={onChange}
+              error={errors.brotherhoodCity}
             />
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="NIF/CIF"
-              placeholder="Ej. G12345678"
+              placeholder="G12345678"
               name="brotherhoodNifCif"
               value={values?.brotherhoodNifCif}
               onChange={onChange}
+              error={errors.brotherhoodNifCif}
             />
             <TextField
               label="Sede canónica"
-              placeholder="Ej. Parroquia de..."
+              placeholder="Parroquia de..."
               name="brotherhoodCanonicalSeat"
               value={values?.brotherhoodCanonicalSeat}
               onChange={onChange}
+              error={errors.brotherhoodCanonicalSeat}
             />
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="Teléfono"
-              placeholder="Ej. 600 000 000"
+              placeholder="600 000 000"
               name="brotherhoodPhone"
               value={values?.brotherhoodPhone}
               onChange={onChange}
+              error={errors.brotherhoodPhone}
             />
             <TextField
               label="Email"
-              placeholder="Ej. contacto@hermandad.com"
+              placeholder="contacto@hermandad.com"
               name="brotherhoodEmail"
               value={values?.brotherhoodEmail}
               onChange={onChange}
+              error={errors.brotherhoodEmail}
+              type="email"
             />
           </div>
         </>
       )}
 
-      {/* BANDA */}
       {orgType === "band" && (
         <>
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="Nombre de la banda"
-              placeholder="Ej. Banda de CC y TT..."
+              placeholder="Banda de CC y TT..."
               name="bandName"
               value={values?.bandName}
               onChange={onChange}
+              error={errors.bandName}
             />
             <TextField
               label="Descripción (opcional)"
-              placeholder="Ej. Banda fundada en..."
+              placeholder="Banda fundada en..."
               name="bandDescription"
               value={values?.bandDescription}
               onChange={onChange}
+              error={errors.bandDescription}
             />
           </div>
 
@@ -119,30 +125,35 @@ export default function RegisterStep1Identity({ values, onChange }) {
               name="bandCity"
               value={values?.bandCity}
               onChange={onChange}
+              error={errors.bandCity}
             />
             <TextField
               label="Sitio de ensayo"
-              placeholder="Ej. Polideportivo / Local..."
+              placeholder="Polideportivo / Local..."
               name="bandRehearsalPlace"
               value={values?.bandRehearsalPlace}
               onChange={onChange}
+              error={errors.bandRehearsalPlace}
             />
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TextField
               label="NIF/CIF"
-              placeholder="Ej. G12345678"
+              placeholder="G12345678"
               name="bandNifCif"
               value={values?.bandNifCif}
               onChange={onChange}
+              error={errors.bandNifCif}
             />
             <TextField
               label="Email"
-              placeholder="Ej. contacto@banda.com"
+              placeholder="contacto@banda.com"
               name="bandEmail"
               value={values?.bandEmail}
               onChange={onChange}
+              error={errors.bandEmail}
+              type="email"
             />
           </div>
         </>

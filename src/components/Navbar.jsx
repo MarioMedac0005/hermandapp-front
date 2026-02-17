@@ -3,33 +3,34 @@ import Logo from "@assets/img/logo.png";
 import { useAuth } from "@contexts/AuthContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
-  UserIcon,
-  ArrowRightStartOnRectangleIcon,
-  CommandLineIcon,
-  ChevronDownIcon,
-  MusicalNoteIcon,
-  UserGroupIcon
+	UserIcon,
+	ArrowRightStartOnRectangleIcon,
+	CommandLineIcon,
+	ChevronDownIcon,
+	MusicalNoteIcon,
+	UserGroupIcon
 } from "@heroicons/react/24/outline";
 
 function Navbar() {
-  const { user, loading, logout } = useAuth();
-  const navigate = useNavigate();
+	const { user, loading, logout } = useAuth();
+	const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
+	const handleLogout = async () => {
+		await logout();
+		navigate("/login");
+	};
 
-  if (loading && !user) {
-    return (
-      <div className="navbar bg-white shadow-sm px-6 h-16 flex items-center">
-        <span className="text-sm text-gray-400">Cargando...</span>
-      </div>
-    );
-  }
+	if (loading && !user) {
+		return (
+			<div className="navbar bg-white shadow-sm px-6 h-16 flex items-center">
+				<span className="text-sm text-gray-400">Cargando...</span>
+			</div>
+		);
+	}
 
 	return (
 		<>
+			{/* ===== MOBILE DRAWER ===== */}
 			<div className="drawer md:hidden">
 				<input id="main-drawer" type="checkbox" className="drawer-toggle" />
 
@@ -57,7 +58,9 @@ function Navbar() {
 								</svg>
 							</label>
 
-							<img src={Logo} className="w-28 ml-2" />
+							<Link to="/">
+								<img src={Logo} className="w-28 ml-2" />
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -81,46 +84,73 @@ function Navbar() {
 							</div>
 						)}
 
-						<ul className="menu gap-1 flex-1">
-							<li><Link to="/perfil">Perfil</Link></li>
+						<ul className="menu gap-2 flex-1 mt-4">
+							{!user ? (
+								<>
+									<li>
+										<Link to="/login" className="flex items-center gap-3 py-3">
+											<ArrowRightStartOnRectangleIcon className="h-5 w-5 text-gray-400" />
+											<span className="font-medium">Iniciar Sesión</span>
+										</Link>
+									</li>
+									<li>
+										<Link to="/register" className="flex items-center gap-3 py-3">
+											<UserGroupIcon className="h-5 w-5 text-gray-400" />
+											<span className="font-medium">Solicitud de Registro</span>
+										</Link>
+									</li>
+								</>
+							) : (
+								<>
+									<li>
+										<Link to="/perfil" className="flex items-center gap-3 py-3">
+											<UserIcon className="h-5 w-5 text-gray-400" />
+											<span className="font-medium">Mi Perfil</span>
+										</Link>
+									</li>
 
-							{user?.permissions.can_access_admin && (
-								<li>
-									<Link to="/admin-panel/dashboard">
-										Administración
-									</Link>
-								</li>
+									{user?.permissions?.can_access_admin && (
+										<li>
+											<Link to="/admin-panel/dashboard" className="flex items-center gap-3 py-3">
+												<CommandLineIcon className="h-5 w-5 text-gray-400" />
+												<span className="font-medium">Panel Administración</span>
+											</Link>
+										</li>
+									)}
+
+									{user?.panel === 'gestor_banda' && (
+										<li>
+											<Link to="/banda/panel/informacion" className="flex items-center gap-3 py-3">
+												<MusicalNoteIcon className="h-5 w-5 text-gray-400" />
+												<span className="font-medium">Panel de Banda</span>
+											</Link>
+										</li>
+									)}
+
+									{user?.panel === 'gestor_hermandad' && (
+										<li>
+											<Link to="/hermandad/panel/informacion" className="flex items-center gap-3 py-3">
+												<UserGroupIcon className="h-5 w-5 text-gray-400" />
+												<span className="font-medium">Panel de Hermandad</span>
+											</Link>
+										</li>
+									)}
+
+									<li className="mt-auto pt-4 border-t border-gray-100">
+										<button
+											onClick={handleLogout}
+											className="flex items-center gap-3 py-3 text-red-600 hover:bg-red-50 transition-colors"
+										>
+											<ArrowRightStartOnRectangleIcon className="h-5 w-5 text-red-400" />
+											<span className="font-medium">Cerrar Sesión</span>
+										</button>
+									</li>
+								</>
 							)}
-
-              {user?.panel === 'gestor_banda' && (
-                <li>
-                  <Link to="/banda/panel/informacion">
-                    Panel de Banda
-                  </Link>
-                </li>
-              )}
-
-              {user?.panel === 'gestor_hermandad' && (
-                <li>
-                  <Link to="/hermandad/panel/informacion">
-                    Panel de Hermandad
-                  </Link>
-                </li>
-              )}
 						</ul>
-
-						{user && (
-							<button
-								className="btn btn-outline mt-4"
-								onClick={handleLogout}
-							>
-								Cerrar sesión
-							</button>
-						)}
 					</aside>
 				</div>
 			</div>
-			{/* ===== MOBILE DRAWER ===== */}
 
 			{/* ===== DESKTOP NAVBAR ===== */}
 			<div className="navbar bg-base-100 shadow px-6 hidden md:flex">
@@ -130,132 +160,132 @@ function Navbar() {
 					</Link>
 				</div>
 
-        <div className="navbar-end flex items-center gap-4">
-          {!user ? (
-            <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-[#E9D5FF] rounded-lg transition-colors"
-              >
-                Iniciar sesión
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-all shadow-sm hover:shadow"
-              >
-                Solicitud de Registro
-              </Link>
-            </div>
-          ) : (
-            <Menu as="div" className="relative ml-3">
-                <MenuButton className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 p-1 pr-2 hover:bg-gray-50 transition-colors">
-                  <img
-                    className="h-9 w-9 rounded-full object-cover border border-gray-200"
-                    src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
-                    alt={user.name}
-                  />
-                  <div className="flex flex-col items-start sr-only sm:not-sr-only">
-                    <span className="text-xs font-medium text-gray-700 max-w-[100px] truncate">
-                      {user.name}
-                    </span>
-                  </div>
-                  <ChevronDownIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                </MenuButton>
+				<div className="navbar-end flex items-center gap-4">
+					{!user ? (
+						<div className="flex items-center gap-2">
+							<Link
+								to="/login"
+								className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-[#E9D5FF] rounded-lg transition-colors"
+							>
+								Iniciar sesión
+							</Link>
+							<Link
+								to="/register"
+								className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-all shadow-sm hover:shadow"
+							>
+								Solicitud de Registro
+							</Link>
+						</div>
+					) : (
+						<Menu as="div" className="relative ml-3">
+							<MenuButton className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 p-1 pr-2 hover:bg-gray-50 transition-colors">
+								<img
+									className="h-9 w-9 rounded-full object-cover border border-gray-200"
+									src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
+									alt={user.name}
+								/>
+								<div className="flex flex-col items-start sr-only sm:not-sr-only">
+									<span className="text-xs font-medium text-gray-700 max-w-[100px] truncate">
+										{user.name}
+									</span>
+								</div>
+								<ChevronDownIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+							</MenuButton>
 
-              <MenuItems
-                transition
-                className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 transition duration-100 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
-              >
-                <div className="px-4 py-3">
-                  <p className="text-sm font-semibold text-gray-900 truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate mt-0.5">
-                    {user.organization}
-                  </p>
-                </div>
+							<MenuItems
+								transition
+								className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 transition duration-100 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
+							>
+								<div className="px-4 py-3">
+									<p className="text-sm font-semibold text-gray-900 truncate">
+										{user.name}
+									</p>
+									<p className="text-xs text-gray-500 truncate mt-0.5">
+										{user.organization}
+									</p>
+								</div>
 
-                <div className="py-1">
-                  <MenuItem>
-                    <Link
-                      to="/perfil"
-                      className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
-                    >
-                      <UserIcon
-                        className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
-                        aria-hidden="true"
-                      />
-                      Mi Perfil
-                    </Link>
-                  </MenuItem>
+								<div className="py-1">
+									<MenuItem>
+										<Link
+											to="/perfil"
+											className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+										>
+											<UserIcon
+												className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+												aria-hidden="true"
+											/>
+											Mi Perfil
+										</Link>
+									</MenuItem>
 
-                  {user?.permissions?.can_access_admin && (
-                    <MenuItem>
-                      <Link
-                        to="/admin-panel/dashboard"
-                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
-                      >
-                        <CommandLineIcon
-                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
-                          aria-hidden="true"
-                        />
-                        Panel Administración
-                      </Link>
-                    </MenuItem>
-                  )}
+									{user?.permissions?.can_access_admin && (
+										<MenuItem>
+											<Link
+												to="/admin-panel/dashboard"
+												className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+											>
+												<CommandLineIcon
+													className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+													aria-hidden="true"
+												/>
+												Panel Administración
+											</Link>
+										</MenuItem>
+									)}
 
-                  {user?.panel === 'gestor_banda' && (
-                    <MenuItem>
-                      <Link
-                        to="/banda/panel/informacion"
-                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
-                      >
-                        <MusicalNoteIcon
-                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
-                          aria-hidden="true"
-                        />
-                        Panel de Banda
-                      </Link>
-                    </MenuItem>
-                  )}
+									{user?.panel === 'gestor_banda' && (
+										<MenuItem>
+											<Link
+												to="/banda/panel/informacion"
+												className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+											>
+												<MusicalNoteIcon
+													className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+													aria-hidden="true"
+												/>
+												Panel de Banda
+											</Link>
+										</MenuItem>
+									)}
 
-                  {user?.panel === 'gestor_hermandad' && (
-                    <MenuItem>
-                      <Link
-                        to="/hermandad/panel/informacion"
-                        className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
-                      >
-                        <UserGroupIcon
-                          className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
-                          aria-hidden="true"
-                        />
-                        Panel de Hermandad
-                      </Link>
-                    </MenuItem>
-                  )}
-                </div>
+									{user?.panel === 'gestor_hermandad' && (
+										<MenuItem>
+											<Link
+												to="/hermandad/panel/informacion"
+												className="group flex items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-gray-50 data-[focus]:text-purple-700 transition-colors"
+											>
+												<UserGroupIcon
+													className="h-5 w-5 text-gray-400 group-data-[focus]:text-purple-600"
+													aria-hidden="true"
+												/>
+												Panel de Hermandad
+											</Link>
+										</MenuItem>
+									)}
+								</div>
 
-                <div className="py-1">
-                  <MenuItem>
-                    <button
-                      onClick={handleLogout}
-                      className="group flex w-full items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-red-50 data-[focus]:text-red-700 transition-colors"
-                    >
-                      <ArrowRightStartOnRectangleIcon
-                        className="h-5 w-5 text-gray-400 group-data-[focus]:text-red-500"
-                        aria-hidden="true"
-                      />
-                      Cerrar Sesión
-                    </button>
-                  </MenuItem>
-                </div>
-              </MenuItems>
-            </Menu>
-          )}
-        </div>
-      </div>
-    </>
-  );
+								<div className="py-1">
+									<MenuItem>
+										<button
+											onClick={handleLogout}
+											className="group flex w-full items-center px-4 py-2 text-sm gap-3 text-gray-700 data-[focus]:bg-red-50 data-[focus]:text-red-700 transition-colors"
+										>
+											<ArrowRightStartOnRectangleIcon
+												className="h-5 w-5 text-gray-400 group-data-[focus]:text-red-500"
+												aria-hidden="true"
+											/>
+											Cerrar Sesión
+										</button>
+									</MenuItem>
+								</div>
+							</MenuItems>
+						</Menu>
+					)}
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default Navbar;

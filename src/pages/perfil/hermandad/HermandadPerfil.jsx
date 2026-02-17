@@ -9,8 +9,6 @@ import HermandadContact from "../../../components/hermandad/HermandadContact";
 import HermandadGallery from "../../../components/hermandad/HermandadGallery";
 import HermandadCortejos from "../../../components/hermandad/HermandadCortejos";
 
-
-
 function HermandadPerfil() {
 	const { brotherhood } = useParams();
 
@@ -97,7 +95,6 @@ function HermandadPerfil() {
 							</section>
 						)}
 					</section>
-
 					<aside className="lg:w-1/3 space-y-6">
 						<div className="sticky top-32 space-y-6">
 							<HermandadContact hermandad={data} />

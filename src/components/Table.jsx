@@ -7,13 +7,13 @@ function Table({ columns, data, entity, onEdit, onDelete }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const handleDeleteClick = (id) => {
-      setSelectedId(id);
-      setOpen(true);
+    setSelectedId(id);
+    setOpen(true);
   }
 
   const handleConfirm = () => {
     if (onDelete && selectedId) {
-        onDelete(selectedId);
+      onDelete(selectedId);
     }
     setOpen(false);
     setSelectedId(null);
@@ -55,13 +55,15 @@ function Table({ columns, data, entity, onEdit, onDelete }) {
                   ))}
                   <td className="border-r border-gray-200 align-middle">
                     <div className="flex justify-center items-center gap-3">
-                      <ArchiveBoxIcon
-                        onClick={() => handleDeleteClick(item.id)}
-                        className="size-5 text-red-600 hover:cursor-pointer hover:scale-110 transition"
-                      />
-                      <PencilSquareIcon 
+                      {onDelete && (
+                        <ArchiveBoxIcon
+                          onClick={() => handleDeleteClick(item.id)}
+                          className="size-5 text-red-600 hover:cursor-pointer hover:scale-110 transition"
+                        />
+                      )}
+                      <PencilSquareIcon
                         onClick={() => onEdit && onEdit(item)}
-                        className="size-5 text-green-600 hover:cursor-pointer hover:scale-110 transition" 
+                        className="size-5 text-green-600 hover:cursor-pointer hover:scale-110 transition"
                       />
                     </div>
                   </td>
