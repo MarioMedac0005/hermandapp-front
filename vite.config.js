@@ -6,7 +6,7 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   build: {
-    outDir: "dist",
+    outDir: "public",
   },
   plugins: [react(), tailwindcss()],
   resolve: {
