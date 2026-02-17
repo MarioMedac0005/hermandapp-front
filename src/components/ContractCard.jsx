@@ -9,6 +9,8 @@ function ContractCard({ contract, onClick, type }) {
     signed_by_band: "bg-purple-50 text-purple-700 border-purple-200",
     signed_by_brotherhood: "bg-purple-50 text-purple-700 border-purple-200",
     completed: "bg-green-50 text-green-700 border-green-200",
+    paid: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    payment_failed: "bg-orange-50 text-orange-700 border-orange-200",
     expired: "bg-gray-50 text-gray-600 border-gray-200",
   };
 
@@ -19,6 +21,8 @@ function ContractCard({ contract, onClick, type }) {
     signed_by_band: "Firmado por Banda",
     signed_by_brotherhood: "Firmado por Hermandad",
     completed: "Completado",
+    paid: "Pagado",
+    payment_failed: "Pago Fallido",
     expired: "Expirado",
   };
 
@@ -28,7 +32,7 @@ function ContractCard({ contract, onClick, type }) {
     : contract.band?.name || "Banda desconocida";
     
   // Subtitle could be the event or procession name if available
-  const subtitle = contract.event_name || contract.procession?.name || "Evento sin nombre";
+  const subtitle = contract.procession?.name || contract.event_name || (contract.performance_type ? contract.performance_type.charAt(0).toUpperCase() + contract.performance_type.slice(1) : "Evento sin nombre");
 
   return (
     <div 
@@ -51,17 +55,17 @@ function ContractCard({ contract, onClick, type }) {
         <div className="flex items-center gap-2">
           <CalendarIcon className="w-4 h-4 text-gray-400" />
           <span>
-            {new Date(contract.date).toLocaleDateString("es-ES", {
+            {contract.performance_date ? new Date(contract.performance_date).toLocaleDateString("es-ES", {
               day: 'numeric',
               month: 'long',
               year: 'numeric'
-            })}
+            }) : "Fecha no indicada"}
           </span>
         </div>
         <div className="flex items-center gap-2">
             <BanknotesIcon className="w-4 h-4 text-gray-400" />
             <span className="font-medium text-gray-900">
-                {parseFloat(contract.amount).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                {contract.amount ? parseFloat(contract.amount).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0,00"} €
             </span>
         </div>
       </div>

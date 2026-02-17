@@ -8,6 +8,7 @@ import { useFetchData } from "../../../hooks/useFetchData";
 import { API_ENDPOINTS } from "../../../config/api";
 import toast from "react-hot-toast";
 import { paymentService } from "../../../services/paymentService";
+import { invoiceService } from "../../../services/invoiceService";
 
 function Contratos() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -24,6 +25,7 @@ function Contratos() {
       if (activeTab === 'all') return true;
       if (activeTab === 'pending_signature') return contract.status === 'signed_by_band';
       if (activeTab === 'to_pay') return contract.status === 'completed';
+      if (activeTab === 'paid') return contract.status === 'paid';
       return true;
   });
 
@@ -64,12 +66,22 @@ function Contratos() {
         toast.error(error.message || "Error al iniciar el pago");
     }
   };
+
+  const handleDownloadInvoice = async (invoiceId) => {
+    const loadingToast = toast.loading('Descargando factura...');
+    try {
+      await invoiceService.downloadInvoice(invoiceId);
+      toast.success('Factura descargada correctamente', { id: loadingToast });
+    } catch (error) {
+      toast.error('Error al descargar la factura', { id: loadingToast });
+    }
+  };
   const renderModalActions = () => {
       if (!selectedContract) return null;
       
-      
       const isReadyToSign = selectedContract.status === 'signed_by_band';
       const isReadyToPay = selectedContract.status === 'completed';
+      const hasInvoice = selectedContract.invoice !== null && selectedContract.invoice !== undefined;
 
       return (
           <>
@@ -99,6 +111,14 @@ function Contratos() {
                     className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
                 >
                     Pagar contrato
+                </button>
+            )}
+            {hasInvoice && (
+                <button
+                    onClick={() => handleDownloadInvoice(selectedContract.invoice.id)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                >
+                    Descargar Factura
                 </button>
             )}
           </>
@@ -144,6 +164,16 @@ function Contratos() {
         >
           Por pagar
         </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
+            activeTab === 'paid'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => setActiveTab('paid')}
+        >
+          Pagados
+        </button>
       </div>
 
       <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
@@ -174,7 +204,8 @@ function Contratos() {
                    {activeTab === 'all' && "No hay contratos disponibles."}
                    {activeTab === 'pending_signature' && "No tienes contratos pendientes de firmar."}
                    {activeTab === 'to_pay' && "No tienes contratos pendientes de pago."}
-               </p>
+                   {activeTab === 'paid' && "No tienes contratos pagados todavía."}
+                </p>
            </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

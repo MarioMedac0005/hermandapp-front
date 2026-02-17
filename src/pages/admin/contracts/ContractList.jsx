@@ -2,13 +2,16 @@ import { useState } from "react";
 import Modal from "@components/Modal";
 import ContractForm from "./ContractForm";
 import Table from "@components/Table";
-import { contractColumns } from "../../../config/tables/contractsColumns";
+import ContractDetailModal from "@components/ContractDetailModal";
+import { EyeIcon } from "@heroicons/react/24/outline";
+import { contractColumns } from "@config/tables/contractsColumns";
 import { useFetchData } from "../../../hooks/useFetchData";
 import { useDeleteEntity } from "../../../hooks/useDeleteEntity";
 import { API_ENDPOINTS } from "../../../config/api";
 
 function ContractList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
 
@@ -25,6 +28,11 @@ function ContractList() {
   const handleEdit = (contract) => {
     setSelectedContract(contract);
     setIsModalOpen(true);
+  };
+
+  const handleView = (contract) => {
+    setSelectedContract(contract);
+    setIsDetailModalOpen(true);
   };
 
   const handleDelete = async (id) => {
@@ -87,6 +95,15 @@ function ContractList() {
         onDelete={handleDelete}
         pagination={pagination}
         onPageChange={setPage}
+        customActions={(item) => (
+            <button
+                onClick={() => handleView(item)}
+                className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
+                title="Ver detalles"
+            >
+                <EyeIcon className="w-5 h-5" />
+            </button>
+        )}
       />
 
       <Modal
@@ -99,6 +116,13 @@ function ContractList() {
             onSuccess={handleSuccess}
         />
       </Modal>
+
+      <ContractDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        contract={selectedContract}
+        isAdmin={true}
+      />
     </div>
   );
 }

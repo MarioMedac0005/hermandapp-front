@@ -31,13 +31,7 @@ const hermandadMenuFinal = [
     items: [
       { name: "Mi Perfil", icon: UserIcon, href: "/hermandad/panel/informacion" },
       { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
-       { name: "Buscar Banda", icon: MagnifyingGlassIcon, href: "/hermandad/panel/buscar-banda" }, // Adding this because it was likely missing or I should include it if it's a key feature.
-       // Actually, strictly following previous file content ensures I don't break/change what wasn't asked.
-       // Previous file content:
-       // { name: "Mi Perfil", icon: UserIcon, href: "/hermandad/panel/informacion" },
-       // { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
-       // imported MagnifyingGlassIcon but didnt use it.
-       // I will add "Buscar Banda" because it makes sense and icon was there.
+       { name: "Buscar Banda", icon: MagnifyingGlassIcon, href: "/busqueda" },
     ]
   }
 ];

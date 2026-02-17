@@ -18,10 +18,14 @@ function ContractForm({ initialData = null, onSuccess }) {
     const error = createError || updateError;
 
     const [form, setForm] = useState({
-        date: "",
+        performance_date: "",
+        performance_type: "procession",
         status: "pending",
         amount: "",
-        description: "",
+        additional_information: "",
+        approximate_route: "",
+        duration: "",
+        minimum_musicians: "",
         band_id: "",
         procession_id: "",
     });
@@ -29,10 +33,14 @@ function ContractForm({ initialData = null, onSuccess }) {
     useEffect(() => {
         if (initialData) {
             setForm({
-                date: initialData.date || "",
+                performance_date: initialData.performance_date || "",
+                performance_type: initialData.performance_type || "procession",
                 status: initialData.status || "pending",
                 amount: initialData.amount || "",
-                description: initialData.description || "",
+                additional_information: initialData.additional_information || "",
+                approximate_route: initialData.approximate_route || "",
+                duration: initialData.duration || "",
+                minimum_musicians: initialData.minimum_musicians || "",
                 band_id: initialData.band_id || "",
                 procession_id: initialData.procession_id || "",
             });
@@ -50,13 +58,19 @@ function ContractForm({ initialData = null, onSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Ensure amount is a number if needed, but strings usually work with API
+        // Ensure numeric fields are numbers if necessary
+        const payload = {
+            ...form,
+            amount: form.amount ? parseFloat(form.amount) : null,
+            duration: form.duration ? parseInt(form.duration) : null,
+            minimum_musicians: form.minimum_musicians ? parseInt(form.minimum_musicians) : null,
+        };
         
         let result;
         if (initialData) {
-            result = await update(`${API_ENDPOINTS.contracts}/${initialData.id}`, form);
+            result = await update(`${API_ENDPOINTS.contracts}/${initialData.id}`, payload);
         } else {
-            result = await create(API_ENDPOINTS.contracts, form);
+            result = await create(API_ENDPOINTS.contracts, payload);
         }
 
         if (result && onSuccess) {
@@ -71,59 +85,108 @@ function ContractForm({ initialData = null, onSuccess }) {
         { id: "signed_by_band", name: "Firmado por Banda" },
         { id: "signed_by_brotherhood", name: "Firmado por Hermandad" },
         { id: "completed", name: "Completado" },
+        { id: "paid", name: "Pagado" },
+        { id: "payment_failed", name: "Pago Fallido" },
         { id: "expired", name: "Expirado" },
+    ];
+
+    const typeOptions = [
+        { id: "procession", name: "Procesión" },
+        { id: "concert", name: "Concierto" },
+        { id: "transfer", name: "Traslado" },
+        { id: "festival", name: "Certamen" },
+        { id: "other", name: "Otro" },
     ];
     
   return (
     <form onSubmit={handleSubmit} className="w-full">
-        <InputField
-          label="Fecha"
-          name="date"
-          type="datetime-local"
-          value={form.date}
-          onChange={handleChange}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField
+              label="Fecha de Actuación"
+              name="performance_date"
+              type="datetime-local"
+              value={form.performance_date}
+              onChange={handleChange}
+            />
 
-        <SelectField
-          label="Estado"
-          options={statusOptions}
-          value={form.status}
-          onChange={(val) => handleSelectChange("status", val)}
-        />
+            <SelectField
+              label="Tipo de Actuación"
+              options={typeOptions}
+              value={form.performance_type}
+              onChange={(val) => handleSelectChange("performance_type", val)}
+            />
 
-        <InputField
-          label="Importe"
-          name="amount"
-          type="number"
-          step="0.01"
-          placeholder="Cantidad"
-          value={form.amount}
-          onChange={handleChange}
-        />
+            <SelectField
+              label="Estado"
+              options={statusOptions}
+              value={form.status}
+              onChange={(val) => handleSelectChange("status", val)}
+            />
 
-        <InputField
-          label="Descripción"
-          name="description"
-          as="textarea"
-          type="text"
-          placeholder="Descripción del contrato"
-          value={form.description}
-          onChange={handleChange} 
-        />
+            <InputField
+              label="Importe"
+              name="amount"
+              type="number"
+              step="0.01"
+              placeholder="Cantidad"
+              value={form.amount}
+              onChange={handleChange}
+            />
 
-        <SelectField
-          label="Banda"
-          options={bands || []} // Usa las bandas reales
-          value={form.band_id}
-          onChange={(val) => handleSelectChange("band_id", val)}
-        />
+            <InputField
+              label="Duración (minutos)"
+              name="duration"
+              type="number"
+              placeholder="Ej: 240"
+              value={form.duration}
+              onChange={handleChange}
+            />
 
-        <SelectField
-          label="Procesión"
-          options={processions || []} // Usa las procesiones reales
-          value={form.procession_id}
-          onChange={(val) => handleSelectChange("procession_id", val)}
-        />
+            <InputField
+              label="Músicos Mínimos"
+              name="minimum_musicians"
+              type="number"
+              placeholder="Ej: 50"
+              value={form.minimum_musicians}
+              onChange={handleChange}
+            />
+
+            <SelectField
+              label="Banda"
+              options={bands || []}
+              value={form.band_id}
+              onChange={(val) => handleSelectChange("band_id", val)}
+            />
+
+            <SelectField
+              label="Procesión"
+              options={processions || []}
+              value={form.procession_id}
+              onChange={(val) => handleSelectChange("procession_id", val)}
+            />
+        </div>
+
+        <div className="mt-4">
+            <InputField
+              label="Recorrido Aproximado"
+              name="approximate_route"
+              as="textarea"
+              placeholder="Detalla el recorrido..."
+              value={form.approximate_route}
+              onChange={handleChange}
+            />
+        </div>
+
+        <div className="mt-4">
+            <InputField
+              label="Información Adicional"
+              name="additional_information"
+              as="textarea"
+              placeholder="Información extra para el contrato"
+              value={form.additional_information}
+              onChange={handleChange} 
+            />
+        </div>
 
       <div className="mt-6 flex justify-end">
         <button

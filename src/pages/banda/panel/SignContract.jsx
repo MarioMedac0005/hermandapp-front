@@ -36,8 +36,10 @@ function SignContract() {
             
             if (contentType && contentType.includes("application/json")) {
                 const data = await response.json();
-                // Backend returns { success: true, pdf_path: "..." }
-                if (data.url) {
+                // Backend returns { success: true, pdf_url: "..." }
+                if (data.pdf_url) {
+                    setPdfUrl(data.pdf_url);
+                } else if (data.url) {
                     setPdfUrl(data.url);
                 } else if (data.pdf_path) {
                     setPdfUrl(data.pdf_path); 

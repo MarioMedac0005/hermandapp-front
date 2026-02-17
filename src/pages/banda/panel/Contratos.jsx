@@ -7,6 +7,7 @@ import Modal from "../../../components/Modal"; // Needed for edit modal
 import { useFetchData } from "../../../hooks/useFetchData";
 import { API_ENDPOINTS } from "../../../config/api";
 import toast from "react-hot-toast";
+import { invoiceService } from "../../../services/invoiceService";
 
 
 function Contratos() {
@@ -24,6 +25,7 @@ function Contratos() {
       if (activeTab === 'all') return true;
       if (activeTab === 'pending') return contract.status === 'pending';
       if (activeTab === 'to_sign') return contract.status === 'accepted';
+      if (activeTab === 'paid') return contract.status === 'paid';
       return true;
   });
 
@@ -45,9 +47,9 @@ function Contratos() {
              setIsDetailModalOpen(false);
 
              if (action === 'accept') {
-                 const pdfPath = resData.data?.pdf_path;
-                 if (pdfPath) {
-                     navigate(`/banda/panel/contratos/${id}/firmar`, { state: { pdf_path: pdfPath } });
+                 const pdfUrl = resData.pdf_url;
+                 if (pdfUrl) {
+                     navigate(`/banda/panel/contratos/${id}/firmar`, { state: { pdf_url: pdfUrl } });
                  } else {
                      toast.error("Ruta del PDF no recibida, no se puede redirigir a la firma.");
                      refetch();
@@ -81,11 +83,22 @@ function Contratos() {
     refetch();
   };
 
+  const handleDownloadInvoice = async (invoiceId) => {
+    const loadingToast = toast.loading('Descargando factura...');
+    try {
+      await invoiceService.downloadInvoice(invoiceId);
+      toast.success('Factura descargada correctamente', { id: loadingToast });
+    } catch (error) {
+      toast.error('Error al descargar la factura', { id: loadingToast });
+    }
+  };
+
   const renderModalActions = () => {
       if (!selectedContract) return null;
       
       const isPending = selectedContract.status === 'pending';
       const isReadyToSign = selectedContract.status === 'accepted'; // Accepted by band, ready to sign
+      const hasInvoice = selectedContract.invoice !== null && selectedContract.invoice !== undefined;
 
       return (
           <>
@@ -115,11 +128,19 @@ function Contratos() {
                 <button
                     onClick={() => {
                         setIsDetailModalOpen(false);
-                        navigate(`/banda/panel/contratos/${selectedContract.id}/firmar`, { state: { pdf_path: selectedContract.pdf_path } });
+                        navigate(`/banda/panel/contratos/${selectedContract.id}/firmar`, { state: { pdf_url: selectedContract.pdf_url } });
                     }}
                     className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
                 >
                     Firmar
+                </button>
+            )}
+            {hasInvoice && (
+                <button
+                    onClick={() => handleDownloadInvoice(selectedContract.invoice.id)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                >
+                    Descargar Factura
                 </button>
             )}
           </>
@@ -165,6 +186,16 @@ function Contratos() {
         >
           Por Firmar
         </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none whitespace-nowrap ${
+            activeTab === 'paid'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => { setActiveTab('paid'); setPage(1); }}
+        >
+          Pagados
+        </button>
       </div>
 
       <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
@@ -193,9 +224,10 @@ function Contratos() {
            <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                <p className="text-gray-500">
                    {activeTab === 'all' && "No hay contratos disponibles."}
-                   {activeTab === 'pending' && "No tienes contratos pendientes."}
-                   {activeTab === 'to_sign' && "No tienes contratos por firmar."}
-               </p>
+                    {activeTab === 'pending' && "No tienes contratos pendientes."}
+                    {activeTab === 'to_sign' && "No tienes contratos por firmar."}
+                    {activeTab === 'paid' && "No hay contratos pagados."}
+                </p>
            </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

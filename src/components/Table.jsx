@@ -52,24 +52,28 @@ function Table({ columns, data, entity, onEdit, onDelete, customActions, paginat
                     {(() => {
                         if (col.type === "status") {
                           const statusColors = {
-                            pending: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-                            rejected: "bg-red-50 text-red-700 border border-red-200",
-                            accepted: "bg-blue-50 text-blue-700 border border-blue-200",
-                            signed_by_band: "bg-purple-50 text-purple-700 border border-purple-200",
-                            signed_by_brotherhood: "bg-purple-50 text-purple-700 border border-purple-200",
-                            completed: "bg-green-50 text-green-700 border border-green-200",
-                            expired: "bg-gray-50 text-gray-600 border border-gray-200",
-                          };
-                          
-                          const statusLabels = {
-                            pending: "Pendiente",
-                            rejected: "Rechazado",
-                            accepted: "Aceptado",
-                            signed_by_band: "Firmado por Banda",
-                            signed_by_brotherhood: "Firmado por Hermandad",
-                            completed: "Completado",
-                            expired: "Expirado",
-                          };
+                             pending: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+                             rejected: "bg-red-50 text-red-700 border border-red-200",
+                             accepted: "bg-blue-50 text-blue-700 border border-blue-200",
+                             signed_by_band: "bg-purple-50 text-purple-700 border border-purple-200",
+                             signed_by_brotherhood: "bg-purple-50 text-purple-700 border border-purple-200",
+                             completed: "bg-green-50 text-green-700 border border-green-200",
+                             paid: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+                             payment_failed: "bg-orange-50 text-orange-700 border border-orange-200",
+                             expired: "bg-gray-50 text-gray-600 border border-gray-200",
+                           };
+                           
+                           const statusLabels = {
+                             pending: "Pendiente",
+                             rejected: "Rechazado",
+                             accepted: "Aceptado",
+                             signed_by_band: "Firmado por Banda",
+                             signed_by_brotherhood: "Firmado por Hermandad",
+                             completed: "Completado",
+                             paid: "Pagado",
+                             payment_failed: "Pago Fallido",
+                             expired: "Expirado",
+                           };
 
                           const value = item[col.key];
                           return (

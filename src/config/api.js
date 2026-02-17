@@ -16,5 +16,6 @@ export const API_ENDPOINTS = {
   forgotPassword: `${API_BASE_URL}/forgot-password`,
   register: `${API_BASE_URL}/register`,
   organizationRequests: `${API_BASE_URL}/organization-requests`,
-  search: `${API_BASE_URL}/search`
+  search: `${API_BASE_URL}/search`,
+  invoices: `${API_BASE_URL}/invoice`
 };

@@ -1,13 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 
 export default function BandaContratarCTA() {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { band } = useParams();
 
-    // Only visible to authenticated users
-    if (!user) return null;
+    // Only visible to authenticated users who manage a brotherhood
+    if (!user || (!user.brotherhood_id && !user.brotherhood)) return null;
 
     return (
         <section className="bg-linear-to-r from-purple-50 to-indigo-50 border border-purple-100 rounded-xl shadow-sm p-6 md:p-8 relative overflow-hidden group">
@@ -24,7 +25,7 @@ export default function BandaContratarCTA() {
                 </div>
 
                 <button
-                    onClick={() => navigate("/hermandades/contratos/crear")}
+                    onClick={() => navigate(`/hermandades/contratos/crear/${band}`)}
                     className="shrink-0 bg-purple-600 text-white hover:bg-purple-700 px-6 py-2.5 rounded-lg font-semibold shadow-md shadow-purple-200 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 cursor-pointer"
                 >
                     <DocumentTextIcon className="size-5" />

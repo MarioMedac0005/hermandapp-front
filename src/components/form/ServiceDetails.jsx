@@ -20,62 +20,74 @@ addLocale('es', {
 	clear: 'Limpiar'
 });
 
-export default function ServiceDetails({ formData, updateField, errors }) {
+export default function ServiceDetails({ formData, updateField, errors, processions = [] }) {
 	const serviceOptions = [
-		{ value: "semana-santa", label: "Semana Santa" },
-		{ value: "gloria", label: "Gloria / Ordinaria" },
-		{ value: "otro", label: "Otro evento" },
+		{ value: "procession", label: "Procesión" },
+		{ value: "concert", label: "Concierto" },
+		{ value: "transfer", label: "Traslado" },
+		{ value: "festival", label: "Certamen" },
+		{ value: "other", label: "Otro" },
 	];
 
-	const momentOptions = [
-		{ value: "mañana", label: "Mañana" },
-		{ value: "tarde", label: "Tarde" },
-		{ value: "noche", label: "Noche" },
-	];
+    const processionOptions = processions.map(p => ({
+        value: p.id,
+        label: p.name
+    }));
 
 	const handleSelectChange = (e) => {
 		const { name, value } = e.target;
 		updateField(name, value);
 	};
 
+    const handleProcessionChange = (e) => {
+        const { value } = e.target;
+        updateField("procession_id", value);
+        
+        const selected = processions.find(p => p.id == value);
+        if (selected && selected.itinerary) {
+             updateField("approximate_route", selected.itinerary);
+        }
+    };
+
 	const handleDateChange = (e) => {
-		updateField("date", e.value);
+		updateField("performance_date", e.value);
 	};
 
 	return (
 		<div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<SelectField
-					label="Tipo de Servicio"
+					label="Tipo de Actuación"
 					placeholder="Selecciona el tipo"
 					options={serviceOptions}
-					name="serviceType"
-					value={formData.serviceType}
+					name="performance_type"
+					value={formData.performance_type}
 					onChange={handleSelectChange}
-					error={errors.serviceType}
+					error={errors.performance_type}
 				/>
 
-				<SelectField
-					label="Momento del Día"
-					placeholder="Selecciona el horario"
-					options={momentOptions}
-					name="moment"
-					value={formData.moment}
-					onChange={handleSelectChange}
-					error={errors.moment}
-				/>
+                {processions.length > 0 && formData.performance_type === 'procession' && (
+                    <SelectField
+                        label="Seleccionar Procesión (Opcional)"
+                        placeholder="Elige una procesión..."
+                        options={processionOptions}
+                        name="procession_id"
+                        value={formData.procession_id}
+                        onChange={handleProcessionChange}
+                        error={errors.procession_id}
+                    />
+                )}
 			</div>
-
 			<div className="flex flex-col gap-6">
 				<div className="text-xs font-black text-base-content/40 uppercase tracking-widest flex items-center gap-2">
 					<div className="w-1.5 h-1.5 rounded-full bg-[#8a01e5]"></div>
 					Selecciona la Fecha del Evento
 				</div>
 
-				<div className={`p-4 sm:p-8 border-2 border-dashed rounded-[2rem] bg-base-50/30 flex flex-col items-center hover:border-[#8a01e5]/30 transition-all duration-500 overflow-hidden ${errors.date ? 'border-error/50 bg-error/5 shadow-[0_0_40px_rgba(255,0,0,0.05)]' : 'border-base-200'}`}>
+				<div className={`p-4 sm:p-8 border-2 border-dashed rounded-[2rem] bg-base-50/30 flex flex-col items-center hover:border-[#8a01e5]/30 transition-all duration-500 overflow-hidden ${errors.performance_date ? 'border-error/50 bg-error/5 shadow-[0_0_40px_rgba(255,0,0,0.05)]' : 'border-base-200'}`}>
 					<div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-base-100">
 						<Calendar
-							value={formData.date}
+							value={formData.performance_date}
 							onChange={handleDateChange}
 							inline
 							showWeek
@@ -84,10 +96,10 @@ export default function ServiceDetails({ formData, updateField, errors }) {
 						/>
 					</div>
 
-					{errors.date && (
+					{errors.performance_date && (
 						<div className="mt-8 animate-in fade-in zoom-in duration-300">
 							<p className="text-xs font-black text-error uppercase tracking-[0.2em] bg-error/10 px-6 py-3 rounded-xl border border-error/20">
-								{errors.date}
+								{errors.performance_date}
 							</p>
 						</div>
 					)}
