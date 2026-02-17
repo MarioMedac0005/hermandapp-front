@@ -4,17 +4,17 @@ export default function BandaGaleria({ media }) {
 	const galeria = getMediaByCategories(media, "gallery");
 
 	return (
-		<section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-			<h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-				<span className="w-1.5 h-8 bg-purple-600 rounded-full"></span>
+		<section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+			<h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+				<span className="w-1 h-6 bg-purple-600 rounded-full"></span>
 				Galería
 			</h2>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
 				{galeria.map(item => (
 					<div 
 						key={item.id} 
-						className="relative aspect-square overflow-hidden rounded-xl shadow-md group cursor-zoom-in"
+						className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in group"
 					>
 						<img
 							src={item.url}

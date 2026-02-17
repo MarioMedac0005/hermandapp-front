@@ -8,7 +8,7 @@ import HermandadHistory from "../../../components/hermandad/HermandadHistory";
 import HermandadContact from "../../../components/hermandad/HermandadContact";
 import HermandadGallery from "../../../components/hermandad/HermandadGallery";
 import HermandadCortejos from "../../../components/hermandad/HermandadCortejos";
-import HermandadBandaCTA from "../../../components/hermandad/HermandadBandaCTA";
+
 
 
 function HermandadPerfil() {
@@ -55,10 +55,10 @@ function HermandadPerfil() {
 	const hasCortejos = processions.length > 0;
 
 	return (
-		<div className="min-h-screen bg-gray-50 pb-20">
+		<div className="min-h-screen bg-gray-50 pb-12">
 			<HermandadHeader hermandad={data} />
 
-			<div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mt-[-4rem]">
+			<div className="sticky top-0 z-30 bg-gray-50/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
 				<HermandadNav
 					hasHistoria
 					hasGaleria={hasGaleria}
@@ -66,10 +66,10 @@ function HermandadPerfil() {
 				/>
 			</div>
 
-			<main className="container mx-auto px-6 py-12 max-w-6xl">
-				<div className="flex flex-col lg:flex-row gap-8">
-					<section className="lg:w-2/3 space-y-16">
-						<div id="historia" className="scroll-mt-32 space-y-8">
+			<main className="container mx-auto px-6 py-6 max-w-6xl">
+				<div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+					<section className="lg:w-2/3 space-y-8">
+						<div id="historia" className="scroll-mt-32 space-y-6">
 							<HermandadStats
 								stats={{
 									foundationYear: data.foundation_year,
@@ -81,29 +81,28 @@ function HermandadPerfil() {
 							<HermandadHistory
 								name={data.name}
 								city={data.city}
-								description={data.description} // Assuming description exists in data if needed by History component, otherwise just name/city as before
+								description={data.description}
 							/>
 						</div>
+
+						{hasGaleria && (
+							<section id="galeria" className="scroll-mt-32">
+								<HermandadGallery media={data.media} />
+							</section>
+						)}
+						
+						{hasCortejos && (
+							<section id="cortejos" className="scroll-mt-32">
+								<HermandadCortejos cortejos={processions} />
+							</section>
+						)}
 					</section>
 
-					<aside className="lg:w-1/3 space-y-8">
-						<HermandadContact hermandad={data} />
-						<HermandadBandaCTA />
+					<aside className="lg:w-1/3 space-y-6">
+						<div className="sticky top-32 space-y-6">
+							<HermandadContact hermandad={data} />
+						</div>
 					</aside>
-				</div>
-
-				<div className="mt-16 space-y-16">
-					{hasGaleria && (
-						<section id="galeria" className="scroll-mt-32">
-							<HermandadGallery media={data.media} />
-						</section>
-					)}
-					
-					{hasCortejos && (
-						<section id="cortejos" className="scroll-mt-32">
-							<HermandadCortejos cortejos={processions} />
-						</section>
-					)}
 				</div>
 			</main>
 		</div>

@@ -2,13 +2,13 @@ export default function HermandadHistory({ name, city, description }) {
     if (!description && !name) return null;
 
     return (
-        <section id="historia" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <span className="w-1.5 h-8 bg-purple-600 rounded-full"></span>
+        <section id="historia" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-1 h-6 bg-purple-600 rounded-full"></span>
                 Nuestra Historia
             </h2>
 
-            <div className="prose prose-lg text-gray-700 max-w-none whitespace-pre-line leading-relaxed">
+            <div className="prose prose-sm md:prose-base text-gray-600 max-w-none whitespace-pre-line leading-relaxed">
                 {description ? (
                     description
                 ) : (

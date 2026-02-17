@@ -6,27 +6,27 @@ export default function BandaHeader({ banda }) {
 	const perfil = getMediaByCategory(banda.media, "profile");
 
 	return (
-		<header className="relative w-full mb-8 md:mb-16 md:h-[50vh] md:min-h-[400px]">
+		<header className="relative w-full mb-12 md:mb-16 md:h-[40vh] md:min-h-[350px] group">
 			{/* Banner Background */}
-			<div className="absolute inset-0 w-full h-full">
+			<div className="absolute inset-0 w-full h-full overflow-hidden rounded-b-3xl">
+				<div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/40 to-transparent z-10" />
 				{banner ? (
 					<img
 						src={banner.url}
-						className="w-full h-full object-cover"
+						className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 						alt="Banner"
 					/>
 				) : (
-					<div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800" />
+					<div className="w-full h-full bg-linear-to-br from-indigo-900 to-purple-900" />
 				)}
-				<div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent" />
 			</div>
 
 			{/* Content */}
-			<div className="relative md:absolute md:inset-0 container mx-auto px-6 max-w-6xl flex flex-col justify-end pb-8 pt-24 md:pt-0 min-h-[400px] md:h-full">
-				<div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 mb-4 md:mb-8 text-center md:text-left">
+			<div className="relative z-20 container mx-auto px-6 max-w-6xl h-full flex flex-col justify-end pb-8 pt-32 md:pt-0">
+				<div className="flex flex-col md:flex-row items-end gap-6">
 					{/* Profile Image */}
-					<div className="relative shrink-0">
-						<div className="w-28 h-28 md:w-48 md:h-48 rounded-2xl bg-white p-2 shadow-2xl relative z-10 overflow-hidden transform transition-transform hover:scale-105 duration-300">
+					<div className="relative shrink-0 -mb-12 md:-mb-16 mx-auto md:mx-0">
+						<div className="w-32 h-32 md:w-44 md:h-44 rounded-2xl bg-white p-2 shadow-2xl ring-1 ring-white/20 overflow-hidden relative z-20">
 							{perfil ? (
 								<img
 									src={perfil.url}
@@ -34,7 +34,7 @@ export default function BandaHeader({ banda }) {
 									alt="Perfil"
 								/>
 							) : (
-								<div className="w-full h-full flex items-center justify-center text-gray-400 text-5xl font-bold bg-gray-50 rounded-xl">
+								<div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl font-bold bg-gray-50 rounded-xl">
 									{banda.name.charAt(0)}
 								</div>
 							)}
@@ -42,24 +42,25 @@ export default function BandaHeader({ banda }) {
 					</div>
 
 					{/* Text Details */}
-					<div className="flex-1 text-white pb-2 flex flex-col items-center md:items-start">
-						<h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-2 md:mb-4 text-shadow-lg leading-tight">
+					<div className="flex-1 text-white pb-1 w-full text-center md:text-left pt-12 md:pt-0">
+						<h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 text-shadow-sm leading-none px-4 md:px-0">
 							{banda.name}
 						</h1>
 						
-						<div className="flex flex-wrap gap-4 text-gray-200 font-medium text-lg justify-center md:justify-start">
-							<p className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-colors">
-								<MapPinIcon className="size-5" />
+						<div className="flex flex-wrap items-center gap-3 text-gray-200 font-medium text-sm md:text-base justify-center md:justify-start">
+							<span className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+								<MapPinIcon className="size-4" />
 								{banda.city}
-							</p>
+							</span>
 
 							{banda.email && (
-								<p className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-colors">
-									<EnvelopeIcon className="size-5" />
-									<a href={`mailto:${banda.email}`} className="hover:text-white transition-colors">
-										{banda.email}
-									</a>
-								</p>
+								<a 
+									href={`mailto:${banda.email}`}
+									className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors"
+								>
+									<EnvelopeIcon className="size-4" />
+									{banda.email}
+								</a>
 							)}
 						</div>
 					</div>

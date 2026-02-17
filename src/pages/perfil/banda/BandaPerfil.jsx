@@ -6,6 +6,7 @@ import BandaNav from "../../../components/banda/BandaNav";
 import BandaInfo from "../../../components/banda/BandaInfo";
 import BandaGaleria from "../../../components/banda/BandaGaleria";
 import BandaDisponibilidad from "../../../components/banda/BandaDisponibilidad";
+import BandaContratarCTA from "../../../components/banda/BandaContratarCTA";
 
 function BandaPerfil() {
 	const { band } = useParams();
@@ -57,17 +58,20 @@ function BandaPerfil() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 pb-20">
+		<div className="min-h-screen bg-gray-50 pb-12">
 			<BandaHeader banda={banda} />
 
-			<div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mt-[-4rem]">
+			<div className="sticky top-0 z-30 bg-gray-50/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
 				<BandaNav
 					hasGaleria={banda.media?.some(m => m.category === "gallery")}
 				/>
 			</div>
 
-			<main className="container mx-auto px-6 py-12 max-w-6xl">
-				<div className="flex flex-col gap-16">
+			<main className="container mx-auto px-6 py-6 max-w-6xl">
+				<div className="flex flex-col gap-8">
+					{/* CTA for Authed Users */}
+					<BandaContratarCTA />
+
 					<section id="historia" className="scroll-mt-32">
 						<BandaInfo banda={banda} />
 					</section>
