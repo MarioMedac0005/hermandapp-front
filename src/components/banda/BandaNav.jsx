@@ -12,14 +12,21 @@ export default function BandaNav({ hasRepertorio, hasGaleria }) {
 	const scrollTo = id => {
 		const section = document.getElementById(id);
 		if (section) {
-			section.scrollIntoView({ behavior: "smooth" });
+			const offset = 100; // Adjust for sticky header
+			const elementPosition = section.getBoundingClientRect().top;
+			const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+			window.scrollTo({
+				top: offsetPosition,
+				behavior: "smooth"
+			});
 			setActive(id);
 		}
 	};
 
 	return (
-		<nav className="mt-8 bg-white rounded-xl shadow-md container mx-auto px-6 max-w-7xl">
-			<div className="py-3 flex gap-x-8 text-gray-700">
+		<nav className="container mx-auto px-6 max-w-6xl py-3">
+			<div className="flex justify-center md:justify-start gap-2 overflow-x-auto no-scrollbar pb-1">
 				<Item
 					icon={NewspaperIcon}
 					text="Historia"
@@ -58,16 +65,16 @@ export default function BandaNav({ hasRepertorio, hasGaleria }) {
 
 function Item({ icon: Icon, text, onClick, active }) {
 	return (
-		<div
+		<button
 			onClick={onClick}
-			className={`flex items-center gap-2 pb-2 cursor-pointer
+			className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap
 			${active
-					? "border-b-2 border-purple-600 text-purple-600"
-					: "hover:text-purple-600"
+					? "bg-purple-600 text-white shadow-md shadow-purple-200"
+					: "bg-white text-gray-500 hover:bg-gray-50 hover:text-purple-600 border border-gray-100"
 				}`}
 		>
-			<Icon className="size-5" />
+			<Icon className="size-4" />
 			<span>{text}</span>
-		</div>
+		</button>
 	);
 }

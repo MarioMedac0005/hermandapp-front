@@ -1,30 +1,30 @@
-export default function HermandadHistory({ name, city }) {
-    if (!name && !city) return null;
+export default function HermandadHistory({ name, city, description }) {
+    if (!description && !name) return null;
 
     return (
-        <section id="historia">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        <section id="historia" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-1 h-6 bg-purple-600 rounded-full"></span>
                 Nuestra Historia
             </h2>
 
-            <div className="text-gray-800 leading-relaxed space-y-4">
-                <p>
-                    La <strong>{name}</strong>, con sede en {city}, es una corporación
-                    religiosa de profunda tradición que forma parte del patrimonio
-                    cultural y devocional de su localidad.
-                </p>
-
-                <p>
-                    A lo largo de los años, la hermandad ha mantenido vivas sus
-                    tradiciones, participando activamente en la vida religiosa y
-                    social de la ciudad, especialmente durante la Semana Santa.
-                </p>
-
-                <p>
-                    Actualmente, la hermandad continúa su labor organizativa y
-                    patrimonial, adaptándose a los nuevos tiempos sin perder su
-                    identidad histórica.
-                </p>
+            <div className="prose prose-sm md:prose-base text-gray-600 max-w-none whitespace-pre-line leading-relaxed">
+                {description ? (
+                    description
+                ) : (
+                    <>
+                        <p>
+                            La <strong>{name}</strong>, con sede en {city}, es una corporación
+                            religiosa de profunda tradición que forma parte del patrimonio
+                            cultural y devocional de su localidad.
+                        </p>
+                        <p>
+                            A lo largo de los años, la hermandad ha mantenido vivas sus
+                            tradiciones, participando activamente en la vida religiosa y
+                            social de la ciudad, especialmente durante la Semana Santa.
+                        </p>
+                    </>
+                )}
             </div>
         </section>
     );

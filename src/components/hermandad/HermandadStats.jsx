@@ -4,25 +4,15 @@ import {
     MapPinIcon,
 } from "@heroicons/react/24/outline";
 
-function Stat({ icon: Icon, label, value }) {
-    return (
-        <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-            <Icon className="w-10 h-10 mx-auto mb-3 text-purple-600" />
-            <p className="text-gray-500 text-sm">{label}</p>
-            <p className="text-2xl font-bold text-purple-600">{value}</p>
-        </div>
-    );
-}
-
 export default function HermandadStats({ stats }) {
     const items = [
         stats.foundationYear && {
-            label: "Año de Fundación",
+            label: "Fundación",
             value: stats.foundationYear,
             icon: CalendarDaysIcon,
         },
         stats.nazarenos && {
-            label: "Nº de Nazarenos",
+            label: "Nazarenos",
             value: stats.nazarenos,
             icon: UserCircleIcon,
         },
@@ -36,10 +26,24 @@ export default function HermandadStats({ stats }) {
     if (!items.length) return null;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6">
             {items.map((item, i) => (
                 <Stat key={i} {...item} />
             ))}
+        </div>
+    );
+}
+
+function Stat({ icon: Icon, label, value }) {
+    return (
+        <div className="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2 transition-all hover:border-purple-200/50 hover:shadow-md">
+            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                <Icon className="size-5 md:size-6" />
+            </div>
+            <div>
+                <p className="text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-0.5">{label}</p>
+                <p className="text-sm md:text-lg font-bold text-gray-900 leading-tight">{value}</p>
+            </div>
         </div>
     );
 }
