@@ -23,6 +23,7 @@ function Contratos() {
   const filteredData = data.filter(contract => {
       if (activeTab === 'all') return true;
       if (activeTab === 'pending_signature') return contract.status === 'signed_by_band';
+      if (activeTab === 'to_pay') return contract.status === 'completed';
       return true;
   });
 
@@ -133,6 +134,16 @@ function Contratos() {
         >
           Pendientes de firmar
         </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
+            activeTab === 'to_pay'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => setActiveTab('to_pay')}
+        >
+          Por pagar
+        </button>
       </div>
 
       <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
@@ -157,12 +168,12 @@ function Contratos() {
         </label>
       </div>
       
-      {filteredData.length === 0 ? (
+          {filteredData.length === 0 ? (
            <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                <p className="text-gray-500">
-                   {activeTab === 'all' 
-                    ? "No hay contratos disponibles." 
-                    : "No tienes contratos pendientes de firmar."}
+                   {activeTab === 'all' && "No hay contratos disponibles."}
+                   {activeTab === 'pending_signature' && "No tienes contratos pendientes de firmar."}
+                   {activeTab === 'to_pay' && "No tienes contratos pendientes de pago."}
                </p>
            </div>
       ) : (

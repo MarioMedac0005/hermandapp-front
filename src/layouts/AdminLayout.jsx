@@ -1,10 +1,12 @@
 import Sidebar from "@components/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useEffect } from "react";
+import { stripeService } from "../services/stripeService";
 
 function AdminLayout({ menuItems, profile: staticProfile, children }) {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, login } = useAuth();
 
   let profile = staticProfile;
 
@@ -31,6 +33,39 @@ function AdminLayout({ menuItems, profile: staticProfile, children }) {
           };
       }
   }
+
+
+  // Check Stripe account status when entering the panel
+  // We use user.band.id as dependency so it runs once when the band is loaded.
+  // We do NOT include 'user' or 'profile' to avoid infinite loops if we update the user object.
+  useEffect(() => {
+    if (user?.band?.id) {
+      const checkStripeStatus = async () => {
+        try {
+          const status = await stripeService.checkAccountStatus();
+          
+          if (status.success && status.onboarding_completed !== user.band.stripe_onboarding_completed) {
+            
+            const updatedUser = {
+              ...user,
+              band: {
+                ...user.band,
+                stripe_onboarding_completed: status.onboarding_completed
+              }
+            };
+            
+            // Updates global state
+            await login(localStorage.getItem('token'), updatedUser);
+          }
+        } catch (error) {
+          console.error("Stripe status check failed", error);
+        }
+      };
+      
+      checkStripeStatus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.band?.id]);
 
   if (location.pathname === '/perfil') {
     return children || <Outlet />;

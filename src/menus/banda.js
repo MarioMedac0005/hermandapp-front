@@ -14,11 +14,7 @@ const menuBanda = [
       { 
         name: "Contratos", 
         icon: DocumentTextIcon, 
-        submenu: [
-            { name: "Todos", href: "/banda/panel/contratos" },
-            { name: "Pendientes", href: "/banda/panel/contratos-pendientes" },
-            { name: "Por Firmar", href: "/banda/panel/contratos-por-firmar" },
-        ]
+        href: "/banda/panel/contratos" 
       },
     ]
   }

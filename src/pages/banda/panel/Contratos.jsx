@@ -8,14 +8,24 @@ import { useFetchData } from "../../../hooks/useFetchData";
 import { API_ENDPOINTS } from "../../../config/api";
 import toast from "react-hot-toast";
 
+
 function Contratos() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'pending', 'to_sign'
   const navigate = useNavigate();
 
   const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
+
+  // Filter contracts based on active tab
+  const filteredData = data.filter(contract => {
+      if (activeTab === 'all') return true;
+      if (activeTab === 'pending') return contract.status === 'pending';
+      if (activeTab === 'to_sign') return contract.status === 'accepted';
+      return true;
+  });
 
   const handleAction = async (id, action) => {
       const loadingToast = toast.loading('Procesando...');
@@ -75,6 +85,7 @@ function Contratos() {
       if (!selectedContract) return null;
       
       const isPending = selectedContract.status === 'pending';
+      const isReadyToSign = selectedContract.status === 'accepted'; // Accepted by band, ready to sign
 
       return (
           <>
@@ -100,12 +111,17 @@ function Contratos() {
                     </button>
                 </>
             )}
-            {/* Edit button always available or logically placed? Based on request: "aceptar rechazar en caso de ser banda" 
-                The user specifically said: "podran salirle los botones de aceptar o rechazar en caso de ser banda y aceptar rechazar y modificar en caso de ser hermandad"
-                So for Band, we only keep Accept/Reject. If I misinterpreted "edit" for Band in previous turn, I will remove it or hide it here based on new instruction.
-                But wait, previous plan had Edit for Band. New request says "aceptar rechazar en caso de ser banda".
-                I will stick to Accept/Reject for Band here as per latest specific instruction.
-            */}
+            {isReadyToSign && (
+                <button
+                    onClick={() => {
+                        setIsDetailModalOpen(false);
+                        navigate(`/banda/panel/contratos/${selectedContract.id}/firmar`, { state: { pdf_path: selectedContract.pdf_path } });
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
+                >
+                    Firmar
+                </button>
+            )}
           </>
       );
   };
@@ -116,6 +132,41 @@ function Contratos() {
   return (
     <div>
       <h1 className="text-2xl font-bold -mt-3 mb-6">Contratos</h1>
+
+      {/* Tabs */}
+      <div className="flex space-x-4 border-b border-gray-200 mb-6 overflow-x-auto">
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none whitespace-nowrap ${
+            activeTab === 'all'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => { setActiveTab('all'); setPage(1); }}
+        >
+          Todos
+        </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none whitespace-nowrap ${
+            activeTab === 'pending'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => { setActiveTab('pending'); setPage(1); }}
+        >
+          Pendientes
+        </button>
+        <button
+          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none whitespace-nowrap ${
+            activeTab === 'to_sign'
+              ? 'border-purple-600 text-purple-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          }`}
+          onClick={() => { setActiveTab('to_sign'); setPage(1); }}
+        >
+          Por Firmar
+        </button>
+      </div>
+
       <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
         <label className="input input-sm">
           <svg
@@ -138,13 +189,17 @@ function Contratos() {
         </label>
       </div>
       
-      {data.length === 0 ? (
+      {filteredData.length === 0 ? (
            <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-               <p className="text-gray-500">No hay contratos disponibles.</p>
+               <p className="text-gray-500">
+                   {activeTab === 'all' && "No hay contratos disponibles."}
+                   {activeTab === 'pending' && "No tienes contratos pendientes."}
+                   {activeTab === 'to_sign' && "No tienes contratos por firmar."}
+               </p>
            </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.map(contract => (
+            {filteredData.map(contract => (
                 <ContractCard 
                     key={contract.id} 
                     contract={contract} 

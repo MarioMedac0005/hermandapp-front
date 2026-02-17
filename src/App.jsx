@@ -50,6 +50,7 @@ import ResetPassword from "@pages/reset_password/ResetPassword";
 import Register from "@pages/register/Register";
 import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 import PaymentSuccess from "@pages/PaymentSuccess";
+import StripeConnectReturn from "@pages/StripeConnectReturn";
 
 
 function App() {
@@ -145,6 +146,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/stripe/complete" element={<StripeConnectReturn />} />
       </Routes>
     </AuthProvider>
   );
