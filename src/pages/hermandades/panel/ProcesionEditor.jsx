@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Map, MapControls, MapMarker, MarkerContent, MarkerPopup, MapRoute } from "@/components/ui/map";
+import { useNavigate, useParams } from "react-router-dom";
+import { Map, MapControls, MapMarker, MarkerContent, MarkerPopup, MapRoute, MarkerLabel } from "@/components/ui/map";
 import { Button } from "@/components/ui/button";
 import {
     Plus, Trash2, Save, MapPin, Route, RotateCcw, X,
@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Modal from "@/components/Modal";
+import { API_ENDPOINTS } from "@/config/api";
+import { toast } from "react-hot-toast";
 
 const POI_ICONS = {
     default: MapPin,
@@ -50,6 +52,29 @@ const getDistance = (point1, point2) => {
     return EARTH_RADIUS * c; // distancia en metros
 };
 
+// Global Snapping Helper (Pixel-based)
+const findSnapPoint = (lng, lat, tramos, map, radiusPx = 20) => {
+    if (!map) return null;
+    const clickPx = map.project([lng, lat]);
+
+    let bestSnap = null;
+    let minPxDist = radiusPx;
+
+    tramos.forEach(tramo => {
+        if (!tramo.visible) return;
+        tramo.coordinates.forEach(coord => {
+            const coordPx = map.project(coord);
+            const dist = Math.sqrt(Math.pow(clickPx.x - coordPx.x, 2) + Math.pow(clickPx.y - coordPx.y, 2));
+            if (dist < minPxDist) {
+                minPxDist = dist;
+                bestSnap = [...coord];
+            }
+        });
+    });
+
+    return bestSnap;
+};
+
 export default function ProcesionEditor() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -76,6 +101,82 @@ export default function ProcesionEditor() {
     const [isSaving, setIsSaving] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isMobileScreen, setIsMobileScreen] = useState(false);
+    const [hasLoaded, setHasLoaded] = useState(false);
+
+    // Procession Metadata (for Settings)
+    const [processionData, setProcessionData] = useState({
+        name: "Procesión de Semana Santa",
+        description: "Recorrido oficial por el centro histórico",
+        date: "2026-03-29"
+    });
+
+    // Local Persistence Key
+    const STORAGE_KEY = `procesion-editor-data-${id}`;
+
+    // Load from API
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${API_ENDPOINTS.processions}/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const p = data.data;
+                    setProcessionData({
+                        name: p.name,
+                        description: p.description || "",
+                        date: p.checkout_time ? p.checkout_time.split(' ')[0] : ""
+                    });
+
+                    if (p.tramos && p.tramos.length > 0) {
+                        setTramos(p.tramos);
+                        setActiveTramoId(p.tramos[0].id);
+                    }
+                    if (p.points) {
+                        setPoints(p.points);
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading procession data", error);
+                toast.error("Error al cargar los datos del servidor. Usando copia local...");
+
+                // Fallback to local storage if API fails
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    if (parsed.tramos) setTramos(parsed.tramos);
+                    if (parsed.points) setPoints(parsed.points);
+                    if (parsed.processionData) setProcessionData(parsed.processionData);
+                    if (parsed.activeTramoId) setActiveTramoId(parsed.activeTramoId);
+                }
+            } finally {
+                setHasLoaded(true);
+            }
+        };
+
+        fetchData();
+    }, [id, STORAGE_KEY]);
+
+    // Save recovery to LocalStorage (as backup)
+    useEffect(() => {
+        if (!hasLoaded) return;
+
+        const dataToSave = {
+            tramos,
+            points,
+            processionData,
+            activeTramoId,
+            mapTheme
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    }, [tramos, points, processionData, activeTramoId, mapTheme, STORAGE_KEY, hasLoaded]);
 
     // Initial responsive check
     useEffect(() => {
@@ -88,13 +189,6 @@ export default function ProcesionEditor() {
         window.addEventListener('resize', checkScreen);
         return () => window.removeEventListener('resize', checkScreen);
     }, []);
-
-    // Procession Metadata (for Settings)
-    const [processionData, setProcessionData] = useState({
-        name: "Procesión de Semana Santa",
-        description: "Recorrido oficial por el centro histórico",
-        date: "2026-03-29"
-    });
 
     // Modal State
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -223,10 +317,38 @@ export default function ProcesionEditor() {
             setSelectedId(newPoint.id);
             setSelectedType('point');
         } else if (activeTool === 'route') {
+            const currentTramo = tramos.find(t => t.id === activeTramoId);
+            if (!currentTramo) return;
+
+            // Check if clicking near the first point to close the loop
+            if (currentTramo.coordinates.length > 2 && mapRef.current) {
+                const firstCoord = currentTramo.coordinates[0];
+
+                // Pixel-based distance calculation
+                const p1 = mapRef.current.project([e.lngLat.lng, e.lngLat.lat]);
+                const p2 = mapRef.current.project(firstCoord);
+                const pixDist = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+
+                // If within 20 pixels, close the route
+                if (pixDist < 20) {
+                    pushToHistory();
+                    setTramos(prev => prev.map(t =>
+                        t.id === activeTramoId
+                            ? { ...t, coordinates: [...t.coordinates, [...firstCoord]] }
+                            : t
+                    ));
+                    return;
+                }
+            }
+
+            // Enhanced Global Snapping
+            const snapCoord = findSnapPoint(e.lngLat.lng, e.lngLat.lat, tramos, mapRef.current);
+            const finalCoord = snapCoord || [e.lngLat.lng, e.lngLat.lat];
+
             pushToHistory();
             setTramos(prev => prev.map(t =>
                 t.id === activeTramoId
-                    ? { ...t, coordinates: [...t.coordinates, [e.lngLat.lng, e.lngLat.lat]] }
+                    ? { ...t, coordinates: [...t.coordinates, finalCoord] }
                     : t
             ));
         }
@@ -246,6 +368,23 @@ export default function ProcesionEditor() {
         setSelectedType(null);
     };
 
+    const handleDragRoutePoint = (tramoId, index, e) => {
+        setTramos(prev => prev.map(t => {
+            if (t.id === tramoId) {
+                const newCoords = [...t.coordinates];
+
+                // Global Snap during drag
+                const snapCoord = findSnapPoint(e.lng, e.lat, tramos, mapRef.current);
+                const finalLngLat = snapCoord ? { lng: snapCoord[0], lat: snapCoord[1] } : e;
+
+                newCoords[index] = [finalLngLat.lng, finalLngLat.lat];
+                return { ...t, coordinates: newCoords };
+            }
+            return t;
+        }));
+        if (!hasUnsavedChanges) setHasUnsavedChanges(true);
+    };
+
     const updatePoint = (id, updates) => {
         pushToHistory();
         setPoints(points.map(p => p.id === id ? { ...p, ...updates } : p));
@@ -258,7 +397,7 @@ export default function ProcesionEditor() {
 
     const addNewTramo = () => {
         pushToHistory();
-        const newId = Math.max(...tramos.map(t => t.id)) + 1;
+        const newId = tramos.length > 0 ? Math.max(...tramos.map(t => t.id)) + 1 : 1;
         const newTramo = {
             id: newId,
             name: `Tramo ${newId}`,
@@ -269,14 +408,62 @@ export default function ProcesionEditor() {
         };
         setTramos([...tramos, newTramo]);
         setActiveTramoId(newId);
+        setSelectedId(newId);
+        setSelectedType('route');
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true);
-        setTimeout(() => {
+        try {
+            const token = localStorage.getItem("token");
+            const payload = {
+                name: processionData.name,
+                description: processionData.description,
+                status: 'published', // Opcional: podrías añadir un interruptor en UI
+                distance: totalDistance / 1000,
+                points_count: points.length,
+                tramos: tramos.map(t => ({
+                    name: t.name,
+                    color: t.color,
+                    width: t.width,
+                    visible: t.visible,
+                    coordinates: t.coordinates
+                })),
+                points: points.map(p => ({
+                    name: p.name,
+                    description: p.description,
+                    lat: p.lat,
+                    lng: p.lng,
+                    url_imagen: p.imageUrl,
+                    icono: p.icon,
+                    color: p.color,
+                    show_label: p.showLabel
+                }))
+            };
+
+            const response = await fetch(`${API_ENDPOINTS.processions}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                toast.success("Cambios guardados correctamente");
+                setHasUnsavedChanges(false);
+            } else {
+                toast.error(data.message || "Error al guardar los cambios");
+            }
+        } catch (error) {
+            console.error("Save error:", error);
+            toast.error("Error de conexión al guardar");
+        } finally {
             setIsSaving(false);
-            setHasUnsavedChanges(false);
-        }, 1000);
+        }
     };
 
     const clearAll = () => {
@@ -444,6 +631,11 @@ export default function ProcesionEditor() {
                             width={tramo.width}
                             opacity={activeTramoId === tramo.id ? 1 : 0.4}
                             onClick={() => { setSelectedId(tramo.id); setSelectedType('route'); setActiveTramoId(tramo.id); }}
+                            onContextMenu={() => {
+                                if (tramo.coordinates.length > 0) {
+                                    deleteRoutePoint(tramo.id, tramo.coordinates.length - 1);
+                                }
+                            }}
                         />
                     ))}
 
@@ -478,22 +670,24 @@ export default function ProcesionEditor() {
                                         <IconComp className="size-3" />
                                     </div>
                                     {point.showLabel && (
-                                        <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm px-1 py-0.5 rounded-md border border-slate-200 shadow-lg text-[8px] font-bold text-slate-800 whitespace-nowrap pointer-events-none uppercase tracking-tight">
+                                        <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm px-1 py-0.5 rounded-md border border-slate-200 shadow-lg text-[8px] font-bold text-slate-800 whitespace-nowrap pointer-events-none uppercase tracking-tight max-w-[80px] truncate">
                                             {point.name}
                                         </div>
                                     )}
                                 </MarkerContent>
                                 <MarkerPopup className="p-0 w-64 overflow-hidden shadow-2xl border-none">
-                                    <div className="relative h-32 overflow-hidden">
-                                        <img
-                                            src={point.imageUrl}
-                                            alt={point.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <div className="absolute top-2 right-2 px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-full text-[8px] font-black uppercase tracking-widest text-slate-900 border border-white shadow-sm">
-                                            {point.category}
+                                    {point.imageUrl && (
+                                        <div className="relative h-32 overflow-hidden">
+                                            <img
+                                                src={point.imageUrl}
+                                                alt={point.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute top-2 right-2 px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-full text-[8px] font-black uppercase tracking-widest text-slate-900 border border-white shadow-sm">
+                                                {point.category}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                     <div className="p-4 space-y-3">
                                         <div>
                                             <div className="flex items-center gap-1.5 mb-1">
@@ -503,8 +697,13 @@ export default function ProcesionEditor() {
                                                 </div>
                                                 <span className="text-[10px] text-slate-400 font-medium">({point.reviews} reseñas)</span>
                                             </div>
-                                            <h3 className="font-black text-slate-900 text-sm leading-tight uppercase tracking-tight">{point.name}</h3>
-                                            <p className="text-[11px] text-slate-500 font-medium leading-relaxed mt-1">{point.description}</p>
+                                            {!point.imageUrl && (
+                                                <div className="inline-block px-2 py-0.5 bg-slate-100 rounded-full text-[8px] font-black uppercase tracking-widest text-slate-500 border border-slate-200 shadow-sm mb-2">
+                                                    {point.category}
+                                                </div>
+                                            )}
+                                            <h3 className="font-black text-slate-900 text-sm leading-tight uppercase tracking-tight truncate">{point.name}</h3>
+                                            <p className="text-[11px] text-slate-500 font-medium leading-relaxed mt-1 line-clamp-3">{point.description}</p>
                                         </div>
 
                                         <div className="flex gap-2 pt-1">
@@ -530,30 +729,86 @@ export default function ProcesionEditor() {
                         );
                     })}
 
-                    {/* ROUTE POINTS (SELECTABLE) */}
-                    {tramos.map(tramo => tramo.visible && tramo.coordinates.map((coord, idx) => (
-                        <MapMarker
-                            key={`route-point-${tramo.id}-${idx}`}
-                            longitude={coord[0]}
-                            latitude={coord[1]}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedId(`route-point-${tramo.id}-${idx}`);
-                                setSelectedType('route-point');
-                                setActiveTramoId(tramo.id);
-                            }}
-                        >
-                            <MarkerContent>
-                                <div className={cn(
-                                    "size-2 rounded-full border-2 shadow-xl transition-all cursor-pointer",
-                                    mapTheme === 'dark' ? "border-white/40" : "border-slate-900/20",
-                                    selectedId === `route-point-${tramo.id}-${idx}`
-                                        ? "bg-red-500 scale-150 rotate-45"
-                                        : (mapTheme === 'dark' ? "bg-white" : "bg-slate-900")
-                                )} />
-                            </MarkerContent>
-                        </MapMarker>
-                    )))}
+                    {/* ROUTE POINTS (SELECTABLE & DRAGGABLE) */}
+                    {tramos.map(tramo => tramo.visible && tramo.coordinates.map((coord, idx) => {
+                        const isFirst = idx === 0;
+                        const isLast = idx === tramo.coordinates.length - 1;
+                        const isClosed = tramo.coordinates.length > 2 &&
+                            tramo.coordinates[0][0] === tramo.coordinates[tramo.coordinates.length - 1][0] &&
+                            tramo.coordinates[0][1] === tramo.coordinates[tramo.coordinates.length - 1][1];
+
+                        return (
+                            <MapMarker
+                                key={`route-point-${tramo.id}-${idx}`}
+                                longitude={coord[0]}
+                                latitude={coord[1]}
+                                draggable={true}
+                                onDragStart={() => pushToHistory()}
+                                onDrag={(e) => handleDragRoutePoint(tramo.id, idx, e)}
+                                onDragEnd={(e) => handleDragRoutePoint(tramo.id, idx, e)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // If Route tool is active, clicking any marker adds its coordinates to join the points
+                                    if (activeTool === 'route') {
+                                        // Case 1: Click first point of ACTIVE tramo -> Close loop
+                                        if (idx === 0 && tramo.id === activeTramoId && tramo.coordinates.length > 2) {
+                                            pushToHistory();
+                                            setTramos(prev => prev.map(t =>
+                                                t.id === tramo.id
+                                                    ? { ...t, coordinates: [...t.coordinates, [...tramo.coordinates[0]]] }
+                                                    : t
+                                            ));
+                                            return;
+                                        }
+
+                                        // Case 2: Click ANY marker (this or another tramo) -> Add coordinate to join
+                                        pushToHistory();
+                                        setTramos(prev => prev.map(t =>
+                                            t.id === activeTramoId
+                                                ? { ...t, coordinates: [...t.coordinates, [coord[0], coord[1]]] }
+                                                : t
+                                        ));
+                                        return;
+                                    }
+
+                                    // Selection logic (only if not drawing)
+                                    setSelectedId(`route-point-${tramo.id}-${idx}`);
+                                    setSelectedType('route-point');
+                                    setActiveTramoId(tramo.id);
+                                }}
+                                onContextMenu={(e) => {
+                                    // e is the event from map.jsx, where preventDefault was already called
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <MarkerContent>
+                                    <div className={cn(
+                                        "size-2 rounded-full border-2 shadow-xl transition-all cursor-pointer",
+                                        mapTheme === 'dark' ? "border-white/40" : "border-slate-900/20",
+                                        selectedId === `route-point-${tramo.id}-${idx}`
+                                            ? "bg-red-500 scale-150 rotate-45"
+                                            : (mapTheme === 'dark' ? "bg-white" : "bg-slate-900")
+                                    )} />
+
+                                    {isFirst && !isClosed && (
+                                        <MarkerLabel position="bottom" className="mt-2 px-1.5 py-0.5 bg-white border border-slate-200 rounded shadow-sm font-bold text-[8px] text-slate-600 uppercase">
+                                            Inicio
+                                        </MarkerLabel>
+                                    )}
+                                    {isLast && !isClosed && tramo.coordinates.length > 1 && (
+                                        <MarkerLabel position="bottom" className="mt-2 px-1.5 py-0.5 bg-white border border-slate-200 rounded shadow-sm font-bold text-[8px] text-slate-600 uppercase">
+                                            Final
+                                        </MarkerLabel>
+                                    )}
+                                    {isFirst && isClosed && idx === 0 && (
+                                        <MarkerLabel position="bottom" className="mt-2 px-1.5 py-0.5 bg-white border border-slate-200 rounded shadow-sm font-bold text-[8px] text-slate-600 uppercase">
+                                            {tramo.name}
+                                        </MarkerLabel>
+                                    )}
+                                </MarkerContent>
+                            </MapMarker>
+                        );
+                    }))}
                 </Map>
             </div>
 
@@ -682,7 +937,17 @@ export default function ProcesionEditor() {
                                                 <input
                                                     className="w-full bg-white border border-slate-100 rounded-xl px-3 py-2 text-[11px] font-bold outline-none transition-all shadow-sm focus:ring-2 focus:ring-purple-100"
                                                     value={p.name}
+                                                    maxLength={40}
                                                     onChange={(e) => updatePoint(p.id, { name: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest pl-1">Descripción</label>
+                                                <input
+                                                    className="w-full bg-white border border-slate-100 rounded-xl px-3 py-2 text-[11px] font-bold outline-none transition-all shadow-sm focus:ring-2 focus:ring-purple-100"
+                                                    value={p.description || ""}
+                                                    maxLength={150}
+                                                    onChange={(e) => updatePoint(p.id, { description: e.target.value })}
                                                 />
                                             </div>
                                             <div className="space-y-1">
@@ -690,6 +955,8 @@ export default function ProcesionEditor() {
                                                 <input
                                                     className="w-full bg-white border border-slate-100 rounded-xl px-3 py-2 text-[11px] font-bold outline-none transition-all shadow-sm focus:ring-2 focus:ring-purple-100"
                                                     value={p.imageUrl}
+                                                    maxLength={500}
+                                                    placeholder="URL de la imagen (deja vacío para no mostrar)"
                                                     onChange={(e) => updatePoint(p.id, { imageUrl: e.target.value })}
                                                 />
                                             </div>
@@ -710,7 +977,7 @@ export default function ProcesionEditor() {
                                                 </div>
                                                 <div className="space-y-1">
                                                     <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest pl-1">Color</label>
-                                                    <div className="flex flex-wrap gap-1 bg-white p-1.5 rounded-xl shadow-sm border border-slate-100 h-full">
+                                                    <div className="flex flex-wrap gap-1 bg-white p-1.5 rounded-xl shadow-sm border border-slate-100">
                                                         {COLORS.map(c => (
                                                             <button
                                                                 key={c}
@@ -725,7 +992,7 @@ export default function ProcesionEditor() {
                                         </div>
                                         <Button
                                             variant="outline"
-                                            className="w-full h-8 text-[10px] text-red-600 border-red-50 hover:bg-red-50 font-bold rounded-xl py-0 transition-all"
+                                            className="w-full h-8 text-[15px] text-red-600 border-red-50 hover:bg-red-50 font-bold rounded-xl py-0 transition-all"
                                             onClick={() => {
                                                 pushToHistory();
                                                 setPoints(points.filter(x => x.id !== p.id));
@@ -733,7 +1000,7 @@ export default function ProcesionEditor() {
                                                 setSelectedType(null);
                                             }}
                                         >
-                                            <Trash2 className="size-3 mr-1" /> Eliminar
+                                            <Trash2 className="size-4 mr-1" />Eliminar
                                         </Button>
                                     </div>
                                 )
@@ -753,6 +1020,7 @@ export default function ProcesionEditor() {
                                             <input
                                                 className="w-full bg-white border border-slate-100 rounded-xl px-3 py-2 text-[11px] font-bold outline-none transition-all shadow-sm focus:ring-2 focus:ring-purple-100"
                                                 value={activeTramo.name}
+                                                maxLength={30}
                                                 onChange={(e) => updateTramo(activeTramo.id, { name: e.target.value })}
                                             />
                                         </div>
@@ -783,45 +1051,19 @@ export default function ProcesionEditor() {
                                         </div>
                                         <Button
                                             variant="outline"
-                                            className="w-full h-8 text-[10px] text-red-600 border-red-50 hover:bg-red-50 font-bold rounded-xl py-0 transition-all"
+                                            className="w-full h-8 text-[15px] text-red-600 border-red-50 hover:bg-red-50 font-bold rounded-xl py-0 transition-all"
                                             onClick={() => {
-                                                if (tramos.length > 1) {
-                                                    pushToHistory();
-                                                    setTramos(tramos.filter(t => t.id !== activeTramo.id));
-                                                    setActiveTramoId(tramos[0].id);
-                                                    setSelectedId(null);
-                                                    setSelectedType(null);
-                                                }
+                                                const newTramos = tramos.filter(t => t.id !== activeTramo.id);
+                                                pushToHistory();
+                                                setTramos(newTramos);
+                                                setActiveTramoId(newTramos.length > 0 ? newTramos[0].id : null);
+                                                setSelectedId(null);
+                                                setSelectedType(null);
                                             }}
-                                            disabled={tramos.length <= 1}
                                         >
-                                            <Trash2 className="size-3 mr-1" /> Eliminar Tramo
+                                            <Trash2 className="size-4 mr-1" /> Eliminar Tramo
                                         </Button>
                                     </div>
-                                </div>
-                            )}
-
-                            {selectedType === 'route-point' && (
-                                <div className="space-y-5 text-center py-4">
-                                    <div className="size-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                                        <Route className="size-8" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <h3 className="font-bold text-slate-900 text-sm italic">Vértice de Ruta</h3>
-                                        <p className="text-[10px] text-slate-500 font-medium px-4 leading-relaxed">
-                                            Elimina este punto de inflexión para simplificar el recorrido.
-                                        </p>
-                                    </div>
-                                    <Button
-                                        variant="destructive"
-                                        className="w-full bg-red-600 hover:bg-red-700 shadow-xl shadow-red-100 font-bold rounded-xl py-2 text-[11px] uppercase tracking-widest"
-                                        onClick={() => {
-                                            const [tId, pIdx] = selectedId.replace('route-point-', '').split('-');
-                                            deleteRoutePoint(parseInt(tId), parseInt(pIdx));
-                                        }}
-                                    >
-                                        ELIMINAR VÉRTICE
-                                    </Button>
                                 </div>
                             )}
                         </div>

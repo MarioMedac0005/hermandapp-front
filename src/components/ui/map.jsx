@@ -295,6 +295,7 @@ function MapMarker({
   onDragStart,
   onDrag,
   onDragEnd,
+  onContextMenu,
   draggable = false,
   ...markerOptions
 }) {
@@ -307,6 +308,7 @@ function MapMarker({
     onDragStart,
     onDrag,
     onDragEnd,
+    onContextMenu,
   });
   callbacksRef.current = {
     onClick,
@@ -315,6 +317,7 @@ function MapMarker({
     onDragStart,
     onDrag,
     onDragEnd,
+    onContextMenu,
   };
 
   const marker = useMemo(() => {
@@ -330,6 +333,10 @@ function MapMarker({
     const handleMouseLeave = (e) =>
       callbacksRef.current.onMouseLeave?.(e);
 
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      callbacksRef.current.onContextMenu?.(e);
+    };
     markerInstance.getElement()?.addEventListener("click", handleClick);
     markerInstance
       .getElement()
@@ -337,6 +344,9 @@ function MapMarker({
     markerInstance
       .getElement()
       ?.addEventListener("mouseleave", handleMouseLeave);
+    markerInstance
+      .getElement()
+      ?.addEventListener("contextmenu", handleContextMenu);
 
     const handleDragStart = () => {
       const lngLat = markerInstance.getLngLat();
@@ -867,6 +877,7 @@ function MapRoute({
   onClick,
   onMouseEnter,
   onMouseLeave,
+  onContextMenu,
   interactive = true
 }) {
   const { map, isLoaded } = useMap();
@@ -953,14 +964,20 @@ function MapRoute({
       onMouseLeave?.();
     };
 
+    const handleContextMenu = (e) => {
+      e.originalEvent?.preventDefault();
+      onContextMenu?.(e);
+    };
     map.on("click", layerId, handleClick);
     map.on("mouseenter", layerId, handleMouseEnter);
     map.on("mouseleave", layerId, handleMouseLeave);
+    map.on("contextmenu", layerId, handleContextMenu);
 
     return () => {
       map.off("click", layerId, handleClick);
       map.off("mouseenter", layerId, handleMouseEnter);
       map.off("mouseleave", layerId, handleMouseLeave);
+      map.off("contextmenu", layerId, handleContextMenu);
     };
   }, [
     isLoaded,

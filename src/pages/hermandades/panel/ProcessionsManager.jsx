@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { API_ENDPOINTS } from "@/config/api";
+import { toast } from "react-hot-toast";
 import {
     Plus, Search, Map as MapIcon, Calendar, Clock,
     MoreVertical, Edit2, Trash2, Eye, MapPin, X, ChevronRight
@@ -7,52 +10,101 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// Mock data for initial implementation
-const MOCK_PROCESSIONS = [
-    {
-        id: 1,
-        name: "La Madrugá 2024",
-        hermandad: "Hermandad de la Macarena",
-        date: "2024-03-29",
-        status: "published",
-        distance: "4.2 km",
-        pointsCount: 12,
-        previewUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuDmD5r5PRa3dfw51hvkrlLXrkmbeo6P6ahCf88Aa2HfmqCqVNSITtJ8zqcVDUvvs-icTeeuUpOU45LBrYE9rueCuitloqIu5jSc8GyvMw6iVA_f1ZlWDs8FMHmb5HbSUsyNepQyjvypJt9u-k7HwrDVB_B8psEwfv3vUC5lkUR_nEJtJKFFJ15xOUfzl7DjmvEWezKSkr9uyR4v3GL-Zon9TIPXkzuGU5VaG_wNF1YmzUPON3UJNsJtmcc0Kik9pH-okeTQC3NQfvM"
-    },
-    {
-        id: 2,
-        name: "Salida Extraordinaria",
-        hermandad: "Hermandad de la Macarena",
-        date: "2024-10-12",
-        status: "draft",
-        distance: "2.8 km",
-        pointsCount: 5,
-        previewUrl: null
-    }
-];
+// Initial data for loading state only
+const MOCK_PROCESSIONS = [];
 
 export default function ProcessionsManager() {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
-    const [processions, setProcessions] = useState(MOCK_PROCESSIONS);
+    const [processions, setProcessions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showWizard, setShowWizard] = useState(false);
-    const [newProcession, setNewProcession] = useState({ name: "", date: "", type: "Ordinaria" });
+    const [newProcession, setNewProcession] = useState({ name: "", date: "", type: "christ" });
+
+    useEffect(() => {
+        fetchProcessions();
+    }, []);
+
+    const fetchProcessions = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(API_ENDPOINTS.processions, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                setProcessions(data.data);
+            }
+        } catch (error) {
+            console.error("Error fetching processions:", error);
+            toast.error("Error al cargar las procesiones");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredProcessions = processions.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm("¿Seguro que quieres eliminar esta procesión?")) {
-            setProcessions(processions.filter(p => p.id !== id));
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${API_ENDPOINTS.processions}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    setProcessions(prev => prev.filter(p => p.id !== id));
+                    toast.success("Procesión eliminada");
+                }
+            } catch (error) {
+                toast.error("Error al eliminar la procesión");
+            }
         }
     };
 
-    const handleCreate = (e) => {
+    const handleCreate = async (e) => {
         e.preventDefault();
-        // In a real app, this would be a POST request. 
-        // For now, we'll navigate to the editor with these initial details.
-        navigate("/hermandad/panel/crear-procesion", { state: newProcession });
+        try {
+            const token = localStorage.getItem("token");
+            const payload = {
+                ...newProcession,
+                brotherhood_id: user?.brotherhood_id || user?.brotherhood?.id,
+                itinerary: "Trazado en mapa",
+                checkout_time: `${newProcession.date} 00:00:00`,
+                checkin_time: `${newProcession.date} 23:59:59`
+            };
+
+            const response = await fetch(API_ENDPOINTS.processions, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                toast.success("Procesión creada. Abriendo editor...");
+                navigate(`/hermandad/panel/editar-procesion/${data.data.id}`);
+            } else {
+                toast.error(data.message || "Error al crear la procesión");
+            }
+        } catch (error) {
+            toast.error("Error de conexión");
+        }
     };
 
     return (
@@ -124,10 +176,8 @@ export default function ProcessionsManager() {
                                             value={newProcession.type}
                                             onChange={(e) => setNewProcession({ ...newProcession, type: e.target.value })}
                                         >
-                                            <option>Ordinaria</option>
-                                            <option>Extraordinaria</option>
-                                            <option>Vía Crucis</option>
-                                            <option>Rosario de la Aurora</option>
+                                            <option value="christ">Paso de Cristo</option>
+                                            <option value="virgin">Paso de Palio</option>
                                         </select>
                                     </div>
                                 </div>

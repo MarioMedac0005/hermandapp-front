@@ -53,6 +53,7 @@ import Register from "@pages/register/Register";
 import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 import PaymentSuccess from "@pages/PaymentSuccess";
 import StripeConnectReturn from "@pages/StripeConnectReturn";
+import ProcessionView from "@pages/perfil/hermandad/ProcessionView";
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
           <Route path="politica-privacidad" element={<Privacidad />} />
           <Route path="politica-cookies" element={<Cookies />} />
           <Route path="payment-success" element={<PaymentSuccess />} />
+          <Route path="procesion/:id" element={<ProcessionView />} />
         </Route>
         {/* Ruta para el panel de administracion de las hermandades */}
         <Route
