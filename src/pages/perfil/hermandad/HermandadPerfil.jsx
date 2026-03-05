@@ -9,6 +9,8 @@ import HermandadContact from "../../../components/hermandad/HermandadContact";
 import HermandadGallery from "../../../components/hermandad/HermandadGallery";
 import HermandadCortejos from "../../../components/hermandad/HermandadCortejos";
 
+import { API_ENDPOINTS } from "@/config/api";
+
 function HermandadPerfil() {
 	const { brotherhood } = useParams();
 
@@ -24,19 +26,29 @@ function HermandadPerfil() {
 		}
 
 		Promise.all([
-			fetch(`https://daw23.arenadaw.com.es/api/brotherhoods/${brotherhood}`)
+			fetch(`${API_ENDPOINTS.brotherhoods}/${brotherhood}`)
 				.then(r => r.json()),
-			fetch(`https://daw23.arenadaw.com.es/api/processions`)
+			fetch(`${API_ENDPOINTS.processions}?brotherhood_id=${brotherhood}&status=published`)
 				.then(r => r.json()),
 		])
 			.then(([brotherhoodRes, processionsRes]) => {
 				setData(brotherhoodRes.data);
+				// Filter out past processions (maintain same logic as HermandadCortejos)
+				const upcoming = (processionsRes.data || []).filter(c => {
+					const raw = c.checkout_time ?? c.date;
+					if (!raw) return false;
+					const normalized = raw.includes(" ") ? raw.replace(" ", "T") : raw;
+					const parsed = new Date(normalized);
+					if (Number.isNaN(parsed.getTime())) return false;
 
-				const filtered = processionsRes.data.filter(
-					p => p.brotherhood_id === Number(brotherhood)
-				);
+					const today = new Date();
+					today.setHours(0, 0, 0, 0);
+					const checkoutDay = new Date(parsed);
+					checkoutDay.setHours(0, 0, 0, 0);
 
-				setProcessions(filtered);
+					return checkoutDay >= today;
+				});
+				setProcessions(upcoming);
 			})
 			.catch(err => {
 				console.error(err);
@@ -50,7 +62,7 @@ function HermandadPerfil() {
 	if (!data) return <div className="p-6">Hermandad no encontrada</div>;
 
 	const hasGaleria = data.media?.some(m => m.category === "gallery");
-	const hasCortejos = processions.length > 0;
+	const hasProcesiones = processions.length > 0;
 
 	return (
 		<div className="min-h-screen bg-gray-50 pb-12">
@@ -60,7 +72,7 @@ function HermandadPerfil() {
 				<HermandadNav
 					hasHistoria
 					hasGaleria={hasGaleria}
-					hasCortejos={hasCortejos}
+					hasProcesiones={hasProcesiones}
 				/>
 			</div>
 
@@ -88,10 +100,17 @@ function HermandadPerfil() {
 								<HermandadGallery media={data.media} />
 							</section>
 						)}
-						
-						{hasCortejos && (
-							<section id="cortejos" className="scroll-mt-32">
+
+						{hasProcesiones ? (
+							<section id="procesiones" className="scroll-mt-32">
 								<HermandadCortejos cortejos={processions} />
+							</section>
+						) : (
+							<section id="procesiones" className="scroll-mt-32">
+								<div className="bg-white rounded-3xl p-12 text-center border border-gray-200/50 shadow-sm">
+									<h3 className="text-lg font-bold text-gray-900 mb-1">No hay procesiones disponibles</h3>
+									<p className="text-gray-500 text-sm max-w-xs mx-auto">Esta hermandad aún no ha publicado recorridos de sus procesiones.</p>
+								</div>
 							</section>
 						)}
 					</section>

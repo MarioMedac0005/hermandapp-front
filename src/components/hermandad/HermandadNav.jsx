@@ -8,7 +8,7 @@ import {
 export default function HermandadNav({
 	hasHistoria,
 	hasGaleria,
-	hasCortejos,
+	hasProcesiones,
 }) {
 	const [active, setActive] = useState("historia");
 
@@ -48,12 +48,12 @@ export default function HermandadNav({
 					/>
 				)}
 
-				{hasCortejos && (
+				{hasProcesiones && (
 					<Item
 						icon={UserGroupIcon}
-						text="Cortejos"
-						active={active === "cortejos"}
-						onClick={() => scrollTo("cortejos")}
+						text="Procesiones"
+						active={active === "procesiones"}
+						onClick={() => scrollTo("procesiones")}
 					/>
 				)}
 			</div>

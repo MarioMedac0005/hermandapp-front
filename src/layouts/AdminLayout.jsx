@@ -74,7 +74,7 @@ function AdminLayout({ menuItems, profile: staticProfile, children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row overflow-hidden">
+    <div className="h-screen bg-gray-50 flex flex-col md:flex-row overflow-hidden relative">
       <Sidebar menuItems={menuItems} profile={profile} />
 
       <main
