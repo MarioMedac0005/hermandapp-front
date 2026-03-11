@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
   profile: `${API_BASE_URL}/me`,
   gestores: `${API_BASE_URL}/gestores`,
   resetPassword: `${API_BASE_URL}/reset-password`,
-  forgotPassword: `${API_BASE_URL}/forgot-password`,
+  forgotPassword: `${API_BASE_URL}/password/forgot`,
   register: `${API_BASE_URL}/register`,
   organizationRequests: `${API_BASE_URL}/organization-requests`,
   search: `${API_BASE_URL}/search`,
