@@ -1,17 +1,44 @@
-import { useState } from "react";
+import { API_ENDPOINTS } from "@/config/api";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const useProfileForm = () => {
     const [personalInfo, setPersonalInfo] = useState({
-        nombre: "Juan",
-        apellidos: "García Pérez",
-        email: "juan.garcia@example.com",
-        telefono: "600123456",
-        ciudad: "Sevilla",
-        fechaNacimiento: "1990-05-15",
+        nombre: "",
+        apellidos: "",
+        email: "",
     });
 
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
     const [touched, setTouched] = useState({});
+
+    useEffect(() => {
+        const getUserDetails = async () => {
+            try {
+                setLoading(true)
+                const response = await fetch(API_ENDPOINTS.profile, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`  
+                    }
+                })
+                const { data: { name, surname, email } } = await response.json()
+
+                setPersonalInfo(prev => ({
+                    ...prev,
+                    nombre: name,
+                    apellidos: surname,
+                    email: email
+                }))
+            } catch (error) {
+                toast.error(error?.message || 'Error al obtener los datos del usuario')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        getUserDetails()
+    }, [])
 
     const validateField = (name, value) => {
         let error = "";
@@ -23,23 +50,6 @@ export const useProfileForm = () => {
                 if (!value) error = "Este campo es obligatorio";
                 else if (value.length < 2) error = "Mínimo 2 caracteres";
                 else if (!nameRegex.test(value)) error = "Solo se permiten letras";
-                break;
-            case "telefono":
-                if (value && (!/^\d+$/.test(value) || value.length < 9)) {
-                    error = "Mínimo 9 dígitos numéricos";
-                }
-                break;
-            case "ciudad":
-                if (value && (!nameRegex.test(value) || value.length > 50)) {
-                    error = "Solo letras, máximo 50 caracteres";
-                }
-                break;
-            case "fechaNacimiento":
-                if (value) {
-                    const selectedDate = new Date(value);
-                    const today = new Date();
-                    if (selectedDate > today) error = "La fecha no puede ser futura";
-                }
                 break;
             default:
                 break;
@@ -74,6 +84,7 @@ export const useProfileForm = () => {
         touched,
         handleInputChange,
         handleBlur,
-        getInputClass
+        getInputClass,
+        loading
     };
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { UserIcon, IdentificationIcon, EnvelopeIcon, PhoneIcon, MapPinIcon, CalendarIcon } from "@heroicons/react/24/outline";
+import { UserIcon, IdentificationIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
 const PersonalInfoSection = ({
     personalInfo,
@@ -16,12 +16,12 @@ const PersonalInfoSection = ({
                     <UserIcon className="w-6 h-6 text-purple-600" />
                     Datos Personales
                 </h2>
-                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg active:scale-95 font-medium">
+                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg active:scale-95 font-medium cursor-pointer">
                     Editar Perfil
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
                 {/* Nombre */}
                 <div className="space-y-1">
                     <label className="block text-sm font-medium text-gray-700">Nombre</label>
@@ -73,60 +73,6 @@ const PersonalInfoSection = ({
                             className={`${getInputClass("email")} bg-gray-50 cursor-not-allowed opacity-75`}
                         />
                     </div>
-                </div>
-
-                {/* Teléfono */}
-                <div className="space-y-1">
-                    <label className="block text-sm font-medium text-gray-700">Teléfono</label>
-                    <div className="relative">
-                        <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                            type="tel"
-                            name="telefono"
-                            placeholder="Ej. 600000000"
-                            value={personalInfo.telefono}
-                            onChange={handleInputChange}
-                            onBlur={handleBlur}
-                            className={getInputClass("telefono")}
-                        />
-                    </div>
-                    {touched.telefono && errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
-                </div>
-
-                {/* Ciudad */}
-                <div className="space-y-1">
-                    <label className="block text-sm font-medium text-gray-700">Ciudad</label>
-                    <div className="relative">
-                        <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                            type="text"
-                            name="ciudad"
-                            placeholder="Ej. Sevilla"
-                            value={personalInfo.ciudad}
-                            onChange={handleInputChange}
-                            onBlur={handleBlur}
-                            className={getInputClass("ciudad")}
-                        />
-                    </div>
-                    {touched.ciudad && errors.ciudad && <p className="text-red-500 text-xs mt-1">{errors.ciudad}</p>}
-                </div>
-
-                {/* Fecha Nacimiento */}
-                <div className="space-y-1">
-                    <label className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
-                    <div className="relative">
-                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                            type="date"
-                            name="fechaNacimiento"
-                            placeholder="dd/mm/aaaa"
-                            value={personalInfo.fechaNacimiento}
-                            onChange={handleInputChange}
-                            onBlur={handleBlur}
-                            className={getInputClass("fechaNacimiento")}
-                        />
-                    </div>
-                    {touched.fechaNacimiento && errors.fechaNacimiento && <p className="text-red-500 text-xs mt-1">{errors.fechaNacimiento}</p>}
                 </div>
             </div>
         </section>

@@ -12,40 +12,46 @@ import SecuritySection from "../../components/perfilUsuario/SecuritySection";
 import ProfileAnimations from "../../components/perfilUsuario/ProfileAnimations";
 
 const PerfilUsuario = () => {
-    const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState("personal");
 
+  const profileForm = useProfileForm();
+  const { loading } = profileForm;
+  const passwordChange = usePasswordChange();
 
-    const profileForm = useProfileForm();
-    const passwordChange = usePasswordChange();
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 mb-6 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 group"
+        >
+          <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          Volver al inicio
+        </Link>
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8">
-                <Link to="/" className="inline-flex items-center gap-2 mb-6 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 group">
-                    <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                    Volver al inicio
-                </Link>
+        <div className="space-y-8">
+          <ProfileHeader />
+          <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-                <div className="space-y-8">
-                    <ProfileHeader />
-                    <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-                    <div className="grid grid-cols-1 gap-8">
-                        {activeTab === "personal" && (
-                            <PersonalInfoSection {...profileForm} />
-                        )}
-
-                        {activeTab === "account" && (
-                            <SecuritySection {...passwordChange} />
-                        )}
-                    </div>
+          <div className="grid grid-cols-1 gap-8">
+            {activeTab === "personal" &&
+              (loading ? (
+                <div className="flex justify-center py-10">
+                  <div className="w-6 h-6 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-                <ProfileAnimations />
-            </main>
-            <Footer />
+              ) : (
+                <PersonalInfoSection {...profileForm} />
+              ))}
+
+            {activeTab === "account" && <SecuritySection {...passwordChange} />}
+          </div>
         </div>
-    );
+        <ProfileAnimations />
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default PerfilUsuario;
