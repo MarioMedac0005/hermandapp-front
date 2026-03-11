@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { API_ENDPOINTS } from "../../config/api";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -96,22 +98,28 @@ export default function ResetPassword() {
   // Enlace inválido (faltan parámetros)
   if (!tokenParam || !emailParam) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center space-y-4">
-          <p className="text-red-600 font-medium">Enlace inválido o expirado.</p>
-          <Link
-            to="/login"
-            className="inline-block text-sm text-[#8a01e5] hover:underline"
-          >
-            Volver al inicio de sesión
-          </Link>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center space-y-4">
+            <p className="text-red-600 font-medium">Enlace inválido o expirado.</p>
+            <Link
+              to="/login"
+              className="inline-block text-sm text-[#8a01e5] hover:underline"
+            >
+              Volver al inicio de sesión
+            </Link>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
 
         {/* Cabecera */}
@@ -183,6 +191,8 @@ export default function ResetPassword() {
         </div>
 
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }
