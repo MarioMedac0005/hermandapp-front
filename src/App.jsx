@@ -43,6 +43,7 @@ import Cookies from "@pages/legal/Cookies";
 import ScrollToTop from "@components/ScrollToTop";
 import ProcesionEditor from "@pages/hermandades/panel/ProcesionEditor";
 import ProcessionsManager from "@pages/hermandades/panel/ProcessionsManager";
+import Repertorio from "@pages/banda/panel/Repertorio";
 
 import { Toaster } from 'react-hot-toast';
 
@@ -116,6 +117,7 @@ function App() {
           <Route path="contratos-por-firmar" element={<ContractsToSign />} />
           <Route path="contratos/:id/firmar" element={<SignContract />} />
           <Route path="disponibilidad" element={<DisponibilidadBanda />} />
+          <Route path="repertorio" element={<Repertorio />} />
         </Route>
 
         {/* Rutas para el panel de administracion nuestro */}
