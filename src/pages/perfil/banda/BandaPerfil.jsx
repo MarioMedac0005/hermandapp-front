@@ -7,12 +7,15 @@ import BandaInfo from "../../../components/banda/BandaInfo";
 import BandaGaleria from "../../../components/banda/BandaGaleria";
 import BandaDisponibilidad from "../../../components/banda/BandaDisponibilidad";
 import BandaContratarCTA from "../../../components/banda/BandaContratarCTA";
+import BandaRepertorio from "../../../components/banda/BandaRepertorio";
+import { API_ENDPOINTS } from "../../../config/api";
 
 function BandaPerfil() {
 	const { band } = useParams();
 
 	const [banda, setBanda] = useState(null);
 	const [bookedDates, setBookedDates] = useState([]);
+	const [repertoire, setRepertoire] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
@@ -20,8 +23,8 @@ function BandaPerfil() {
 		async function fetchBand() {
 			try {
 				const [bandResponse, datesResponse] = await Promise.all([
-					fetch(`https://daw23.arenadaw.com.es/api/bands/${band}`),
-					fetch(`https://daw23.arenadaw.com.es/api/bands/${band}/booked-dates`)
+					fetch(`${API_ENDPOINTS.bands}/${band}`),
+					fetch(`${API_ENDPOINTS.bands}/${band}/booked-dates`)
 				]);
 
 				if (!bandResponse.ok) {
@@ -29,7 +32,10 @@ function BandaPerfil() {
 				}
 
 				const bandJson = await bandResponse.json();
-				setBanda(bandJson.data);
+				const bandData = bandJson.data;
+
+				setBanda(bandData);
+				setRepertoire(bandData.songs || []);
 
 				if (datesResponse.ok) {
 					const datesJson = await datesResponse.json();
@@ -38,6 +44,7 @@ function BandaPerfil() {
 						setBookedDates(dates);
 					}
 				}
+
 			} catch (err) {
 				console.error(err);
 				setError("No se pudo cargar la banda");
@@ -63,6 +70,7 @@ function BandaPerfil() {
 
 			<div className="sticky top-0 z-30 bg-gray-50/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
 				<BandaNav
+					hasRepertorio={repertoire.length > 0}
 					hasGaleria={banda.media?.some(m => m.category === "gallery")}
 				/>
 			</div>
@@ -73,6 +81,10 @@ function BandaPerfil() {
 
 					<section id="historia" className="scroll-mt-32">
 						<BandaInfo banda={banda} />
+					</section>
+
+					<section id="repertorio" className="scroll-mt-32">
+						<BandaRepertorio songs={repertoire} />
 					</section>
 
 					{banda.media?.some(m => m.category === "gallery") && (

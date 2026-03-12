@@ -1,4 +1,4 @@
-import { DocumentTextIcon, UserIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon, UserIcon, MusicalNoteIcon } from "@heroicons/react/24/outline";
 
 const menuBanda = [
   {
@@ -16,6 +16,11 @@ const menuBanda = [
         icon: DocumentTextIcon, 
         href: "/banda/panel/contratos" 
       },
+      {
+        name: "Repertorio",
+        icon: MusicalNoteIcon,
+        href: "/banda/panel/repertorio"
+      }
     ]
   }
 ];
