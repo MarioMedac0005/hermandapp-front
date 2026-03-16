@@ -55,6 +55,7 @@ import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 import PaymentSuccess from "@pages/PaymentSuccess";
 import StripeConnectReturn from "@pages/StripeConnectReturn";
 import ProcessionView from "@pages/perfil/hermandad/ProcessionView";
+import Galeria from "./pages/hermandades/panel/Galeria";
 
 
 function App() {
@@ -100,6 +101,7 @@ function App() {
           <Route path="procesiones" element={<ProcessionsManager />} />
           <Route path="crear-procesion" element={<ProcesionEditor />} />
           <Route path="editar-procesion/:id" element={<ProcesionEditor />} />
+          <Route path="galeria" element={<Galeria />} />
         </Route>
 
         {/* Rutas para el panel de administracion de la banda */}

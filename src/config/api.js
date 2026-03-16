@@ -18,5 +18,6 @@ export const API_ENDPOINTS = {
   organizationRequests: `${API_BASE_URL}/organization-requests`,
   search: `${API_BASE_URL}/search`,
   invoices: `${API_BASE_URL}/invoice`,
-  repertoire: `${API_BASE_URL}/repertoire`
+  repertoire: `${API_BASE_URL}/repertoire`,
+  media: `${API_BASE_URL}/media`
 };

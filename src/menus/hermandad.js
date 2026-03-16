@@ -1,8 +1,8 @@
 import {
-  MagnifyingGlassIcon,
   UserIcon,
   MapIcon,
   DocumentTextIcon,
+  PhotoIcon,
 } from "@heroicons/react/24/outline";
 
 const hermandadMenu = [
@@ -12,7 +12,7 @@ const hermandadMenu = [
       { name: "Mi Perfil", icon: UserIcon, href: "/hermandad/panel/informacion" },
       { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
       { name: "Procesiones", icon: MapIcon, href: "/hermandad/panel/procesiones" },
-      { name: "Buscar Banda", icon: MagnifyingGlassIcon, href: "/busqueda" },
+      { name: "Galeria", icon: PhotoIcon, href: "/hermandad/panel/galeria" },
     ]
   }
 ];
