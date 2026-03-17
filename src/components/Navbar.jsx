@@ -4,6 +4,7 @@ import { useAuth } from "@contexts/AuthContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
 	UserIcon,
+	ArrowRightEndOnRectangleIcon,
 	ArrowRightStartOnRectangleIcon,
 	CommandLineIcon,
 	ChevronDownIcon,
@@ -11,6 +12,7 @@ import {
 	UserGroupIcon,
 	Bars3Icon,
 } from "@heroicons/react/24/outline";
+
 
 export default function Navbar() {
 	const { user, loading, logout } = useAuth();
@@ -38,17 +40,17 @@ export default function Navbar() {
 				<div className="drawer md:hidden">
 					<input id="main-drawer" type="checkbox" className="drawer-toggle" />
 
-					<div className="drawer-content flex items-center justify-between h-20 px-4">
-						<Link to="/" className="shrink-0 transition-transform active:scale-95">
-							<img src={Logo} alt="HermandApp" className="h-8 w-auto mix-blend-multiply" />
-						</Link>
-
+					<div className="drawer-content flex items-center h-20 px-4 gap-3">
 						<label
 							htmlFor="main-drawer"
-							className="p-2 -mr-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full cursor-pointer transition-colors"
+							className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full cursor-pointer transition-colors"
 						>
 							<Bars3Icon className="h-7 w-7 stroke-[1.5px]" />
 						</label>
+
+						<Link to="/" className="shrink-0 transition-transform active:scale-95">
+							<img src={Logo} alt="HermandApp" className="h-8 w-auto mix-blend-multiply" />
+						</Link>
 					</div>
 
 					<div className="drawer-side z-60">
@@ -82,7 +84,7 @@ export default function Navbar() {
 											to="/login"
 											className="flex items-center gap-3 py-3.5 px-4 text-gray-600 hover:bg-gray-50 hover:text-[#8a01e5] rounded-xl font-medium transition-colors"
 										>
-											<ArrowRightStartOnRectangleIcon className="h-5 w-5" />
+											<ArrowRightEndOnRectangleIcon className="h-5 w-5" />
 											Iniciar Sesión
 										</Link>
 										<Link
@@ -149,9 +151,9 @@ export default function Navbar() {
 
 				{/* ===== DESKTOP NAVBAR ===== */}
 				<div className="hidden md:flex h-20 items-center justify-between px-6 lg:px-8">
-					<div className="shrink-0">
-						<Link to="/" className="transition-transform hover:scale-105 active:scale-95 inline-block">
-							<img src={Logo} className="h-8 w-auto mix-blend-multiply" alt="HermandApp" />
+					<div className="navbar-start">
+						<Link to="/">
+							<img src={Logo} className="w-32" />
 						</Link>
 					</div>
 
@@ -160,15 +162,15 @@ export default function Navbar() {
 							<div className="flex items-center gap-3">
 								<Link
 									to="/login"
-									className="px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+									className="px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-[#8a01e5] transition-colors"
 								>
 									Iniciar sesión
 								</Link>
 								<Link
 									to="/register"
-									className="px-6 py-2.5 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 rounded-full shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+									className="px-6 py-2.5 text-sm font-bold text-white bg-[#8a01e5] rounded-full shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
 								>
-									Registro
+									Solicitud de Registro
 								</Link>
 							</div>
 						) : (
