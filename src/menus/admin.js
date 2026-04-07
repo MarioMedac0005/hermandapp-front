@@ -11,7 +11,6 @@ const adminMenu = [
       { name: "Contratos", icon: DocumentTextIcon, href: "/admin-panel/contracts" },
       { name: "Disponibilidad", icon: CalendarDaysIcon, href: "/admin-panel/availabilities" },
       { name: "Procesiones", icon: MapPinIcon, href: "/admin-panel/processions" },
-      { name: "Gestores", icon: UserIcon, href: "/admin-panel/gestores" },
       { name: "Solicitudes", icon: DocumentTextIcon, href: "/admin-panel/solicitudes" },
     ]
   }

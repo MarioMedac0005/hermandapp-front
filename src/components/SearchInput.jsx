@@ -34,10 +34,10 @@ export default function SearchInput({
                 <button
                     type="button"
                     onClick={onSearch}
-                    className="ml-2 flex justify-center items-center px-6 py-3.5 bg-[#8a01e5] hover:bg-[#7000b8] text-white font-semibold rounded-xl transition-all duration-300 active:scale-[0.98] shadow-md shadow-[#8a01e5]/20 whitespace-nowrap"
+                    className="cursor-pointer ml-2 flex justify-center items-center px-6 py-3.5 bg-[#8a01e5] hover:bg-[#7000b8] text-white font-semibold rounded-xl transition-all duration-300 active:scale-[0.98] shadow-md shadow-[#8a01e5]/20 whitespace-nowrap"
                 >
                     Buscar
-                    <ArrowRightIcon className="h-5 w-5 ml-2 stroke-[2.5px] hidden sm:block" />
+                    <ArrowRightIcon className="size-3 ml-2 stroke-[2.5px] hidden sm:block" />
                 </button>
             </div>
         </div>

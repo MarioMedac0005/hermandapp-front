@@ -104,8 +104,6 @@ function Galeria() {
         },
       });
 
-      console.log(response);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Error al subir la imagen");
@@ -241,7 +239,7 @@ function Galeria() {
                   <span className="text-xs text-muted-foreground">
                     Categoría
                   </span>
-                  <span className="text-sm truncate">{g.category}</span>
+                  <span className="text-sm truncate">{g.category === 'gallery' ? 'Galería' : g.category}</span>
                 </div>
                 <button
                   className="shrink-0 p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 active:scale-90 shadow-xs cursor-pointer"

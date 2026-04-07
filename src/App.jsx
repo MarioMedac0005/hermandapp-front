@@ -17,7 +17,6 @@ import AvailabilityList from "@pages/admin/availabilities/AvailabilityList";
 import AvailabilityForm from "@pages/admin/availabilities/AvailabilityForm";
 import ProcessionList from "@pages/admin/procession/ProcessionList";
 import ProcessionForm from "@pages/admin/procession/ProcessionForm";
-import GestorList from "@pages/admin/gestores/GestorList";
 import Dashboard from "@pages/admin/dashboard/Dashboard";
 import OrganizationRequestList from "@pages/admin/requests/OrganizationRequestList";
 import BuscarBanda from "@pages/hermandades/panel/BuscarBanda";
@@ -44,12 +43,8 @@ import ScrollToTop from "@components/ScrollToTop";
 import ProcesionEditor from "@pages/hermandades/panel/ProcesionEditor";
 import ProcessionsManager from "@pages/hermandades/panel/ProcessionsManager";
 import Repertorio from "@pages/banda/panel/Repertorio";
-
 import { Toaster } from 'react-hot-toast';
-
 import ResetPassword from "@pages/reset_password/ResetPassword";
-
-
 import Register from "@pages/register/Register";
 import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 import PaymentSuccess from "@pages/PaymentSuccess";
@@ -145,7 +140,6 @@ function App() {
           <Route path="availabilities/create" element={<AvailabilityForm />} />
           <Route path="processions" element={<ProcessionList />} />
           <Route path="processions/create" element={<ProcessionForm />} />
-          <Route path="gestores" element={<GestorList />} />
           <Route path="solicitudes" element={<OrganizationRequestList />} />
         </Route>
 

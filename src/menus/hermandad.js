@@ -9,7 +9,7 @@ const hermandadMenu = [
   {
     title: "Principal",
     items: [
-      { name: "Mi Perfil", icon: UserIcon, href: "/hermandad/panel/informacion" },
+      { name: "Perfil Hermandad", icon: UserIcon, href: "/hermandad/panel/informacion" },
       { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
       { name: "Procesiones", icon: MapIcon, href: "/hermandad/panel/procesiones" },
       { name: "Galeria", icon: PhotoIcon, href: "/hermandad/panel/galeria" },

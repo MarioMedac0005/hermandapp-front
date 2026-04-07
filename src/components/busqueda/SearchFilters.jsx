@@ -1,4 +1,5 @@
-import SearchInput from "../SearchInput";
+import FilterInput from "../ui/FilterInput";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const PROVINCES = [
     { label: "Almería", value: "Almeria" },
@@ -22,10 +23,9 @@ function SearchFilters({ filters, onChange, onSubmit, onReset }) {
                     <label className="block text-sm font-medium text-gray-700">
                         Buscar por nombre
                     </label>
-                    <SearchInput
+                    <FilterInput
                         value={filters.q}
                         onChange={value => onChange("q", value)}
-                        onSearch={onSubmit}
                         placeholder="Ej. Veracruz, Redención..."
                     />
                 </div>
@@ -35,18 +35,21 @@ function SearchFilters({ filters, onChange, onSubmit, onReset }) {
                     <label className="block text-sm font-medium text-gray-700">
                         Provincia
                     </label>
-                    <select
-                        value={filters.city}
-                        onChange={e => onChange("city", e.target.value)}
-                        className="mt-1 w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-purple-500 focus:border-purple-500"
-                    >
-                        <option value="">Todas</option>
-                        {PROVINCES.map(p => (
-                            <option key={p.value} value={p.value}>
-                                {p.label}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="relative mt-1">
+                        <select
+                            value={filters.city}
+                            onChange={e => onChange("city", e.target.value)}
+                            className="w-full appearance-none border border-gray-300 rounded-lg py-2 pl-3 pr-10 text-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                        >
+                            <option value="">Todas</option>
+                            {PROVINCES.map(p => (
+                                <option key={p.value} value={p.value}>
+                                    {p.label}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                    </div>
                 </div>
 
                 {/* TIPO */}
@@ -54,22 +57,25 @@ function SearchFilters({ filters, onChange, onSubmit, onReset }) {
                     <label className="block text-sm font-medium text-gray-700">
                         Tipo
                     </label>
-                    <select
-                        value={filters.type}
-                        onChange={e => onChange("type", e.target.value)}
-                        className="mt-1 w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:ring-purple-500 focus:border-purple-500"
-                    >
-                        <option value="">Todos</option>
-                        <option value="band">Banda</option>
-                        <option value="brotherhood">Hermandad</option>
-                    </select>
+                    <div className="relative mt-1">
+                        <select
+                            value={filters.type}
+                            onChange={e => onChange("type", e.target.value)}
+                            className="w-full appearance-none border border-gray-300 rounded-lg py-2 pl-3 pr-10 text-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                        >
+                            <option value="">Todos</option>
+                            <option value="band">Banda</option>
+                            <option value="brotherhood">Hermandad</option>
+                        </select>
+                        <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                    </div>
                 </div>
 
                 {/* BOTONES */}
                 <div className="flex gap-3 pt-2">
                     <button
                         type="submit"
-                        className="flex-1 bg-purple-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-700 transition"
+                        className="cursor-pointer flex-1 bg-purple-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-700 transition"
                     >
                         Buscar
                     </button>
@@ -77,7 +83,7 @@ function SearchFilters({ filters, onChange, onSubmit, onReset }) {
                     <button
                         type="button"
                         onClick={onReset}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition"
+                        className="cursor-pointer flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition"
                     >
                         Resetear
                     </button>

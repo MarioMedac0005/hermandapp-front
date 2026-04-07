@@ -4,7 +4,7 @@ const menuBanda = [
   {
     title: "Principal",
     items: [
-      { name: "Mi Perfil", icon: UserIcon, href: "/banda/panel/informacion" },
+      { name: "Perfil de la Banda", icon: UserIcon, href: "/banda/panel/informacion" },
       { name: "Disponibilidad", icon: DocumentTextIcon, href: "/banda/panel/disponibilidad" },
     ]
   },

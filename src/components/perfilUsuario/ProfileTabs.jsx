@@ -5,7 +5,7 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
         <div className="flex border-b border-gray-200 space-x-8">
             <button
                 onClick={() => setActiveTab("personal")}
-                className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === "personal" ? "text-purple-600" : "text-gray-500 hover:text-gray-700"
+                className={`cursor-pointer pb-4 text-sm font-medium transition-colors relative ${activeTab === "personal" ? "text-purple-600" : "text-gray-500 hover:text-gray-700"
                     }`}
             >
                 Información Personal
@@ -13,7 +13,7 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
             </button>
             <button
                 onClick={() => setActiveTab("account")}
-                className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === "account" ? "text-purple-600" : "text-gray-500 hover:text-gray-700"
+                className={`cursor-pointer pb-4 text-sm font-medium transition-colors relative ${activeTab === "account" ? "text-purple-600" : "text-gray-500 hover:text-gray-700"
                     }`}
             >
                 Seguridad y Cuenta

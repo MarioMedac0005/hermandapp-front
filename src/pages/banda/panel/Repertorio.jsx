@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@contexts/AuthContext";
-import { MusicalNoteIcon, PlusIcon, PencilIcon, TrashIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
+import { MusicalNoteIcon, PlusIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import Table from "@components/Table";
 import Modal from "@components/Modal";
 import toast from "react-hot-toast";
@@ -132,8 +132,8 @@ export default function Repertorio() {
                 </div>
                 <button
                     onClick={() => openModal()}
-                    className="bg-purple-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 active:scale-95">
-                    <PlusIcon className="h-5 w-5 stroke-[3]" />
+                    className="cursor-pointer bg-purple-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 active:scale-95">
+                    <PlusIcon className="h-5 w-5 stroke-3" />
                     Añadir Canción
                 </button>
             </div>
@@ -200,12 +200,12 @@ export default function Repertorio() {
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="px-6 py-2.5 text-gray-400 hover:text-gray-600 font-bold transition-colors">
+                            className="cursor-pointer px-6 py-2.5 text-gray-400 hover:text-gray-600 font-bold transition-colors">
                             Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="bg-purple-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-200">
+                            className="cursor-pointer bg-purple-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-200">
                             {editingSong ? "Guardar Cambios" : "Crear Canción"}
                         </button>
                     </div>

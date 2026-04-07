@@ -18,7 +18,7 @@ function CardInfo() {
             <CardInfoHeader isEditing={isEditing} setIsEditing={setIsEditing} />
 
             {/* Contenido */}
-            <CardContent isEditing={isEditing} />
+            <CardContent isEditing={isEditing} setIsEditing={setIsEditing} />
           </div>
         </div>
       </div>
