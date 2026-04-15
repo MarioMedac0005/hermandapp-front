@@ -45,6 +45,7 @@ import ProcessionsManager from "@pages/hermandades/panel/ProcessionsManager";
 import Repertorio from "@pages/banda/panel/Repertorio";
 import { Toaster } from 'react-hot-toast';
 import ResetPassword from "@pages/reset_password/ResetPassword";
+import ForgotPassword from "@pages/reset_password/ForgotPassword";
 import Register from "@pages/register/Register";
 import PerfilUsuario from "@pages/perfilUsuario/perfilUsuario";
 import PaymentSuccess from "@pages/PaymentSuccess";
@@ -61,7 +62,7 @@ function App() {
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/admin-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
         <Route path="/" element={<GuestLayout />}>

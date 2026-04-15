@@ -175,7 +175,7 @@ export default function ResetPassword() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 bg-[#8a01e5] hover:bg-[#7000b8] text-white font-semibold rounded-lg transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
+                className="flex-1 py-2.5 bg-[#8a01e5] hover:bg-[#7000b8] text-white font-semibold rounded-lg transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-sm active:scale-[0.98] cursor-pointer"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
