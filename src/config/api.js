@@ -19,5 +19,6 @@ export const API_ENDPOINTS = {
   search: `${API_BASE_URL}/search`,
   invoices: `${API_BASE_URL}/invoice`,
   repertoire: `${API_BASE_URL}/repertoire`,
-  media: `${API_BASE_URL}/media`
+  media: `${API_BASE_URL}/media`,
+  bandBookedDates: (id) => `${API_BASE_URL}/bands/${id}/booked-dates`
 };

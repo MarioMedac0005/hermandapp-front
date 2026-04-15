@@ -84,7 +84,7 @@ function CustomCalendar({ bookedDates }) {
 			<div className="flex items-center justify-between mb-6">
 				<button 
 					onClick={prevMonth}
-					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors cursor-pointer"
 				>
 					<ChevronLeftIcon className="size-5" />
 				</button>
@@ -93,7 +93,7 @@ function CustomCalendar({ bookedDates }) {
 				</h3>
 				<button 
 					onClick={nextMonth}
-					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors cursor-pointer"
 				>
 					<ChevronRightIcon className="size-5" />
 				</button>

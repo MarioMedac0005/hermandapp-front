@@ -24,7 +24,7 @@ function BandaPerfil() {
 			try {
 				const [bandResponse, datesResponse] = await Promise.all([
 					fetch(`${API_ENDPOINTS.bands}/${band}`),
-					fetch(`${API_ENDPOINTS.bands}/${band}/booked-dates`)
+					fetch(API_ENDPOINTS.bandBookedDates(band))
 				]);
 
 				if (!bandResponse.ok) {
@@ -40,7 +40,10 @@ function BandaPerfil() {
 				if (datesResponse.ok) {
 					const datesJson = await datesResponse.json();
 					if (datesJson.success && Array.isArray(datesJson.data)) {
-						const dates = datesJson.data.map(d => new Date(d));
+						const dates = datesJson.data.map(d => {
+							const [year, month, day] = d.split('-');
+							return new Date(year, parseInt(month) - 1, day);
+						});
 						setBookedDates(dates);
 					}
 				}
