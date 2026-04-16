@@ -60,79 +60,29 @@ function ProcessionList() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold -mt-3 mb-2">Procesiones</h1>
-      <div className="flex gap-4 flex-wrap justify-between items-center mb-4 text-xs">
-        <label className="input input-sm border-slate-200 focus-within:border-purple-500">
-          <svg
-            className="h-[1em] opacity-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </g>
-          </svg>
-          <input
-            type="search"
-            required
-            placeholder="Search"
-            className="placeholder:text-xs"
-          />
-        </label>
+      <div className="flex justify-between items-center mb-6 mt-2">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Procesiones</h1>
+          <p className="text-sm text-slate-500 mt-1">Gestión de recorridos y procesiones</p>
+        </div>
         <button
           type="button"
-          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none rounded-lg"
+          className="btn bg-purple-600 hover:bg-purple-700 text-white border-none rounded-xl shadow-sm hover:shadow-md transition-all px-5 lg:px-6 font-semibold"
           onClick={handleCreate}
         >
-          Crear una procesion
+          Crear procesion
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <Table
-          columns={columnas}
-          data={data}
-          entity={entidad}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-
-        {/* Pagination Controls */}
-        {pagination && pagination.last_page > 1 && (
-          <div className="flex justify-between items-center px-6 py-4 border-t border-slate-100 bg-slate-50/30">
-            <span className="text-xs text-slate-500 font-medium">
-              Mostrando {data.length} de {pagination.total} procesiones
-            </span>
-            <div className="flex gap-2">
-              <button
-                className="btn btn-xs rounded-lg border-slate-200 bg-white"
-                disabled={page === 1}
-                onClick={() => setPage(p => p - 1)}
-              >
-                Anterior
-              </button>
-              <div className="flex gap-1 items-center">
-                <span className="text-xs font-bold text-slate-900 px-2">{page}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase">de {pagination.last_page}</span>
-              </div>
-              <button
-                className="btn btn-xs rounded-lg border-slate-200 bg-white"
-                disabled={page === pagination.last_page}
-                onClick={() => setPage(p => p + 1)}
-              >
-                Siguiente
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      <Table
+        columns={columnas}
+        data={data}
+        entity={entidad}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        pagination={pagination}
+        onPageChange={setPage}
+      />
 
       <Modal
         open={isModalOpen}

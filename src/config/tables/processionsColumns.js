@@ -17,8 +17,9 @@ export const processionsColumns = [
 		label: "Hora de Entrada",
 	},
 	{
-		key: "brotherhood_id",
-		label: "ID Hermandad",
+		key: "brotherhood",
+		label: "Hermandad",
+		render: (item) => item.brotherhood?.name || "N/A",
 	},
 	{
 		key: "created_at",

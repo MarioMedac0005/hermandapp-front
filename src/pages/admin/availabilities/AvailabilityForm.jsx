@@ -57,11 +57,6 @@ function AvailabilityForm({ initialData = null, onSuccess, preselectedBandId = n
         }
     };
 
-    const statusOptions = [
-        { id: "free", name: "Libre" },
-        { id: "occupied", name: "Ocupado" },
-    ];
-    
   return (
     <form onSubmit={handleSubmit} className="w-full">
         <InputField
@@ -70,13 +65,6 @@ function AvailabilityForm({ initialData = null, onSuccess, preselectedBandId = n
           type="datetime-local"
           value={form.date}
           onChange={handleChange}
-        />
-
-        <SelectField
-          label="Estado"
-          options={statusOptions}
-          value={form.status}
-          onChange={(val) => handleSelectChange("status", val)}
         />
 
         <InputField

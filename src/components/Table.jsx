@@ -139,78 +139,45 @@ function Table({ columns, data, entity, onEdit, onDelete, customActions, paginat
 
       {/* Pagination */}
       {pagination && pagination.last_page > 1 && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-50">
-            <div className="flex flex-1 justify-between sm:hidden">
+        <div className="flex items-center justify-between px-6 py-5 border-t border-slate-100/60 bg-white">
+          <div className="text-sm text-slate-500 font-medium">
+            Página {pagination.current_page} de {pagination.last_page}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
             <button
-                onClick={() => onPageChange(pagination.current_page - 1)}
-                disabled={pagination.current_page === 1}
-                className="relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+              onClick={() => onPageChange(pagination.current_page - 1)}
+              disabled={pagination.current_page === 1}
+              className="flex items-center justify-center h-9 px-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer"
             >
-                Anterior
+              Anterior
             </button>
+            <div className="items-center gap-1 hidden sm:flex">
+                {pagination.links && pagination.links.filter(link => !link.label.includes('&laquo;') && !link.label.includes('&raquo;')).map((link, index) => {
+                     if (isNaN(link.label) && link.label !== '...') return null; 
+                     return (
+                        <button
+                            key={index}
+                            onClick={() => !isNaN(link.label) && onPageChange(parseInt(link.label))}
+                            disabled={link.label === '...'}
+                            className={`flex items-center justify-center h-9 min-w-[36px] px-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                                link.active 
+                                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20 ring-1 ring-purple-600/50' 
+                                    : link.label === '...' ? 'text-slate-400 cursor-default' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                            }`}
+                        >
+                            {link.label}
+                        </button>
+                     );
+                })}
+            </div>
             <button
-                onClick={() => onPageChange(pagination.current_page + 1)}
-                disabled={pagination.current_page === pagination.last_page}
-                className="relative ml-3 inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+              onClick={() => onPageChange(pagination.current_page + 1)}
+              disabled={pagination.current_page === pagination.last_page}
+              className="flex items-center justify-center h-9 px-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all cursor-pointer"
             >
-                Siguiente
+              Siguiente
             </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                    <p className="text-sm text-gray-500">
-                    Mostrando <span className="font-medium text-gray-900">{pagination.from}</span> - <span className="font-medium text-gray-900">{pagination.to}</span> de <span className="font-medium text-gray-900">{pagination.total}</span> resultados
-                    </p>
-                </div>
-                <div>
-                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm gap-1" aria-label="Pagination">
-                         {/* Previous */}
-                        <button
-                            onClick={() => onPageChange(pagination.current_page - 1)}
-                            disabled={pagination.current_page === 1}
-                            className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                        >
-                            <span className="sr-only">Anterior</span>
-                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                        
-                        {/* Page Numbers */}
-                        {pagination.links && pagination.links.filter(link => !link.label.includes('&laquo;') && !link.label.includes('&raquo;')).map((link, index) => {
-                             if (isNaN(link.label) && link.label !== '...') return null; 
-                             
-                             return (
-                                <button
-                                    key={index}
-                                    onClick={() => !isNaN(link.label) && onPageChange(parseInt(link.label))}
-                                    disabled={link.label === '...'}
-                                    aria-current={link.active ? 'page' : undefined}
-                                    className={`relative inline-flex items-center px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
-                                        link.active 
-                                            ? 'z-10 bg-purple-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 shadow-sm' 
-                                            : link.label === '...' ? 'text-gray-400 cursor-default' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
-                                    }`}
-                                >
-                                    {link.label}
-                                </button>
-                             );
-                        })}
-
-                        {/* Next */}
-                        <button
-                            onClick={() => onPageChange(pagination.current_page + 1)}
-                            disabled={pagination.current_page === pagination.last_page}
-                            className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                        >
-                            <span className="sr-only">Siguiente</span>
-                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                        </svg>
-                        </button>
-                    </nav>
-                </div>
-            </div>
+          </div>
         </div>
       )}
 

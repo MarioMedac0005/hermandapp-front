@@ -75,7 +75,7 @@ function Sidebar({ menuItems, profile }) {
             {/* Botón colapsar en desktop */}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition"
+              className="hidden md:flex p-2 rounded-md hover:bg-gray-100 transition cursor-pointer"
             >
               <Bars3Icon className="w-5 h-5 text-gray-700" />
             </button>
@@ -206,7 +206,7 @@ function Sidebar({ menuItems, profile }) {
           {/* LOGOUT */}
           <button
             onClick={logout}
-            className={`flex items-center gap-3 p-2 rounded-md transition w-full text-left text-red-600 hover:bg-red-50 ${
+            className={`flex items-center gap-3 p-2 rounded-md transition w-full text-left text-red-600 hover:bg-red-50 cursor-pointer ${
               collapsed ? "justify-center" : ""
             }`}
             title="Cerrar Sesión"

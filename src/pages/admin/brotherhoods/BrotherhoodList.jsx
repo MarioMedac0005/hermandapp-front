@@ -10,10 +10,11 @@ import { API_ENDPOINTS } from "../../../config/api";
 function BrotherhoodList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBrotherhood, setSelectedBrotherhood] = useState(null);
+  const [page, setPage] = useState(1);
 
   const entidad = "hermandad";
   const columnas = brotherhoodsColumns;
-  const { data, loading, error, refetch } = useFetchData(API_ENDPOINTS.brotherhoods);
+  const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.brotherhoods, page);
   const { destroy } = useDeleteEntity();
 
   const handleCreate = () => {
@@ -44,37 +45,17 @@ function BrotherhoodList() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold -mt-3 mb-2">Hermandades</h1>
-      <div className="flex gap-4 flex-wrap justify-between items-center mb-4 text-xs">
-        <label className="input input-sm">
-          <svg
-            className="h-[1em] opacity-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </g>
-          </svg>
-          <input
-            type="search"
-            placeholder="Buscar..."
-            className="placeholder:text-xs"
-          />
-        </label>
+      <div className="flex justify-between items-center mb-6 mt-2">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Hermandades</h1>
+          <p className="text-sm text-slate-500 mt-1">Gestión de hermandades y cofradías registradas</p>
+        </div>
         <button
           type="button"
-          className="btn btn-sm bg-purple-600 text-white hover:bg-purple-700 border-none"
+          className="btn bg-purple-600 hover:bg-purple-700 text-white border-none rounded-xl shadow-sm hover:shadow-md transition-all px-5 lg:px-6 font-semibold"
           onClick={handleCreate}
         >
-          Crear una hermandad
+          Crear hermandad
         </button>
       </div>
       
@@ -84,6 +65,8 @@ function BrotherhoodList() {
         entity={entidad} 
         onEdit={handleEdit}
         onDelete={handleDelete}
+        pagination={pagination}
+        onPageChange={setPage}
       />
 
       <Modal
