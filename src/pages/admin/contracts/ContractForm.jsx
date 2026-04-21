@@ -114,6 +114,7 @@ function ContractForm({ initialData = null, onSuccess }) {
               options={typeOptions}
               value={form.performance_type}
               onChange={(val) => handleSelectChange("performance_type", val)}
+              disabled={!!initialData}
             />
 
             <SelectField
@@ -121,6 +122,7 @@ function ContractForm({ initialData = null, onSuccess }) {
               options={statusOptions}
               value={form.status}
               onChange={(val) => handleSelectChange("status", val)}
+              disabled={!!initialData}
             />
 
             <InputField
@@ -156,6 +158,7 @@ function ContractForm({ initialData = null, onSuccess }) {
               options={bands || []}
               value={form.band_id}
               onChange={(val) => handleSelectChange("band_id", val)}
+              disabled={!!initialData}
             />
 
             <SelectField
@@ -163,6 +166,7 @@ function ContractForm({ initialData = null, onSuccess }) {
               options={processions || []}
               value={form.procession_id}
               onChange={(val) => handleSelectChange("procession_id", val)}
+              disabled={!!initialData}
             />
         </div>
 

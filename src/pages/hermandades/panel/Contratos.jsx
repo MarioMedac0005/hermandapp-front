@@ -11,7 +11,6 @@ import { paymentService } from "../../../services/paymentService";
 import { invoiceService } from "../../../services/invoiceService";
 
 function Contratos() {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
@@ -29,11 +28,6 @@ function Contratos() {
       return true;
   });
 
-  const handleEdit = () => {
-    // Open edit modal, close detail modal
-    setIsEditModalOpen(true);
-    setIsDetailModalOpen(false);
-  };
 
   const handleCardClick = (contract) => {
     setSelectedContract(contract);
@@ -41,7 +35,6 @@ function Contratos() {
   };
 
   const handleSuccess = () => {
-    setIsEditModalOpen(false);
     setSelectedContract(null);
     refetch();
   };
@@ -90,12 +83,6 @@ function Contratos() {
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
             >
                 Cerrar
-            </button>
-            <button
-                onClick={handleEdit}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-            >
-                Editar
             </button>
             {isReadyToSign && (
                 <button
@@ -297,16 +284,7 @@ function Contratos() {
         actions={renderModalActions()}
       />
 
-      <Modal
-        open={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Editar Contrato"
-      >
-        <ContractForm 
-            initialData={selectedContract}
-            onSuccess={handleSuccess}
-        />
-      </Modal>
+
     </div>
   );
 }

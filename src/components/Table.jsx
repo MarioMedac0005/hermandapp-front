@@ -2,7 +2,7 @@ import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Modal from "./Modal";
 
-function Table({ columns, data, entity, onEdit, onDelete, customActions, pagination, onPageChange }) {
+function Table({ columns, data, entity, onEdit, onDelete, customActions, pagination, onPageChange, canEdit, canDelete }) {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
@@ -102,7 +102,7 @@ function Table({ columns, data, entity, onEdit, onDelete, customActions, paginat
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="flex justify-end items-center gap-2">
                     {customActions && customActions(item)}
-                    {onDelete && (
+                    {onDelete && (!canDelete || canDelete(item)) && (
                       <button
                         onClick={() => handleDeleteClick(item.id)}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
@@ -111,7 +111,7 @@ function Table({ columns, data, entity, onEdit, onDelete, customActions, paginat
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     )}
-                    {onEdit && (
+                    {onEdit && (!canEdit || canEdit(item)) && (
                         <button
                         onClick={() => onEdit(item)}
                         className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"

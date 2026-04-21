@@ -25,11 +25,6 @@ function ContractList() {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (contract) => {
-    setSelectedContract(contract);
-    setIsModalOpen(true);
-  };
-
   const handleView = (contract) => {
     setSelectedContract(contract);
     setIsDetailModalOpen(true);
@@ -71,7 +66,6 @@ function ContractList() {
         columns={columnas} 
         data={data} 
         entity={entidad} 
-        onEdit={handleEdit}
         onDelete={handleDelete}
         pagination={pagination}
         onPageChange={setPage}
@@ -89,7 +83,7 @@ function ContractList() {
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={selectedContract ? "Editar Contrato" : "Crear Contrato"}
+        title="Crear Contrato"
       >
         <ContractForm 
             initialData={selectedContract}

@@ -11,7 +11,6 @@ import { invoiceService } from "../../../services/invoiceService";
 
 
 function Contratos() {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [page, setPage] = useState(1);
@@ -66,21 +65,9 @@ function Contratos() {
       }
   };
 
-  const handleEdit = (contract) => {
-    setSelectedContract(contract);
-    setIsEditModalOpen(true);
-    setIsDetailModalOpen(false); // Close detail modal if switching to edit
-  };
-
   const handleCardClick = (contract) => {
     setSelectedContract(contract);
     setIsDetailModalOpen(true);
-  };
-
-  const handleSuccess = () => {
-    setIsEditModalOpen(false);
-    setSelectedContract(null);
-    refetch();
   };
 
   const handleDownloadInvoice = async (invoiceId) => {
@@ -323,16 +310,7 @@ function Contratos() {
         actions={renderModalActions()}
       />
 
-      <Modal
-        open={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Editar Contrato"
-      >
-        <ContractForm 
-            initialData={selectedContract}
-            onSuccess={handleSuccess}
-        />
-      </Modal>
+
     </div>
   );
 }

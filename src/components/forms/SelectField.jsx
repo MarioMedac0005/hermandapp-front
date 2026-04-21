@@ -2,12 +2,12 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Label } from '@h
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 
-export default function SelectField({ label, options, value, onChange, placeholder = "Select an option", className }) {
+export default function SelectField({ label, options, value, onChange, placeholder = "Select an option", className, disabled = false }) {
   const selectedName = value ? (options.find(opt => opt.value === value || opt.id === value)?.label || options.find(opt => opt.value === value || opt.id === value)?.name || value) : placeholder
 
   return (
     <div className={clsx("w-full mb-4", className)}> 
-      <Listbox value={value} onChange={onChange}>
+      <Listbox value={value} onChange={onChange} disabled={disabled}>
         {label && (
           <Label className="text-sm font-medium text-gray-700 mb-1 block">
             {label}
@@ -17,7 +17,8 @@ export default function SelectField({ label, options, value, onChange, placehold
           <ListboxButton className={clsx(
             "relative w-full cursor-default rounded-lg bg-white/50 py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset ring-gray-200",
             "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white sm:text-sm sm:leading-6",
-            "transition-all duration-200 hover:ring-gray-300 hover:bg-gray-50/50"
+            "transition-all duration-200 hover:ring-gray-300 hover:bg-gray-50/50",
+            disabled && "opacity-60 cursor-not-allowed bg-gray-100 hover:bg-gray-100 hover:ring-gray-200"
           )}>
             <span className={clsx("block truncate", !value ? "text-gray-400" : "text-gray-900")}>
               {selectedName}
