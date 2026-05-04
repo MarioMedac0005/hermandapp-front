@@ -29,25 +29,25 @@ export default function ServiceDetails({ formData, updateField, errors, processi
 		{ value: "other", label: "Otro" },
 	];
 
-    const processionOptions = processions.map(p => ({
-        value: p.id,
-        label: p.name
-    }));
+	const processionOptions = processions.map(p => ({
+		value: p.id,
+		label: p.name
+	}));
 
 	const handleSelectChange = (e) => {
 		const { name, value } = e.target;
 		updateField(name, value);
 	};
 
-    const handleProcessionChange = (e) => {
-        const { value } = e.target;
-        updateField("procession_id", value);
-        
-        const selected = processions.find(p => p.id == value);
-        if (selected && selected.itinerary) {
-             updateField("approximate_route", selected.itinerary);
-        }
-    };
+	const handleProcessionChange = (e) => {
+		const { value } = e.target;
+		updateField("procession_id", value);
+
+		const selected = processions.find(p => p.id == value);
+		if (selected && selected.itinerary) {
+			updateField("approximate_route", selected.itinerary);
+		}
+	};
 
 	const handleDateChange = (e) => {
 		updateField("performance_date", e.value);
@@ -66,17 +66,17 @@ export default function ServiceDetails({ formData, updateField, errors, processi
 					error={errors.performance_type}
 				/>
 
-                {processions.length > 0 && formData.performance_type === 'procession' && (
-                    <SelectField
-                        label="Seleccionar Procesión (Opcional)"
-                        placeholder="Elige una procesión..."
-                        options={processionOptions}
-                        name="procession_id"
-                        value={formData.procession_id}
-                        onChange={handleProcessionChange}
-                        error={errors.procession_id}
-                    />
-                )}
+				{processions.length > 0 && formData.performance_type === 'procession' && (
+					<SelectField
+						label="Seleccionar Procesión (Opcional)"
+						placeholder="Elige una procesión..."
+						options={processionOptions}
+						name="procession_id"
+						value={formData.procession_id}
+						onChange={handleProcessionChange}
+						error={errors.procession_id}
+					/>
+				)}
 			</div>
 			<div className="flex flex-col gap-6">
 				<div className="text-xs font-black text-base-content/40 uppercase tracking-widest flex items-center gap-2">

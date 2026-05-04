@@ -124,7 +124,7 @@ function CardContent({ isEditing, setIsEditing }) {
           <div className="col-span-1 md:col-span-2 form-control space-y-2">
             <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <BriefcaseIcon className="h-4 w-4 text-purple-600" />
-              Sede (Office)
+              Sede
             </label>
             <input
               type="text"

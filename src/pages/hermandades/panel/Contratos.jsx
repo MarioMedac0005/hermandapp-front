@@ -11,293 +11,310 @@ import { paymentService } from "../../../services/paymentService";
 import { invoiceService } from "../../../services/invoiceService";
 
 function Contratos() {
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedContract, setSelectedContract] = useState(null);
-  const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'pending_signature'
+	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+	const [selectedContract, setSelectedContract] = useState(null);
+	const [page, setPage] = useState(1);
+	const [activeTab, setActiveTab] = useState('all'); // 'all' or 'pending_signature'
 
-  const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
+	const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
+	const navigate = useNavigate();
+	const [search, setSearch] = useState("");
 
-  // Filter contracts based on active tab
-  const filteredData = data.filter(contract => {
-    console.log(contract);
-      const matchesTab = (
-          activeTab === 'all' ||
-          (activeTab === 'pending_signature' && contract.status === 'signed_by_band') ||
-          (activeTab === 'to_pay' && contract.status === 'completed') ||
-          (activeTab === 'paid' && contract.status === 'paid')
-      );
+	const TABS = [
+		{ key: 'all', label: 'Todos', statuses: null },
 
-      const matchesSearch = contract.band?.name?.toLowerCase().includes(search.toLowerCase()) || contract.brotherhood?.name?.toLowerCase().includes(search.toLowerCase());
-      return matchesTab && matchesSearch;
-  });
+		{ key: 'pending', label: 'Pendientes', statuses: ['pending'] },
+		{ key: 'rejected', label: 'Rechazados', statuses: ['rejected', 'payment_failed'] },
+		{ key: 'accepted', label: 'Aceptados', statuses: ['accepted'] },
 
+		{ key: 'pending_signature', label: 'Pendientes de firma', statuses: ['signed_by_band', 'signed_by_brotherhood'] },
 
-  const handleCardClick = (contract) => {
-    setSelectedContract(contract);
-    setIsDetailModalOpen(true);
-  };
+		{ key: 'completed', label: 'Firmados', statuses: ['completed'] },
 
-  const handleSuccess = () => {
-    setSelectedContract(null);
-    refetch();
-  };
+		{ key: 'to_pay', label: 'Por pagar', statuses: ['completed'] },
+		{ key: 'paid', label: 'Pagados', statuses: ['paid'] },
 
-  const handleSignRedirect = () => {
-      if (selectedContract && selectedContract.id) {
-          navigate(`/hermandad/panel/contratos/${selectedContract.id}/firmar`);
-      }
-  };
+		{ key: 'expired', label: 'Finalizados', statuses: ['expired'] },
+	];
 
-  const handlePayContract = async () => {
-    if (!selectedContract || !selectedContract.id) return;
+	// Filter contracts based on active tab
+	const filteredData = data.filter(contract => {
+		const tab = TABS.find(t => t.key === activeTab);
 
-    try {
-        const { url } = await paymentService.createPaymentSession(selectedContract.id);
-        if (url) {
-            window.location.href = url;
-        } else {
-            toast.error("No se pudo obtener la URL de pago");
-        }
-    } catch (error) {
-        toast.error(error.message || "Error al iniciar el pago");
-    }
-  };
+		const matchesTab =
+			!tab?.statuses || tab.statuses.includes(contract.status);
 
-  const handleDownloadInvoice = async (invoiceId) => {
-    const loadingToast = toast.loading('Descargando factura...');
-    try {
-      await invoiceService.downloadInvoice(invoiceId);
-      toast.success('Factura descargada correctamente', { id: loadingToast });
-    } catch (error) {
-      toast.error('Error al descargar la factura', { id: loadingToast });
-    }
-  };
-  const renderModalActions = () => {
-      if (!selectedContract) return null;
-      
-      const isReadyToSign = selectedContract.status === 'signed_by_band';
-      const isReadyToPay = selectedContract.status === 'completed';
-      const hasInvoice = selectedContract.invoice !== null && selectedContract.invoice !== undefined;
+		const matchesSearch =
+			contract.band?.name?.toLowerCase().includes(search.toLowerCase()) ||
+			contract.brotherhood?.name?.toLowerCase().includes(search.toLowerCase());
 
-      return (
-          <>
-            <button
-                onClick={() => setIsDetailModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
-            >
-                Cerrar
-            </button>
-            {isReadyToSign && (
-                <button
-                    onClick={handleSignRedirect}
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
-                >
-                    Firmar
-                </button>
-            )}
-            {isReadyToPay && (
-                <button
-                    onClick={handlePayContract}
-                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
-                >
-                    Pagar contrato
-                </button>
-            )}
-            {hasInvoice && (
-                <button
-                    onClick={() => handleDownloadInvoice(selectedContract.invoice.id)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                >
-                    Descargar Factura
-                </button>
-            )}
-          </>
-      );
-  };
-
-  if (loading) return <p>Cargando contratos...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  return (
-    <div>
-      <h1 className="text-2xl font-bold -mt-3 mb-6">Contratos</h1>
-      
-      {/* Tabs */}
-      <div className="flex space-x-4 border-b border-gray-200 mb-6">
-        <button
-          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
-            activeTab === 'all'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
-          onClick={() => setActiveTab('all')}
-        >
-          Todos
-        </button>
-        <button
-          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
-            activeTab === 'pending_signature'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
-          onClick={() => setActiveTab('pending_signature')}
-        >
-          Pendientes de firmar
-        </button>
-        <button
-          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
-            activeTab === 'to_pay'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
-          onClick={() => setActiveTab('to_pay')}
-        >
-          Por pagar
-        </button>
-        <button
-          className={`py-2 px-4 border-b-2 font-medium text-sm focus:outline-none ${
-            activeTab === 'paid'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          }`}
-          onClick={() => setActiveTab('paid')}
-        >
-          Pagados
-        </button>
-      </div>
-
-      <div className="flex gap-4 flex-wrap justify-between items-center mb-6">
-        <label className="input input-sm">
-          <svg
-            className="h-[1em] opacity-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </g>
-          </svg>
-          <input
-            type="search"
-            placeholder="Buscar por nombre..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
-      </div>
-      
-          {filteredData.length === 0 ? (
-           <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-               <p className="text-gray-500">
-                   {activeTab === 'all' && "No hay contratos disponibles."}
-                   {activeTab === 'pending_signature' && "No tienes contratos pendientes de firmar."}
-                   {activeTab === 'to_pay' && "No tienes contratos pendientes de pago."}
-                   {activeTab === 'paid' && "No tienes contratos pagados todavía."}
-                </p>
-           </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredData.map(contract => (
-                <ContractCard 
-                    key={contract.id} 
-                    contract={contract} 
-                    type="brotherhood" 
-                    onClick={handleCardClick} 
-                />
-            ))}
-        </div>
-      )}
-
-      {/* Pagination Controls */}
-      {pagination && pagination.last_page > 1 && (
-        <div className="flex items-center justify-between px-6 py-4 mt-6 bg-white rounded-xl border border-gray-100">
-             <div className="flex flex-1 justify-between sm:hidden">
-                <button
-                    onClick={() => setPage(pagination.current_page - 1)}
-                    disabled={pagination.current_page === 1}
-                    className="relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
-                >
-                    Anterior
-                </button>
-                <button
-                    onClick={() => setPage(pagination.current_page + 1)}
-                    disabled={pagination.current_page === pagination.last_page}
-                    className="relative ml-3 inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
-                >
-                    Siguiente
-                </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                 <div>
-                    <p className="text-sm text-gray-500">
-                    Mostrando <span className="font-medium text-gray-900">{pagination.from}</span> - <span className="font-medium text-gray-900">{pagination.to}</span> de <span className="font-medium text-gray-900">{pagination.total}</span> resultados
-                    </p>
-                </div>
-                <div>
-                     <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm gap-1" aria-label="Pagination">
-                         <button
-                            onClick={() => setPage(pagination.current_page - 1)}
-                            disabled={pagination.current_page === 1}
-                            className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                        >
-                            <span className="sr-only">Anterior</span>
-                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                        {pagination.links && pagination.links.filter(link => !link.label.includes('&laquo;') && !link.label.includes('&raquo;')).map((link, index) => {
-                             if (isNaN(link.label) && link.label !== '...') return null; 
-                             return (
-                                <button
-                                    key={index}
-                                    onClick={() => !isNaN(link.label) && setPage(parseInt(link.label))}
-                                    disabled={link.label === '...'}
-                                    className={`relative inline-flex items-center px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
-                                        link.active 
-                                            ? 'z-10 bg-purple-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 shadow-sm' 
-                                            : link.label === '...' ? 'text-gray-400 cursor-default' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
-                                    }`}
-                                >
-                                    {link.label}
-                                </button>
-                             );
-                        })}
-                        <button
-                            onClick={() => setPage(pagination.current_page + 1)}
-                            disabled={pagination.current_page === pagination.last_page}
-                            className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
-                        >
-                            <span className="sr-only">Siguiente</span>
-                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                     </nav>
-                </div>
-            </div>
-        </div>
-      )}
-
-      <ContractDetailModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        contract={selectedContract}
-        actions={renderModalActions()}
-      />
+		return matchesTab && matchesSearch;
+	});
 
 
-    </div>
-  );
+	const handleCardClick = (contract) => {
+		setSelectedContract(contract);
+		setIsDetailModalOpen(true);
+	};
+
+	const handleSuccess = () => {
+		setSelectedContract(null);
+		refetch();
+	};
+
+	const handleSignRedirect = () => {
+		if (selectedContract && selectedContract.id) {
+			navigate(`/hermandad/panel/contratos/${selectedContract.id}/firmar`);
+		}
+	};
+
+	const handlePayContract = async () => {
+		if (!selectedContract || !selectedContract.id) return;
+
+		try {
+			const { url } = await paymentService.createPaymentSession(selectedContract.id);
+			if (url) {
+				window.location.href = url;
+			} else {
+				toast.error("No se pudo obtener la URL de pago");
+			}
+		} catch (error) {
+			toast.error(error.message || "Error al iniciar el pago");
+		}
+	};
+
+	const handleDownloadInvoice = async (invoiceId) => {
+		const loadingToast = toast.loading('Descargando factura...');
+		try {
+			await invoiceService.downloadInvoice(invoiceId);
+			toast.success('Factura descargada correctamente', { id: loadingToast });
+		} catch (error) {
+			toast.error('Error al descargar la factura', { id: loadingToast });
+		}
+	};
+	const renderModalActions = () => {
+		if (!selectedContract) return null;
+
+		const isReadyToSign = selectedContract.status === 'signed_by_band';
+		const isReadyToPay = selectedContract.status === 'completed';
+		const hasInvoice = selectedContract.invoice !== null && selectedContract.invoice !== undefined;
+
+		return (
+			<>
+				<button
+					onClick={() => setIsDetailModalOpen(false)}
+					className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
+				>
+					Cerrar
+				</button>
+				{isReadyToSign && (
+					<button
+						onClick={handleSignRedirect}
+						className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
+					>
+						Firmar
+					</button>
+				)}
+				{isReadyToPay && (
+					<button
+						onClick={handlePayContract}
+						className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
+					>
+						Pagar contrato
+					</button>
+				)}
+				{hasInvoice && (
+					<button
+						onClick={() => handleDownloadInvoice(selectedContract.invoice.id)}
+						className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+					>
+						Descargar Factura
+					</button>
+				)}
+			</>
+		);
+	};
+
+	if (loading) return <p>Cargando contratos...</p>;
+	if (error) return <p>Error: {error}</p>;
+
+	return (
+		<div>
+			<h1 className="text-2xl font-bold -mt-3 mb-6">Contratos</h1>
+
+			{/* Tabs */}
+			<div className="mb-6">
+				{/* Mobile: scroll horizontal */}
+				<div className="flex gap-2 overflow-x-auto pb-2 sm:hidden">
+					{TABS.map(tab => {
+						const count = data.filter(c =>
+							!tab.statuses || tab.statuses.includes(c.status)
+						).length;
+
+						return (
+							<button
+								key={tab.key}
+								onClick={() => setActiveTab(tab.key)}
+								className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition ${activeTab === tab.key
+										? 'bg-purple-600 text-white border-purple-600'
+										: 'bg-white text-gray-600 border-gray-300'
+									}`}>
+								{tab.label} ({count})
+							</button>
+						);
+					})}
+				</div>
+
+				{/* Desktop: tabs normales */}
+				<div className="hidden sm:flex space-x-4 border-b border-gray-200">
+					{TABS.map(tab => (
+						<button
+							key={tab.key}
+							className={`py-2 px-4 border-b-2 font-medium text-sm ${activeTab === tab.key
+									? 'border-purple-600 text-purple-600'
+									: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+								}`}
+							onClick={() => setActiveTab(tab.key)}
+						>
+							{tab.label}
+						</button>
+					))}
+				</div>
+			</div>
+			<div className="flex gap-4 flex-wrap justify-between items-center mb-6">
+				<label className="input input-sm">
+					<svg
+						className="h-[1em] opacity-50"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+					>
+						<g
+							strokeLinejoin="round"
+							strokeLinecap="round"
+							strokeWidth="2.5"
+							fill="none"
+							stroke="currentColor"
+						>
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.3-4.3"></path>
+						</g>
+					</svg>
+					<input
+						type="search"
+						placeholder="Buscar por nombre..."
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+					/>
+				</label>
+			</div>
+
+			{filteredData.length === 0 ? (
+				<div className="text-center py-12 bg-white rounded-xl border border-gray-100">
+					<p className="text-gray-500">
+						{activeTab === 'all' && "No hay contratos disponibles."}
+						{activeTab === 'pending' && "No hay contratos pendientes."}
+						{activeTab === 'rejected' && "No hay contratos rechazados."}
+						{activeTab === 'accepted' && "No hay contratos aceptados."}
+						{activeTab === 'pending_signature' && "No tienes contratos pendientes de firma."}
+						{activeTab === 'completed' && "No hay contratos firmados."}
+						{activeTab === 'to_pay' && "No tienes contratos pendientes de pago."}
+						{activeTab === 'paid' && "No tienes contratos pagados todavía."}
+						{activeTab === 'payment_failed' && "No hay pagos fallidos."}
+						{activeTab === 'expired' && "No hay contratos finalizados."}
+					</p>
+				</div>
+			) : (
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{filteredData.map(contract => (
+						<ContractCard
+							key={contract.id}
+							contract={contract}
+							type="brotherhood"
+							onClick={handleCardClick}
+						/>
+					))}
+				</div>
+			)}
+
+			{/* Pagination Controls */}
+			{pagination && pagination.last_page > 1 && (
+				<div className="flex items-center justify-between px-6 py-4 mt-6 bg-white rounded-xl border border-gray-100">
+					<div className="flex flex-1 justify-between sm:hidden">
+						<button
+							onClick={() => setPage(pagination.current_page - 1)}
+							disabled={pagination.current_page === 1}
+							className="relative inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+						>
+							Anterior
+						</button>
+						<button
+							onClick={() => setPage(pagination.current_page + 1)}
+							disabled={pagination.current_page === pagination.last_page}
+							className="relative ml-3 inline-flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+						>
+							Siguiente
+						</button>
+					</div>
+					<div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+						<div>
+							<p className="text-sm text-gray-500">
+								Mostrando <span className="font-medium text-gray-900">{pagination.from}</span> - <span className="font-medium text-gray-900">{pagination.to}</span> de <span className="font-medium text-gray-900">{pagination.total}</span> resultados
+							</p>
+						</div>
+						<div>
+							<nav className="isolate inline-flex -space-x-px rounded-md shadow-sm gap-1" aria-label="Pagination">
+								<button
+									onClick={() => setPage(pagination.current_page - 1)}
+									disabled={pagination.current_page === 1}
+									className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+								>
+									<span className="sr-only">Anterior</span>
+									<svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+										<path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+									</svg>
+								</button>
+								{pagination.links && pagination.links.filter(link => !link.label.includes('&laquo;') && !link.label.includes('&raquo;')).map((link, index) => {
+									if (isNaN(link.label) && link.label !== '...') return null;
+									return (
+										<button
+											key={index}
+											onClick={() => !isNaN(link.label) && setPage(parseInt(link.label))}
+											disabled={link.label === '...'}
+											className={`relative inline-flex items-center px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${link.active
+												? 'z-10 bg-purple-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 shadow-sm'
+												: link.label === '...' ? 'text-gray-400 cursor-default' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
+												}`}
+										>
+											{link.label}
+										</button>
+									);
+								})}
+								<button
+									onClick={() => setPage(pagination.current_page + 1)}
+									disabled={pagination.current_page === pagination.last_page}
+									className="relative inline-flex items-center rounded-lg px-2 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+								>
+									<span className="sr-only">Siguiente</span>
+									<svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+										<path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+									</svg>
+								</button>
+							</nav>
+						</div>
+					</div>
+				</div>
+			)}
+
+			<ContractDetailModal
+				isOpen={isDetailModalOpen}
+				onClose={() => setIsDetailModalOpen(false)}
+				contract={selectedContract}
+				actions={renderModalActions()}
+			/>
+
+
+		</div>
+	);
 }
 
 export default Contratos;
