@@ -18,14 +18,20 @@ function Contratos() {
 
   const { data, loading, error, refetch, pagination } = useFetchData(API_ENDPOINTS.contracts, page);
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   // Filter contracts based on active tab
   const filteredData = data.filter(contract => {
-      if (activeTab === 'all') return true;
-      if (activeTab === 'pending_signature') return contract.status === 'signed_by_band';
-      if (activeTab === 'to_pay') return contract.status === 'completed';
-      if (activeTab === 'paid') return contract.status === 'paid';
-      return true;
+    console.log(contract);
+      const matchesTab = (
+          activeTab === 'all' ||
+          (activeTab === 'pending_signature' && contract.status === 'signed_by_band') ||
+          (activeTab === 'to_pay' && contract.status === 'completed') ||
+          (activeTab === 'paid' && contract.status === 'paid')
+      );
+
+      const matchesSearch = contract.band?.name?.toLowerCase().includes(search.toLowerCase()) || contract.brotherhood?.name?.toLowerCase().includes(search.toLowerCase());
+      return matchesTab && matchesSearch;
   });
 
 
@@ -181,7 +187,12 @@ function Contratos() {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" />
+          <input
+            type="search"
+            placeholder="Buscar por nombre..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </label>
       </div>
       

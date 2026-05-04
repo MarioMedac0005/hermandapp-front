@@ -5,10 +5,10 @@ export default function Footer() {
     return (
         <footer className="bg-white text-gray-500 py-16 px-6 md:px-12 border-t border-gray-100 mt-auto">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-                
+
                 <div className="flex flex-col max-w-sm">
-                    <Link to="/" className="mb-6 inline-block opacity-90 hover:opacity-100 transition-opacity">
-                        <img src={Logo} alt="HermandApp Logo" className="w-28 grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+                    <Link to="/" className="mb-6 inline-block">
+                        <img src={Logo} alt="HermandApp Logo" className="w-28 transition-all duration-500 transform hover:scale-110" />
                     </Link>
                     <p className="text-sm text-gray-400 leading-relaxed">
                         Conectando hermandades y bandas con una plataforma elegante, moderna y funcional.
@@ -41,7 +41,7 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-            
+
             <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
                 <p>&copy; {new Date().getFullYear()} HermandApp. Todos los derechos reservados.</p>
             </div>

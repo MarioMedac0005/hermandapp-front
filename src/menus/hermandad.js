@@ -12,7 +12,7 @@ const hermandadMenu = [
       { name: "Perfil Hermandad", icon: UserIcon, href: "/hermandad/panel/informacion" },
       { name: "Contratos", icon: DocumentTextIcon, href: "/hermandad/panel/contratos" },
       { name: "Procesiones", icon: MapIcon, href: "/hermandad/panel/procesiones" },
-      { name: "Galeria", icon: PhotoIcon, href: "/hermandad/panel/galeria" },
+      { name: "Galería", icon: PhotoIcon, href: "/hermandad/panel/galeria" },
     ]
   }
 ];

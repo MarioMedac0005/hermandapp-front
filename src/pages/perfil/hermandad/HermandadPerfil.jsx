@@ -82,9 +82,9 @@ function HermandadPerfil() {
 						<div id="historia" className="scroll-mt-32 space-y-6">
 							<HermandadStats
 								stats={{
-									foundationYear: data.foundation_year,
-									nazarenos: data.nazarenos,
-									headquarters: data.office,
+									year_of_founding: data.year_of_founding,
+									nazarenes: data.nazarenes,
+									office: data.office,
 								}}
 							/>
 

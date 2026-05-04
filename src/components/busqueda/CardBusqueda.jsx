@@ -14,14 +14,14 @@ export default function CardBusqueda({ data }) {
 		?? "/placeholder.jpg";
 
 	return (
-		<div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+		<div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition flex flex-col">
 			<img
 				src={data.banner}
 				alt={data.name}
 				className="w-full h-40 object-cover"
 			/>
 
-			<div className="p-4">
+			<div className="p-4 flex flex-col flex-1">
 				<span className="text-xs font-semibold text-purple-600 uppercase">
 					{routeType} • {data.city}
 				</span>
@@ -36,12 +36,14 @@ export default function CardBusqueda({ data }) {
 					</p>
 				)}
 
-				<Link
-					to={`/perfil/${routeType}/${data.id}`}
-					className="mt-4 block w-full bg-purple-100 text-purple-700 rounded-lg py-2 text-sm font-medium text-center hover:bg-purple-200 transition"
-				>
-					Ver más
-				</Link>
+				<div className="mt-auto pt-4">
+					<Link
+						to={`/perfil/${routeType}/${data.id}`}
+						className="block w-full bg-purple-100 text-purple-700 rounded-lg py-2 text-sm font-medium text-center hover:bg-purple-200 transition"
+					>
+						Ver más
+					</Link>
+				</div>
 			</div>
 		</div>
 	);

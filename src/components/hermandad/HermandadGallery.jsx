@@ -18,7 +18,7 @@ function HermandadGallery({ media }) {
                 {gallery.map((item) => (
                     <div
                         key={item.id}
-                        className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in"
+                        className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100"
                     >
                         <img
                             src={item.url}
@@ -26,7 +26,7 @@ function HermandadGallery({ media }) {
                             className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
                             loading="lazy"
                         />
-                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                     </div>
                 ))}
             </div>

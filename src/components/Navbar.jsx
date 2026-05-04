@@ -153,7 +153,7 @@ export default function Navbar() {
 				<div className="hidden md:flex h-20 items-center justify-between px-6 lg:px-8">
 					<div className="navbar-start">
 						<Link to="/">
-							<img src={Logo} className="w-32" />
+							<img src={Logo} className="w-32 transition-all duration-500 transform hover:scale-105" />
 						</Link>
 					</div>
 
@@ -178,7 +178,7 @@ export default function Navbar() {
 								<div className="h-6 w-px bg-gray-200"></div>
 
 								<Menu as="div" className="relative">
-									<MenuButton className="flex items-center gap-3 rounded-full focus:outline-none p-1.5 pr-3 hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+									<MenuButton className="flex items-center gap-3 rounded-full focus:outline-none p-1.5 pr-3 hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 cursor-pointer">
 										<img
 											className="h-10 w-10 rounded-full object-cover border border-gray-100 shadow-sm"
 											src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
@@ -260,7 +260,7 @@ export default function Navbar() {
 											<MenuItem>
 												<button
 													onClick={handleLogout}
-													className="group flex w-full items-center px-3 py-2.5 text-sm font-medium rounded-xl gap-3 text-red-600 data-focus:bg-red-50 data-focus:text-red-700 transition-colors"
+													className="group flex w-full items-center px-3 py-2.5 text-sm font-medium rounded-xl gap-3 text-red-600 data-focus:bg-red-50 data-focus:text-red-700 transition-colors cursor-pointer"
 												>
 													<ArrowRightStartOnRectangleIcon className="h-5 w-5 text-red-400 group-data-focus:text-red-500" aria-hidden="true" />
 													Cerrar Sesión

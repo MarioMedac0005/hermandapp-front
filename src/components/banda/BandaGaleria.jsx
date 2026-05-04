@@ -12,9 +12,9 @@ export default function BandaGaleria({ media }) {
 
 			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
 				{galeria.map(item => (
-					<div 
-						key={item.id} 
-						className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in group"
+					<div
+						key={item.id}
+						className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 group"
 					>
 						<img
 							src={item.url}

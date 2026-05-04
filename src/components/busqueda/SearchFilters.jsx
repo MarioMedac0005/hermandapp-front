@@ -26,7 +26,7 @@ function SearchFilters({ filters, onChange, onSubmit, onReset }) {
                     <FilterInput
                         value={filters.q}
                         onChange={value => onChange("q", value)}
-                        placeholder="Ej. Veracruz, Redención..."
+                        placeholder="La Esperanza..."
                     />
                 </div>
 

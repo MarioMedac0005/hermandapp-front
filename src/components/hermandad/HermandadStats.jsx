@@ -6,19 +6,19 @@ import {
 
 export default function HermandadStats({ stats }) {
     const items = [
-        stats.foundationYear && {
+        stats.year_of_founding && {
             label: "Fundación",
-            value: stats.foundationYear,
+            value: stats.year_of_founding,
             icon: CalendarDaysIcon,
         },
-        stats.nazarenos && {
+        stats.nazarenes && {
             label: "Nazarenos",
-            value: stats.nazarenos,
+            value: stats.nazarenes,
             icon: UserCircleIcon,
         },
-        stats.headquarters && {
+        stats.office && {
             label: "Sede Canónica",
-            value: stats.headquarters,
+            value: stats.office,
             icon: MapPinIcon,
         },
     ].filter(Boolean);

@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 function CardContent({ isEditing, setIsEditing }) {
   const { user, login } = useAuth();
   const [loading, setLoading] = useState(false);
-  
+  const [originalData, setOriginalData] = useState(null);
+
   // Local state for the form inputs
   const [formData, setFormData] = useState({
     name: "",
@@ -23,7 +24,7 @@ function CardContent({ isEditing, setIsEditing }) {
   // Populate data when user changes
   useEffect(() => {
     if (user?.brotherhood) {
-      setFormData({
+      const data = {
         name: user.brotherhood.name || "",
         description: user.brotherhood.description || "",
         city: user.brotherhood.city || "",
@@ -32,7 +33,10 @@ function CardContent({ isEditing, setIsEditing }) {
         email: user.brotherhood.email || "",
         nazarenes: user.brotherhood.nazarenes || "",
         year_of_founding: user.brotherhood.year_of_founding || "",
-      });
+      };
+
+      setFormData(data);
+      setOriginalData(data);
     }
   }, [user]);
 
@@ -46,7 +50,7 @@ function CardContent({ isEditing, setIsEditing }) {
 
   const handleSave = async () => {
     if (!user?.brotherhood?.id) return;
-    
+
     setLoading(true);
     try {
       // Merge all existing brotherhood fields to avoid missing required fields errors from the backend.
@@ -54,7 +58,7 @@ function CardContent({ isEditing, setIsEditing }) {
         ...user.brotherhood,
         ...formData
       };
-      
+
       await brotherhoodService.updateProfile(user.brotherhood.id, payload);
       toast.success("Perfil actualizado correctamente");
       // Refresh user to get updated brotherhood info
@@ -70,21 +74,10 @@ function CardContent({ isEditing, setIsEditing }) {
   };
 
   const handleCancel = () => {
-    if (user?.brotherhood) {
-      setFormData({
-        name: user.brotherhood.name || "",
-        description: user.brotherhood.description || "",
-        city: user.brotherhood.city || "",
-        office: user.brotherhood.office || "",
-        phone_number: user.brotherhood.phone_number || "",
-        email: user.brotherhood.email || "",
-        nazarenes: user.brotherhood.nazarenes || "",
-        year_of_founding: user.brotherhood.year_of_founding || "",
-      });
+    if (originalData) {
+      setFormData(originalData);
     }
-    if (setIsEditing) {
-      setIsEditing(false);
-    }
+    setIsEditing(false);
   };
 
   return (
@@ -102,7 +95,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Ej. Hermandad del Cristo de la Expiración"
+              placeholder="Hermandad del Cristo de la Expiración"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -122,7 +115,7 @@ function CardContent({ isEditing, setIsEditing }) {
               onChange={handleChange}
               placeholder="Escribe aquí la historia o descripción..."
               rows={4}
-              className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed resize-none ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
+              className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed resize-none ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm resize-y'}`}
               disabled={!isEditing || loading}
             />
           </div>
@@ -138,7 +131,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="office"
               value={formData.office}
               onChange={handleChange}
-              placeholder="Ej. Parroquia de San Jacinto"
+              placeholder="Parroquia de San Jacinto"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -155,7 +148,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="city"
               value={formData.city}
               onChange={handleChange}
-              placeholder="Ej. Sevilla"
+              placeholder="Córdoba"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -172,7 +165,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="phone_number"
               value={formData.phone_number}
               onChange={handleChange}
-              placeholder="Ej. +34 954 123 456"
+              placeholder="+34 954 123 456"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -189,7 +182,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Ej. contacto@hermandad.es"
+              placeholder="contacto@hermandad.es"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -206,7 +199,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="nazarenes"
               value={formData.nazarenes}
               onChange={handleChange}
-              placeholder="Ej. 1500"
+              placeholder="1500"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -223,7 +216,7 @@ function CardContent({ isEditing, setIsEditing }) {
               name="year_of_founding"
               value={formData.year_of_founding}
               onChange={handleChange}
-              placeholder="Ej. 1560"
+              placeholder="1560"
               className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
               disabled={!isEditing || loading}
             />
@@ -233,14 +226,14 @@ function CardContent({ isEditing, setIsEditing }) {
         {/* Acciones */}
         {isEditing && (
           <div className="flex gap-3 justify-end mt-10 pt-6 border-t border-gray-100">
-            <button 
+            <button
               onClick={handleCancel}
               disabled={loading}
               className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50"
             >
               Cancelar
             </button>
-            <button 
+            <button
               onClick={handleSave}
               disabled={loading}
               className="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium text-sm shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
