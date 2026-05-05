@@ -25,11 +25,34 @@ function AvailabilityForm({ initialData = null, onSuccess, preselectedBandId = n
 
     useEffect(() => {
         if (initialData) {
+            let formattedDate = initialData.date || "";
+            if (formattedDate) {
+                // Handle DD/MM/YYYY
+                if (formattedDate.includes('/')) {
+                    const parts = formattedDate.split(' ');
+                    const [day, month, year] = parts[0].split('/');
+                    const time = parts[1] || '00:00';
+                    formattedDate = `${year}-${month}-${day}T${time}`;
+                } 
+                // Handle YYYY-MM-DD HH:mm:ss
+                else if (formattedDate.includes(' ') && formattedDate.includes('-')) {
+                    formattedDate = formattedDate.replace(' ', 'T');
+                }
+
+                // Ensure format is exactly YYYY-MM-DDThh:mm (strip seconds or milliseconds)
+                if (formattedDate.includes('T')) {
+                    const [datePart, timePart] = formattedDate.split('T');
+                    if (timePart && timePart.length >= 5) {
+                        formattedDate = `${datePart}T${timePart.substring(0, 5)}`;
+                    }
+                }
+            }
+
             setForm({
-                date: initialData.date || "",
+                date: formattedDate,
                 status: initialData.status || "free",
                 description: initialData.description || "",
-                band_id: initialData.band_id || preselectedBandId || "",
+                band_id: initialData.band_id || initialData.band?.id || preselectedBandId || "",
             });
         }
     }, [initialData, preselectedBandId]);
