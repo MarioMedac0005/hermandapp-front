@@ -13,6 +13,7 @@ function ContractForm({ initialData = null, onSuccess }) {
     // Fetch dependencies for selects
     const { data: bands } = useFetchData(API_ENDPOINTS.bands);
     const { data: processions } = useFetchData(API_ENDPOINTS.processions);
+    const { data: brotherhoods } = useFetchData(API_ENDPOINTS.brotherhoods);
 
     const loading = creating || updating;
     const error = createError || updateError;
@@ -27,6 +28,7 @@ function ContractForm({ initialData = null, onSuccess }) {
         duration: "",
         minimum_musicians: "",
         band_id: "",
+        brotherhood_id: "",
         procession_id: "",
     });
 
@@ -42,6 +44,7 @@ function ContractForm({ initialData = null, onSuccess }) {
                 duration: initialData.duration || "",
                 minimum_musicians: initialData.minimum_musicians || "",
                 band_id: initialData.band_id || "",
+                brotherhood_id: initialData.brotherhood_id || "",
                 procession_id: initialData.procession_id || "",
             });
         }
@@ -65,6 +68,10 @@ function ContractForm({ initialData = null, onSuccess }) {
             duration: form.duration ? parseInt(form.duration) : null,
             minimum_musicians: form.minimum_musicians ? parseInt(form.minimum_musicians) : null,
         };
+
+        if (payload.performance_type !== 'procession') {
+            payload.procession_id = null;
+        }
         
         let result;
         if (initialData) {
@@ -97,6 +104,10 @@ function ContractForm({ initialData = null, onSuccess }) {
         { id: "festival", name: "Certamen" },
         { id: "other", name: "Otro" },
     ];
+
+    const filteredProcessions = form.brotherhood_id
+        ? (processions || []).filter(p => p.brotherhood_id == form.brotherhood_id || (p.brotherhood && p.brotherhood.id == form.brotherhood_id))
+        : [];
     
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -162,12 +173,24 @@ function ContractForm({ initialData = null, onSuccess }) {
             />
 
             <SelectField
-              label="Procesión"
-              options={processions || []}
-              value={form.procession_id}
-              onChange={(val) => handleSelectChange("procession_id", val)}
+              label="Hermandad"
+              options={brotherhoods || []}
+              value={form.brotherhood_id}
+              onChange={(val) => {
+                  setForm(prev => ({ ...prev, brotherhood_id: val, procession_id: "" }));
+              }}
               disabled={!!initialData}
             />
+
+            {form.performance_type === 'procession' && (
+                <SelectField
+                  label="Procesión"
+                  options={filteredProcessions}
+                  value={form.procession_id}
+                  onChange={(val) => handleSelectChange("procession_id", val)}
+                  disabled={!!initialData || !form.brotherhood_id}
+                />
+            )}
         </div>
 
         <div className="mt-4">
