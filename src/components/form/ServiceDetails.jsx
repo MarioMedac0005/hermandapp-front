@@ -1,31 +1,160 @@
-import { Calendar } from "primereact/calendar";
-import { addLocale } from 'primereact/api';
 import SelectField from "../register/SelectField";
+import { useState, useMemo } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
-// CSS for PrimeReact Calendar
-import 'primeicons/primeicons.css';
-import 'primereact/resources/primereact.css';
-import 'primereact/resources/themes/bootstrap4-light-purple/theme.css';
+function SelectableCalendar({ bookedDates = [], selectedDate, onDateSelect }) {
+	const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
 
-// Configure Spanish locale
-addLocale('es', {
-	firstDayOfWeek: 1,
-	showMonthAfterYear: true,
-	dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
-	dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
-	dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
-	monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
-	monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
-	today: 'Hoy',
-	clear: 'Limpiar'
-});
+	const { days, monthLabel, weekDays } = useMemo(() => {
+		const year = currentDate.getFullYear();
+		const month = currentDate.getMonth();
+		
+		const firstDayOfMonth = new Date(year, month, 1).getDay();
+		const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+		
+		const daysInMonth = new Date(year, month + 1, 0).getDate();
+		
+		const daysArray = [];
 
-export default function ServiceDetails({ formData, updateField, errors, processions = [] }) {
+		for (let i = 0; i < startOffset; i++) {
+			daysArray.push(null);
+		}
+
+		for (let i = 1; i <= daysInMonth; i++) {
+			daysArray.push(new Date(year, month, i));
+		}
+
+		const dateFormatter = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
+		const label = dateFormatter.format(currentDate);
+		const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+
+		return {
+			days: daysArray,
+			monthLabel: capitalizedLabel,
+			weekDays: ["L", "M", "X", "J", "V", "S", "D"]
+		};
+	}, [currentDate]);
+
+	const nextMonth = () => {
+		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+	};
+
+	const prevMonth = () => {
+		setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+	};
+
+	const isDateBooked = (date) => {
+		if (!date) return false;
+		return bookedDates?.some(
+			booked => 
+				booked.getDate() === date.getDate() &&
+				booked.getMonth() === date.getMonth() &&
+				booked.getFullYear() === date.getFullYear()
+		);
+	};
+
+	const isSelected = (date) => {
+		if (!date || !selectedDate) return false;
+		return (
+			date.getDate() === selectedDate.getDate() &&
+			date.getMonth() === selectedDate.getMonth() &&
+			date.getFullYear() === selectedDate.getFullYear()
+		);
+	};
+
+	const handleDateClick = (date) => {
+		if (!date || isDateBooked(date)) return;
+		onDateSelect(date);
+	};
+
+	return (
+		<div className="w-full">
+			{/* Header */}
+			<div className="flex items-center justify-between mb-6">
+				<button 
+					type="button"
+					onClick={prevMonth}
+					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors cursor-pointer"
+				>
+					<ChevronLeftIcon className="size-5" />
+				</button>
+				<h3 className="text-lg font-semibold text-gray-900">
+					{monthLabel}
+				</h3>
+				<button 
+					type="button"
+					onClick={nextMonth}
+					className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors cursor-pointer"
+				>
+					<ChevronRightIcon className="size-5" />
+				</button>
+			</div>
+
+			{/* Grid */}
+			<div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
+				{/* Weekdays */}
+				{weekDays.map(day => (
+					<div key={day} className="text-center text-xs font-semibold text-gray-400 py-2">
+						{day}
+					</div>
+				))}
+
+				{/* Days */}
+				{days.map((date, index) => {
+					if (!date) {
+						return <div key={`empty-${index}`} className="aspect-square" />;
+					}
+
+					const booked = isDateBooked(date);
+					const selected = isSelected(date);
+					
+					return (
+						<button 
+							type="button"
+							key={date.toISOString()} 
+							onClick={() => handleDateClick(date)}
+							disabled={booked}
+							className={`
+								aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all relative
+								${booked 
+									? "bg-red-50 text-red-600 font-bold cursor-not-allowed opacity-50" 
+									: selected
+										? "bg-purple-600 text-white shadow-md shadow-purple-200 cursor-pointer"
+										: "hover:bg-gray-50 text-gray-700 hover:text-purple-600 cursor-pointer"
+								}
+							`}
+						>
+							{date.getDate()}
+							{booked && (
+								<span className="absolute bottom-1.5 w-1 h-1 bg-red-400 rounded-full" />
+							)}
+						</button>
+					);
+				})}
+			</div>
+
+			{/* Legend */}
+			<div className="flex items-center justify-center gap-6 text-xs text-gray-500 mt-6 pt-4 border-t border-gray-100">
+				<div className="flex items-center gap-2">
+					<div className="w-2 h-2 rounded-full bg-red-400" />
+					<span>Ocupado</span>
+				</div>
+				<div className="flex items-center gap-2">
+					<div className="w-2 h-2 rounded-full bg-purple-600" />
+					<span>Seleccionado</span>
+				</div>
+				<div className="flex items-center gap-2">
+					<div className="w-2 h-2 rounded-full border border-gray-200" />
+					<span>Libre</span>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export default function ServiceDetails({ formData, updateField, errors, processions = [], bookedDates = [] }) {
 	const serviceOptions = [
 		{ value: "procession", label: "Procesión" },
-		{ value: "concert", label: "Concierto" },
-		{ value: "transfer", label: "Traslado" },
-		{ value: "festival", label: "Certamen" },
 		{ value: "other", label: "Otro" },
 	];
 
@@ -49,13 +178,13 @@ export default function ServiceDetails({ formData, updateField, errors, processi
 		}
 	};
 
-	const handleDateChange = (e) => {
-		updateField("performance_date", e.value);
+	const handleDateChange = (date) => {
+		updateField("performance_date", date);
 	};
 
 	return (
-		<div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+		<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
+			<div className="flex flex-col gap-4">
 				<SelectField
 					label="Tipo de Actuación"
 					placeholder="Selecciona el tipo"
@@ -68,7 +197,7 @@ export default function ServiceDetails({ formData, updateField, errors, processi
 
 				{processions.length > 0 && formData.performance_type === 'procession' && (
 					<SelectField
-						label="Seleccionar Procesión (Opcional)"
+						label="Seleccionar Procesión"
 						placeholder="Elige una procesión..."
 						options={processionOptions}
 						name="procession_id"
@@ -78,30 +207,24 @@ export default function ServiceDetails({ formData, updateField, errors, processi
 					/>
 				)}
 			</div>
-			<div className="flex flex-col gap-6">
+
+			<div className="flex flex-col gap-4">
 				<div className="text-xs font-black text-base-content/40 uppercase tracking-widest flex items-center gap-2">
 					<div className="w-1.5 h-1.5 rounded-full bg-[#8a01e5]"></div>
 					Selecciona la Fecha del Evento
 				</div>
 
-				<div className={`p-4 sm:p-8 border-2 border-dashed rounded-[2rem] bg-base-50/30 flex flex-col items-center hover:border-[#8a01e5]/30 transition-all duration-500 overflow-hidden ${errors.performance_date ? 'border-error/50 bg-error/5 shadow-[0_0_40px_rgba(255,0,0,0.05)]' : 'border-base-200'}`}>
-					<div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-base-100">
-						<Calendar
-							value={formData.performance_date}
-							onChange={handleDateChange}
-							inline
-							showWeek
-							locale="es"
-							className="service-proposal-calendar w-full"
+				<div className="flex flex-col w-full">
+					<div className={`w-full bg-white rounded-xl shadow-sm p-2 border ${errors.performance_date ? 'border-error/50 shadow-[0_0_40px_rgba(255,0,0,0.05)]' : 'border-base-200'}`}>
+						<SelectableCalendar 
+							bookedDates={bookedDates} 
+							selectedDate={formData.performance_date} 
+							onDateSelect={handleDateChange} 
 						/>
 					</div>
 
 					{errors.performance_date && (
-						<div className="mt-8 animate-in fade-in zoom-in duration-300">
-							<p className="text-xs font-black text-error uppercase tracking-[0.2em] bg-error/10 px-6 py-3 rounded-xl border border-error/20">
-								{errors.performance_date}
-							</p>
-						</div>
+						<p className="mt-2 text-xs text-error">{errors.performance_date}</p>
 					)}
 				</div>
 			</div>

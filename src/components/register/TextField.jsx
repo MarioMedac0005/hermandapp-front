@@ -8,6 +8,7 @@ export default function TextField({
   type = "text",
   name,
   error,
+  ...props
 }) {
   return (
     <div>
@@ -32,6 +33,7 @@ export default function TextField({
             rightAdornment ? "pr-10" : "",
             error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "",
           ].join(" ")}
+          {...props}
         />
 
         {rightAdornment ? (

@@ -1,6 +1,8 @@
 import React from 'react';
 import Modal from './Modal';
 import { CalendarIcon, BanknotesIcon, MapPinIcon, UserGroupIcon, MusicalNoteIcon } from '@heroicons/react/24/outline';
+import CortejoCard from './hermandad/CortejoCard';
+import { Link } from 'react-router-dom';
 
 function ContractDetailModal({ contract, isOpen, onClose, actions, isAdmin = false }) {
   if (!contract) return null;
@@ -101,7 +103,17 @@ function ContractDetailModal({ contract, isOpen, onClose, actions, isAdmin = fal
             />
         </div>
 
-        {contract.approximate_route && (
+        {contract.procession ? (
+            <div className="pt-4 mt-2">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 text-center">Recorrido de la Procesión</p>
+                <div className="max-w-sm mx-auto w-full">
+                    <CortejoCard 
+                        cortejo={contract.procession} 
+                        noHover={true} 
+                    />
+                </div>
+            </div>
+        ) : contract.approximate_route && (
             <div className="pt-4 mt-2">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Recorrido Aproximado</p>
                 <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 whitespace-pre-line">
@@ -161,8 +173,16 @@ function ContractDetailModal({ contract, isOpen, onClose, actions, isAdmin = fal
         )}
       </div>
 
-      {actions && (
-        <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
+      {(actions || contract.procession) && (
+        <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100">
+            {contract.procession && (
+                <Link 
+                    to={`/procesion/${contract.procession.id}`} 
+                    className="inline-flex items-center justify-center rounded-xl bg-purple-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-purple-500 transition-all w-full sm:w-auto"
+                >
+                    Ver Detalles de la Procesión
+                </Link>
+            )}
             {actions}
         </div>
       )}

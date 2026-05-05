@@ -17,26 +17,41 @@ import OfferMessage from "@components/form/OfferMessage";
 export default function ProposalPage() {
 	const { bandId } = useParams();
 	const { user } = useAuth();
-	console.log("HermandadesForm User:", user);
-	console.log("HermandadesForm Processions:", user?.brotherhood?.processions);
 
 	const [step, setStep] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [fetchingBand, setFetchingBand] = useState(true);
 	const [band, setBand] = useState(null);
+	const [bookedDates, setBookedDates] = useState([]);
+	const [detailedProcessions, setDetailedProcessions] = useState([]);
 	const [errors, setErrors] = useState({});
 	const { navigate, safeBack } = useSafeNavigate();
 
 	useEffect(() => {
 		const fetchBand = async () => {
 			try {
-				const response = await fetch(`${API_ENDPOINTS.bands}/${bandId}`);
-				if (response.ok) {
-					const data = await response.json();
+				const [bandResponse, datesResponse] = await Promise.all([
+					fetch(`${API_ENDPOINTS.bands}/${bandId}`),
+					fetch(API_ENDPOINTS.bandBookedDates(bandId))
+				]);
+
+				if (bandResponse.ok) {
+					const data = await bandResponse.json();
 					setBand(data.data);
 				} else {
 					toast.error("No se pudo cargar la información de la banda");
 					safeBack("/busqueda");
+				}
+
+				if (datesResponse.ok) {
+					const datesJson = await datesResponse.json();
+					if (datesJson.success && Array.isArray(datesJson.data)) {
+						const dates = datesJson.data.map(d => {
+							const [year, month, day] = d.split('-');
+							return new Date(year, parseInt(month) - 1, day);
+						});
+						setBookedDates(dates);
+					}
 				}
 			} catch (error) {
 				console.error("Error fetching band:", error);
@@ -49,6 +64,22 @@ export default function ProposalPage() {
 		fetchBand();
 	}, [bandId, navigate]);
 
+	useEffect(() => {
+		const fetchProcessions = async () => {
+			if (!user?.brotherhood) return;
+			try {
+				const response = await fetch(API_ENDPOINTS.processions);
+				if (response.ok) {
+					const json = await response.json();
+					setDetailedProcessions(json.data || json || []);
+				}
+			} catch (error) {
+				console.error("Error fetching processions:", error);
+			}
+		};
+		fetchProcessions();
+	}, [user]);
+
 	const [formData, setFormData] = useState({
 		performance_type: "",
 		performance_date: null,
@@ -59,7 +90,7 @@ export default function ProposalPage() {
 		additional_information: ""
 	});
 
-	const processions = user?.brotherhood?.processions || [];
+	const processions = detailedProcessions.length > 0 ? detailedProcessions : (user?.brotherhood?.processions || []);
 
 	// Helper to update field and clear error in real-time
 	const updateField = (name, value) => {
@@ -90,21 +121,16 @@ export default function ProposalPage() {
 		if (step === 1) {
 			if (!formData.performance_type) newErrors.performance_type = "Selecciona un tipo de actuación";
 			if (!formData.performance_date) newErrors.performance_date = "Selecciona una fecha";
+            if (formData.performance_type === 'procession' && !formData.procession_id) {
+                newErrors.procession_id = "Selecciona una procesión";
+            }
 		} else if (step === 2) {
-			// approximate_route is nullable in schema, but maybe good to require it? User didn't specify.
-			// Schema says nullable, but usually user wants some info. I'll make it optional if it says nullable?
-			// "text('approximate_route')->nullable();"
-			// But let's check previous code. "Indica los detalles del recorrido".
-			// I'll keep it required for better UX unless explicitly told otherwise, or maybe warn?
-			// Actually, if it's nullable in backend, I can allow empty. But for a proposal, it's usually needed.
-			// Let's stick to previous behavior: required.
-			if (!formData.approximate_route?.trim()) newErrors.approximate_route = "Indica el recorrido aproximado";
+			if (formData.performance_type !== 'procession') {
+				if (!formData.approximate_route) newErrors.approximate_route = "Indica los detalles del recorrido";
+			}
 			if (!formData.duration) newErrors.duration = "Indica la duración estimada";
 			if (!formData.minimum_musicians) newErrors.minimum_musicians = "Indica los músicos mínimos";
 		} else if (step === 3) {
-			// amount is nullable in schema, but clearly should be filled for a proposal?
-			// "decimal('amount', 10, 2)->nullable();"
-			// I'll keep it validatable.
 			if (!formData.amount || Number(formData.amount) <= 0) newErrors.amount = "Indica un importe válido";
 		}
 
@@ -214,11 +240,11 @@ export default function ProposalPage() {
 										<p className="text-[#8a01e5] font-black uppercase tracking-[0.2em] text-[11px]">
 											Propuesta de {user?.organization || "Hermandad"} para:
 										</p>
-										<h2 className="text-2xl sm:text-4xl font-black text-base-content tracking-tight">
+										<h2 className="text-2xl sm:text-2xl font-black text-base-content tracking-tight">
 											{fetchingBand ? "Cargando..." : (band?.name || "Banda")}
 										</h2>
 									</div>
-									<p className="mt-2 text-base-content/40 font-medium">
+									<p className="text-base-content/40 font-medium text-sm">
 										{step === 1 ? "Configura el tipo de evento y la fecha en que se realizará el servicio." :
 											step === 2 ? "Indica los puntos clave del recorrido y la duración estimada del evento." :
 												"Define el importe de tu propuesta y añade un mensaje personalizado para la banda."}
@@ -232,9 +258,9 @@ export default function ProposalPage() {
 							loading={loading}
 							isLastStep={step === 3}
 						>
-							<div className="mt-6">
-								{step === 1 && <ServiceDetails formData={formData} updateField={updateField} errors={errors} processions={processions} />}
-								{step === 2 && <ProcessionDetails formData={formData} updateField={updateField} errors={errors} />}
+							<div className="mt-2">
+								{step === 1 && <ServiceDetails formData={formData} updateField={updateField} errors={errors} processions={processions} bookedDates={bookedDates} />}
+								{step === 2 && <ProcessionDetails formData={formData} updateField={updateField} errors={errors} processions={processions} />}
 								{step === 3 && <OfferMessage formData={formData} updateField={updateField} errors={errors} />}
 							</div>
 						</ProposalFormCard>

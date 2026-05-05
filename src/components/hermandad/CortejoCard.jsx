@@ -12,12 +12,28 @@ export default function CortejoCard({
     isAdmin = false,
     onDelete,
     onQuickEdit,
-    staticMapUrl
+    staticMapUrl,
+    noLink = false,
+    noHover = false,
+    openInNewTab = false
 }) {
     const navigate = useNavigate();
 
     // Info del mapa estático local
-    const previewUrl = cortejo.preview_url || staticMapUrl;
+    const previewUrl = useMemo(() => {
+        if (cortejo.preview_url) return cortejo.preview_url;
+        if (staticMapUrl) return staticMapUrl;
+        
+        let segments = cortejo.segments;
+        if (typeof segments === 'string') {
+            try { segments = JSON.parse(segments); } catch(e){}
+        }
+        
+        if (segments && segments.length > 0 && segments[0].coordinates) {
+             return `https://api.mapbox.com/styles/v1/mapbox/light-v11/static/path-5+9333ea-0.6(${encodeURIComponent(segments[0].coordinates.map(c => c.join(',')).join(';'))})/auto/600x400?padding=40&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
+        }
+        return null;
+    }, [cortejo, staticMapUrl]);
 
     const formattedDate = useMemo(() => {
         const dateStr = cortejo.date || cortejo.checkout_time;
@@ -38,11 +54,12 @@ export default function CortejoCard({
     }, [cortejo.checkout_time]);
 
     // Wrapper logic
-    const CardWrapper = Link;
-    const wrapperProps = {
+    const CardWrapper = noLink ? "div" : Link;
+    const wrapperProps = noLink ? {} : {
         to: isAdmin
             ? `/hermandad/panel/editar-procesion/${cortejo.id}`
-            : `/procesion/${cortejo.id}`
+            : `/procesion/${cortejo.id}`,
+        ...(openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})
     };
 
     const handleEdit = (e) => {
@@ -61,7 +78,8 @@ export default function CortejoCard({
         <CardWrapper
             {...wrapperProps}
             className={cn(
-                "group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden flex flex-col"
+                "relative bg-white rounded-[2rem] border border-slate-100 shadow-sm transition-all duration-500 overflow-hidden flex flex-col",
+                !noHover && "group hover:shadow-2xl hover:shadow-purple-500/10"
             )}
         >
             {/* Top Visual Area */}
