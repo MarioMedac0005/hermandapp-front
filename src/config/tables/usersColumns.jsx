@@ -43,13 +43,6 @@ export const userColumns = [
   {
     key: "created_at",
     label: "Fecha de Creación",
-    render: (item) => {
-        if (!item.created_at) return "Sin fecha";
-        return new Date(item.created_at).toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long', 
-            day: 'numeric'
-        });
-    }
+    render: (item) => item.created_at || "Sin fecha",
   },
 ];
