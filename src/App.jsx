@@ -97,7 +97,7 @@ function App() {
           <Route path="procesiones" element={<ProcessionsManager />} />
           <Route path="crear-procesion" element={<ProcesionEditor />} />
           <Route path="editar-procesion/:id" element={<ProcesionEditor />} />
-          <Route path="galeria" element={<Galeria />} />
+          <Route path="galeria" element={<Galeria modelType="brotherhood" />} />
         </Route>
 
         {/* Rutas para el panel de administracion de la banda */}
@@ -116,6 +116,7 @@ function App() {
           <Route path="contratos/:id/firmar" element={<SignContract />} />
           <Route path="disponibilidad" element={<DisponibilidadBanda />} />
           <Route path="repertorio" element={<Repertorio />} />
+          <Route path="galeria" element={<Galeria modelType="band"/>} />
         </Route>
 
         {/* Rutas para el panel de administracion nuestro */}

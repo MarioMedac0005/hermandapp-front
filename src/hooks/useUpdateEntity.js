@@ -19,10 +19,20 @@ export const useUpdateEntity = () => {
                 body: JSON.stringify(body)
             });
 
-            const data = await res.json();
+            let data = null;
 
-            if (!res.ok) throw new Error(data.message || 'Error al actualizar el registro');
-            
+            const contentType = res.headers.get("content-type");
+
+            if (contentType && contentType.includes("application/json")) {
+                data = await res.json();
+            } else {
+                throw new Error("Error del servidor. Inténtalo de nuevo más tarde.");
+            }
+
+            if (!res.ok) {
+                throw new Error(data?.message || "Error al actualizar el registro");
+            }
+
             toast.success("Registro actualizado correctamente");
             return data;
 
@@ -33,7 +43,7 @@ export const useUpdateEntity = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return {
         update,

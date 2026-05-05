@@ -18,10 +18,17 @@ import {
 } from "@headlessui/react";
 import toast from "react-hot-toast";
 
-function Galeria() {
+function Galeria({ modelType = "brotherhood", modelId }) {
   const { user, loading } = useAuth();
+
+  const resolvedModelId =
+  modelType === "band" ? user?.band_id : user?.brotherhood_id;
+
   const [gallery, setGallery] = useState(null);
   const [fetching, setFetching] = useState(true);
+
+  const entityName =
+  modelType === "band" ? "banda" : "hermandad";
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,15 +39,18 @@ function Galeria() {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const getGallery = async () => {
-    if (!user?.brotherhood_id) {
+    if (!resolvedModelId){
       setFetching(false);
       return;
     }
     try {
       setFetching(true);
-      const response = await fetch(
-        `${API_ENDPOINTS.brotherhoods}/${user.brotherhood_id}`,
-      );
+      const endpoint =
+        modelType === "band"
+          ? API_ENDPOINTS.bands
+          : API_ENDPOINTS.brotherhoods;
+
+      const response = await fetch(`${endpoint}/${resolvedModelId}`);
       if (!response.ok) throw new Error("Error al cargar la galería");
       const data = await response.json();
       const filtered = data.data.media.filter((g) => g.category === "gallery");
@@ -54,8 +64,10 @@ function Galeria() {
   };
 
   useEffect(() => {
-    getGallery();
-  }, [user]);
+    if (!loading) {
+      getGallery();
+    }
+  }, [resolvedModelId, loading]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -90,8 +102,8 @@ function Galeria() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("category", "gallery");
-      formData.append("model_type", "brotherhood");
-      formData.append("model_id", user.brotherhood_id);
+      formData.append("model_type", modelType);
+      formData.append("model_id", resolvedModelId);
 
       const token = localStorage.getItem("token");
 
@@ -187,7 +199,7 @@ function Galeria() {
             Galería de Imágenes
           </h2>
           <p className="text-muted-foreground mt-1">
-            Gestiona el contenido visual de tu hermandad de forma sencilla.
+            Gestiona el contenido visual de tu {entityName} de forma sencilla.
           </p>
         </div>
 
@@ -209,7 +221,7 @@ function Galeria() {
             Aún no hay imágenes
           </p>
           <p className="text-muted-foreground mb-8">
-            Empieza a subir fotos para dar vida a tu hermandad.
+            Empieza a subir fotos para dar vida a tu {entityName}.
           </p>
           <button
             onClick={() => setIsModalOpen(true)}

@@ -17,9 +17,4 @@ const hermandadMenu = [
   }
 ];
 
-// Re-reading step 75, I see MagnifyingGlassIcon imported but not used. Maybe it was intended for Search?
-// "Buscar Banda" is a route. User might want it in menu?
-// The user didn't ask to change hermandad menu content, just structure.
-// I'll stick to what was there: Profile and Contracts.
-
 export default hermandadMenu;
