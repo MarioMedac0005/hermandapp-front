@@ -16,7 +16,7 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
         name: "",
         city: "",
         office: "",
-        phone: "",
+        phone_number: "",
         email: "",
     });
 
@@ -37,7 +37,7 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
                 name: initialData.name || "",
                 city: initialData.city || "",
                 office: initialData.office || "",
-                phone: initialData.phone || "",
+                phone_number: initialData.phone_number || "",
                 email: initialData.email || "",
             });
         }
@@ -96,10 +96,10 @@ function BrotherhoodForm({ initialData = null, onSuccess }) {
         <div className="grid grid-cols-2 gap-4">
             <InputField
               label="Teléfono"
-              name="phone"
+              name="phone_number"
               type="text"
               placeholder="Número de teléfono"
-              value={form.phone}
+              value={form.phone_number}
               onChange={handleChange}
             />
 
