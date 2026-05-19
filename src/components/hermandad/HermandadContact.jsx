@@ -5,6 +5,18 @@ import {
 } from "@heroicons/react/24/outline";
 
 function HermandadContact({ hermandad }) {
+    let formattedPhone = null;
+    if (hermandad.phone_number) {
+        const cleanPhone = hermandad.phone_number.replace(/\s+/g, '');
+        if (cleanPhone.startsWith('+')) {
+            formattedPhone = cleanPhone;
+        } else if (cleanPhone.startsWith('34') && cleanPhone.length >= 11) {
+            formattedPhone = `+${cleanPhone}`;
+        } else {
+            formattedPhone = `+34${cleanPhone}`;
+        }
+    }
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -19,7 +31,10 @@ function HermandadContact({ hermandad }) {
                     value={hermandad.email} 
                     href={`mailto:${hermandad.email}`} 
                 />
-                <ContactItem icon={PhoneIcon} value={hermandad.phone_number} />
+                <ContactItem 
+                    icon={PhoneIcon} 
+                    value={formattedPhone} 
+                />
             </div>
         </div>
     );

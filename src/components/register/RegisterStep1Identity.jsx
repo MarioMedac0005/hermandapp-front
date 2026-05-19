@@ -1,6 +1,8 @@
 import SegmentedToggle from "./SegmentedToggle";
 import TextField from "./TextField";
 import SelectField from "./SelectField";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 export default function RegisterStep1Identity({ values, onChange, errors = {} }) {
   const cityOptions = [
@@ -75,14 +77,23 @@ export default function RegisterStep1Identity({ values, onChange, errors = {} })
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <TextField
-              label="Teléfono"
-              placeholder="600 000 000"
-              name="brotherhoodPhone"
-              value={values?.brotherhoodPhone}
-              onChange={onChange}
-              error={errors.brotherhoodPhone}
-            />
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Teléfono</label>
+              <PhoneInput
+                country={'es'}
+                onlyCountries={['es']}
+                disableDropdown={true}
+                value={values?.brotherhoodPhone}
+                onChange={(phone) => onChange({ target: { name: "brotherhoodPhone", value: phone } })}
+                inputClass={`!w-full !h-[42px] !text-sm !rounded-lg !border ${errors.brotherhoodPhone ? '!border-red-500' : '!border-gray-300'} focus:!border-[#8a01e5] focus:!ring-1 focus:!ring-[#8a01e5]`}
+                containerClass="w-full"
+                buttonClass={`!rounded-l-lg !border ${errors.brotherhoodPhone ? '!border-red-500' : '!border-gray-300'} !cursor-default hover:!bg-transparent`}
+                placeholder="+34 600 000 000"
+              />
+              {errors.brotherhoodPhone && (
+                 <span className="text-xs text-red-500 mt-1">{errors.brotherhoodPhone}</span>
+              )}
+            </div>
             <TextField
               label="Email"
               placeholder="contacto@hermandad.com"

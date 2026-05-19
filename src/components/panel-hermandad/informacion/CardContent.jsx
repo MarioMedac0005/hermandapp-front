@@ -3,6 +3,8 @@ import { BriefcaseIcon, EnvelopeIcon, MapPinIcon, PhoneIcon, TagIcon, UserGroupI
 import { useAuth } from "../../../contexts/AuthContext";
 import { brotherhoodService } from "../../../services/brotherhoodService";
 import toast from "react-hot-toast";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 function CardContent({ isEditing, setIsEditing }) {
   const { user, login } = useAuth();
@@ -24,12 +26,25 @@ function CardContent({ isEditing, setIsEditing }) {
   // Populate data when user changes
   useEffect(() => {
     if (user?.brotherhood) {
+      const apiPhone = user.brotherhood.phone_number || "";
+      let formattedPhone = apiPhone;
+      if (apiPhone) {
+        const cleanPhone = apiPhone.replace(/\s+/g, '');
+        if (cleanPhone.startsWith('+')) {
+          formattedPhone = cleanPhone;
+        } else if (cleanPhone.startsWith('34') && cleanPhone.length >= 11) {
+          formattedPhone = `+${cleanPhone}`;
+        } else {
+          formattedPhone = `+34${cleanPhone}`;
+        }
+      }
+
       const data = {
         name: user.brotherhood.name || "",
         description: user.brotherhood.description || "",
         city: user.brotherhood.city || "",
         office: user.brotherhood.office || "",
-        phone_number: user.brotherhood.phone_number || "",
+        phone_number: formattedPhone,
         email: user.brotherhood.email || "",
         nazarenes: user.brotherhood.nazarenes || "",
         year_of_founding: user.brotherhood.year_of_founding || "",
@@ -160,14 +175,17 @@ function CardContent({ isEditing, setIsEditing }) {
               <PhoneIcon className="h-4 w-4 text-purple-600" />
               Teléfono
             </label>
-            <input
-              type="tel"
-              name="phone_number"
+            <PhoneInput
+              country={'es'}
+              onlyCountries={['es']}
+              disableDropdown={true}
               value={formData.phone_number}
-              onChange={handleChange}
-              placeholder="+34 954 123 456"
-              className={`w-full px-4 py-2.5 rounded-lg border bg-gray-50 focus:bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-300 disabled:opacity-75 disabled:cursor-not-allowed ${!isEditing ? 'border-transparent bg-gray-50/50 shadow-none' : 'border-gray-300 shadow-sm'}`}
+              onChange={(phone) => setFormData(prev => ({ ...prev, phone_number: phone }))}
               disabled={!isEditing || loading}
+              inputClass={`!w-full !h-[42px] !text-sm !rounded-lg !border !bg-gray-50 focus:!bg-white focus:!border-[#8a01e5] focus:!ring-1 focus:!ring-[#8a01e5] transition-colors duration-200 disabled:!opacity-75 disabled:!cursor-not-allowed ${!isEditing ? '!border-transparent !bg-gray-50/50 !shadow-none' : '!border-gray-300 !shadow-sm hover:!border-purple-300'}`}
+              containerClass="w-full"
+              buttonClass={`!rounded-l-lg !border ${!isEditing ? '!border-transparent !bg-gray-50/50' : '!border-gray-300'} !cursor-default hover:!bg-transparent`}
+              placeholder="+34 954 123 456"
             />
           </div>
 

@@ -6,7 +6,7 @@ export default function Step2Account({ values, onChange, errors = {} }) {
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TextField
           label="Nombre"
-          placeholder="Ej. Gonchalo"
+          placeholder="Antonio"
           name="firstName"
           value={values?.firstName}
           onChange={onChange}
@@ -15,7 +15,7 @@ export default function Step2Account({ values, onChange, errors = {} }) {
 
         <TextField
           label="Apellidos"
-          placeholder="Ej. Martinez de la torre"
+          placeholder="Gonzalez Ruiz"
           name="lastName"
           value={values?.lastName}
           onChange={onChange}
@@ -26,7 +26,7 @@ export default function Step2Account({ values, onChange, errors = {} }) {
       <div className="mt-6">
         <TextField
           label="Email"
-          placeholder="Ej. usuario@dominio.com"
+          placeholder="usuario@dominio.com"
           name="userEmail"
           value={values?.userEmail}
           onChange={onChange}

@@ -64,14 +64,28 @@ export default function ProposalPage() {
 		fetchBand();
 	}, [bandId, navigate]);
 
+	const getBrotherhoodId = () => {
+		if (user?.brotherhood_id) return user.brotherhood_id;
+		if (user?.brotherhood?.id) return user.brotherhood.id;
+		// Fallback: extract from avatar url if id is missing in object
+		if (user?.avatar) {
+			const match = user.avatar.match(/brotherhoods\/(\d+)\//);
+			if (match) return parseInt(match[1]);
+		}
+		return null;
+	};
+
 	useEffect(() => {
 		const fetchProcessions = async () => {
 			if (!user?.brotherhood) return;
+			const bId = getBrotherhoodId();
 			try {
 				const response = await fetch(API_ENDPOINTS.processions);
 				if (response.ok) {
 					const json = await response.json();
-					setDetailedProcessions(json.data || json || []);
+					const allProcessions = json.data || json || [];
+					const filtered = allProcessions.filter(p => p.brotherhood_id == bId || (p.brotherhood && p.brotherhood.id == bId));
+					setDetailedProcessions(filtered);
 				}
 			} catch (error) {
 				console.error("Error fetching processions:", error);
@@ -104,16 +118,6 @@ export default function ProposalPage() {
 		}
 	};
 
-	const getBrotherhoodId = () => {
-		if (user?.brotherhood_id) return user.brotherhood_id;
-		if (user?.brotherhood?.id) return user.brotherhood.id;
-		// Fallback: extract from avatar url if id is missing in object
-		if (user?.avatar) {
-			const match = user.avatar.match(/brotherhoods\/(\d+)\//);
-			if (match) return parseInt(match[1]);
-		}
-		return null;
-	};
 
 
 	const validateStep = () => {
@@ -169,8 +173,11 @@ export default function ProposalPage() {
 		setLoading(true);
 		try {
 			const token = localStorage.getItem("token");
-			// Format date as YYYY-MM-DD for MySQL date (not datetime)
-			const dateStr = formData.performance_date.toISOString().split('T')[0];
+			const d = formData.performance_date;
+			const year = d.getFullYear();
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const day = String(d.getDate()).padStart(2, '0');
+			const dateStr = `${year}-${month}-${day}`;
 
 			const response = await fetch(API_ENDPOINTS.contracts, {
 				method: "POST",

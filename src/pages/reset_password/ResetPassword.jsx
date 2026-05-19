@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { API_ENDPOINTS } from "../../config/api";
+import { useAuth } from "../../contexts/AuthContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import {
@@ -42,6 +43,7 @@ function PasswordInput({ label, value, onChange, show, onToggle }) {
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const tokenParam = searchParams.get("token");
   const emailParam = searchParams.get("email");
@@ -83,7 +85,42 @@ export default function ResetPassword() {
 
       if (response.ok) {
         toast.success("Contraseña restablecida correctamente");
-        navigate("/login");
+        
+        try {
+          const loginResponse = await fetch(API_ENDPOINTS.login, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ email: emailParam, password }),
+          });
+
+          if (loginResponse.ok) {
+            const loginData = await loginResponse.json();
+            const user = await login(loginData.access_token, loginData.user);
+
+            switch (user?.panel) {
+              case 'admin':
+                navigate("/admin-panel/dashboard");
+                break;
+              case 'gestor_banda':
+                navigate("/banda/panel/informacion");
+                break;
+              case 'gestor_hermandad':
+                navigate("/hermandad/panel/informacion");
+                break;
+              default:
+                navigate("/");
+                break;
+            }
+          } else {
+            navigate("/login");
+          }
+        } catch (loginError) {
+          console.error("Auto-login falló", loginError);
+          navigate("/login");
+        }
       } else {
         toast.error(data.message || "Error al restablecer la contraseña");
       }

@@ -36,13 +36,26 @@ function SignContract() {
             
             if (contentType && contentType.includes("application/json")) {
                 const data = await response.json();
-                // Backend returns { success: true, pdf_url: "..." }
-                if (data.pdf_url) {
-                    setPdfUrl(data.pdf_url);
-                } else if (data.url) {
-                    setPdfUrl(data.url);
-                } else if (data.pdf_path) {
-                    setPdfUrl(data.pdf_path); 
+                let finalUrl = data.pdf_url || data.url || data.pdf_path;
+                
+                if (finalUrl) {
+                    try {
+                        const fileRes = await fetch(finalUrl, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (fileRes.ok) {
+                            const blob = await fileRes.blob();
+                            if (isMounted) {
+                                blobUrl = URL.createObjectURL(blob);
+                                setPdfUrl(blobUrl);
+                            }
+                        } else {
+                            // Fallback
+                            if (isMounted) setPdfUrl(finalUrl);
+                        }
+                    } catch (e) {
+                        if (isMounted) setPdfUrl(finalUrl);
+                    }
                 } else {
                      throw new Error("El servidor devolvió JSON pero sin URL válida.");
                 }
