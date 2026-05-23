@@ -7,6 +7,21 @@ import {
     ShieldCheckIcon
 } from "@heroicons/react/24/outline";
 
+const parseSpanishDate = (dateString) => {
+    if (!dateString) return null;
+
+    // Si ya viene en ISO, funciona directo
+    if (dateString.includes('T')) {
+        return new Date(dateString);
+    }
+
+    // Formato DD/MM/YYYY HH:mm
+    const [datePart, timePart = "00:00"] = dateString.split(" ");
+    const [day, month, year] = datePart.split("/");
+
+    return new Date(`${year}-${month}-${day}T${timePart}`);
+};
+
 export const requestColumns = [
     {
         key: "organization",
@@ -94,7 +109,7 @@ export const requestColumns = [
         render: (item) => (
             <div className="text-slate-500">
                 <p className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">Registrada</p>
-                <p className="text-xs">{item.created_at ? new Date(item.created_at).toLocaleDateString('es-ES') : "N/A"}</p>
+                <p className="text-xs">{item.created_at ? parseSpanishDate(item.created_at)?.toLocaleDateString('es-ES'): "N/A"}</p>
             </div>
         )
     },
