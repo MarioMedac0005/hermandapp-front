@@ -20,14 +20,14 @@ function BandForm({ initialData = null, onSuccess }) {
   });
 
   const cityOptions = [
-    { value: "almeria", label: "Almería" },
-    { value: "cadiz", label: "Cádiz" },
-    { value: "cordoba", label: "Córdoba" },
-    { value: "granada", label: "Granada" },
-    { value: "huelva", label: "Huelva" },
-    { value: "jaen", label: "Jaén" },
-    { value: "malaga", label: "Málaga" },
-    { value: "sevilla", label: "Sevilla" },
+    { value: "Almería", label: "Almería" },
+    { value: "Cádiz", label: "Cádiz" },
+    { value: "Córdoba", label: "Córdoba" },
+    { value: "Granada", label: "Granada" },
+    { value: "Huelva", label: "Huelva" },
+    { value: "Jaén", label: "Jaén" },
+    { value: "Málaga", label: "Málaga" },
+    { value: "Sevilla", label: "Sevilla" },
   ];
 
   useEffect(() => {

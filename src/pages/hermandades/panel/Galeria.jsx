@@ -231,35 +231,44 @@ function Galeria({ modelType = "brotherhood", modelId }) {
           </button>
         </div>
       ) : (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {gallery.map((g) => (
             <article
               key={g.id}
-              className="group flex flex-col bg-card rounded-lg overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-2"
+              className="group relative flex flex-col bg-white dark:bg-zinc-900 rounded-[2rem] overflow-hidden border border-zinc-200/60 dark:border-zinc-800/60 shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-2"
             >
-              <div className="relative aspect-video overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden bg-zinc-50 dark:bg-zinc-800/50">
                 <img
                   src={g.url}
                   alt={g.category || "Imagen de la galería"}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.src = "https://placehold.co/600x400/f4f4f5/a1a1aa?text=Imagen+no+disponible";
+                  }}
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-white dark:bg-zinc-900 border-t border-border/10">
-                <div className="flex flex-col min-w-0 pr-4 pl-2 font-medium">
-                  <span className="text-xs text-muted-foreground">
-                    Categoría
-                  </span>
-                  <span className="text-sm truncate">{g.category === 'gallery' ? 'Galería' : g.category}</span>
+                
+                {/* Permanent Gradient Overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none transition-opacity duration-300 group-hover:opacity-90" />
+                
+                {/* Floating Delete Button (Always Visible) */}
+                <div className="absolute top-4 right-4 z-10">
+                  <button
+                    className="p-3 bg-white/10 hover:bg-red-500/90 text-white backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 transition-all duration-300 hover:scale-110 hover:border-red-500/50 active:scale-95 cursor-pointer"
+                    onClick={() => confirmDelete(g.id)}
+                    aria-label={`Eliminar imagen`}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
-                <button
-                  className="shrink-0 p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 active:scale-90 shadow-xs cursor-pointer"
-                  onClick={() => confirmDelete(g.id)}
-                  aria-label={`Eliminar imagen`}
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+
+                {/* Info Container (Always Visible) */}
+                <div className="absolute bottom-0 left-0 w-full p-5 z-10">
+                  <div className="flex items-center gap-3">
+                    <span className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold tracking-wider shadow-sm border border-white/20">
+                      {g.category === 'gallery' ? 'GALERÍA' : g.category?.toUpperCase() || 'IMAGEN'}
+                    </span>
+                  </div>
+                </div>
               </div>
             </article>
           ))}
@@ -283,7 +292,7 @@ function Galeria({ modelType = "brotherhood", modelId }) {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/40 backdrop-blur-md"
               aria-hidden="true"
             />
           </TransitionChild>
@@ -293,46 +302,46 @@ function Galeria({ modelType = "brotherhood", modelId }) {
               <TransitionChild
                 as={Fragment}
                 enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95 translate-y-4"
+                enterFrom="opacity-0 scale-95 translate-y-8"
                 enterTo="opacity-100 scale-100 translate-y-0"
                 leave="ease-in duration-200"
                 leaveFrom="opacity-100 scale-100 translate-y-0"
-                leaveTo="opacity-0 scale-95 translate-y-4"
+                leaveTo="opacity-0 scale-95 translate-y-8"
               >
-                <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-[3.5rem] bg-white dark:bg-zinc-900 p-12 text-left align-middle shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] transition-all">
-                  <div className="flex justify-between items-center mb-10">
-                    <div>
+                <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-[2.5rem] bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-white/20 dark:border-white/10 p-8 md:p-12 text-left align-middle shadow-2xl shadow-purple-500/10 transition-all">
+                  <div className="flex justify-between items-center mb-8">
+                    <div className="space-y-1">
                       <DialogTitle
                         as="h3"
-                        className="text-3xl font-black tracking-tight text-foreground"
+                        className="text-3xl font-black tracking-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent"
                       >
                         Añadir Imagen
                       </DialogTitle>
-                      <p className="text-muted-foreground mt-1 text-sm">
-                        Completa los detalles para tu nueva publicación.
+                      <p className="text-muted-foreground text-sm font-medium">
+                        Sube una nueva foto a tu galería.
                       </p>
                     </div>
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="p-3 hover:bg-muted rounded-2xl transition-all duration-300 group"
+                      className="p-3 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-all duration-300 group shadow-sm hover:shadow"
                     >
-                      <X className="w-6 h-6 text-muted-foreground group-hover:rotate-90 transition-transform duration-300" />
+                      <X className="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:rotate-90 transition-transform duration-300" />
                     </button>
                   </div>
 
                   <form
                     onSubmit={handleCreateImage}
-                    className="space-y-12"
+                    className="space-y-10"
                   >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                       {/* Left Column: Upload */}
-                      <div className="space-y-6">
-                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 text-center">
-                          1. Seleccionar Imagen
+                      <div className="space-y-4">
+                        <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 text-center">
+                          1. Seleccionar Archivo
                         </label>
                         
                         <div
-                          className="relative group cursor-pointer aspect-video"
+                          className="relative group cursor-pointer aspect-[4/3] rounded-[2rem] overflow-hidden"
                           onClick={() =>
                             document.getElementById("fileInput").click()
                           }
@@ -360,43 +369,50 @@ function Galeria({ modelType = "brotherhood", modelId }) {
                             accept="image/*"
                             onChange={handleFileChange}
                           />
-                          <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-zinc-800/40 rounded-[2rem] border-2 border-dashed border-zinc-200 dark:border-zinc-700 group-hover:border-purple-500/50 group-hover:bg-white dark:group-hover:bg-zinc-800 transition-all duration-500 shadow-xs hover:shadow-xl hover:-translate-y-1">
-                            <div className="p-4 bg-white dark:bg-zinc-800 rounded-2xl shadow-sm text-purple-500 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                          <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-900/80 dark:to-zinc-800/80 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-[2rem] transition-all duration-500 group-hover:border-purple-500/60 group-hover:bg-purple-50/50 dark:group-hover:bg-purple-500/5 flex flex-col items-center justify-center gap-5">
+                            
+                            {/* Glow effect on hover */}
+                            <div className="absolute inset-0 bg-purple-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                            
+                            <div className="relative z-10 p-5 bg-white dark:bg-zinc-800 rounded-2xl shadow-sm text-purple-500 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-110 group-hover:shadow-md">
                               <UploadCloud className="w-8 h-8" />
                             </div>
-                            <div className="text-center px-6">
-                              <p className="text-sm font-bold text-foreground line-clamp-1">
+                            
+                            <div className="relative z-10 text-center px-6 space-y-1.5">
+                              <p className="text-sm font-bold text-foreground line-clamp-1 transition-colors duration-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
                                 {selectedFile
                                   ? selectedFile.name
                                   : "Haz clic o arrastra aquí"}
                               </p>
-                              <p className="text-[10px] text-muted-foreground mt-1 font-medium uppercase tracking-wider">
-                                PNG, JPG o WEBP (Máx. 10MB)
+                              <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest opacity-70">
+                                PNG, JPG o WEBP
                               </p>
                             </div>
                           </div>
                         </div>
-                        <p className="text-[11px] leading-relaxed text-muted-foreground/50 text-center italic px-4">
-                          Sube archivos locales directamente desde tu dispositivo.
-                        </p>
                       </div>
 
                       {/* Right Column: Preview */}
-                      <div className="space-y-6">
-                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 text-center">
+                      <div className="space-y-4">
+                        <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 text-center">
                           Vista Previa
                         </label>
                         
-                        <div className="aspect-video bg-zinc-50 dark:bg-zinc-800/40 rounded-[2rem] border border-border/10 overflow-hidden">
+                        <div className="aspect-[4/3] bg-zinc-100/50 dark:bg-zinc-900/50 rounded-[2rem] border border-border/10 overflow-hidden relative group shadow-inner">
                           {previewUrl ? (
-                            <img
-                              src={previewUrl}
-                              alt="Mockup"
-                              className="w-full h-full object-cover"
-                            />
+                            <>
+                              <img
+                                src={previewUrl}
+                                alt="Preview"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-6">
+                                <span className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-bold tracking-wider">LISTO PARA SUBIR</span>
+                              </div>
+                            </>
                           ) : (
-                            <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground/20">
-                              <ImageIcon className="w-12 h-12" />
+                            <div className="flex flex-col items-center justify-center h-full gap-4 text-zinc-400/50">
+                              <ImageIcon className="w-10 h-10" />
                               <p className="text-[10px] font-black uppercase tracking-widest">
                                 Sin imagen
                               </p>
@@ -406,38 +422,39 @@ function Galeria({ modelType = "brotherhood", modelId }) {
                       </div>
                     </div>
 
-                    {/* Centered Actions */}
-                    <div className="flex flex-col items-center justify-center gap-6 pt-4">
-                      <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-lg">
-                        <button
-                          type="submit"
-                          disabled={isSubmitting || !selectedFile}
-                          className="flex-[2] w-full px-8 py-4 bg-purple-600 text-white font-bold rounded-2xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-3 text-lg cursor-pointer shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-1 active:scale-95"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <Loader2 className="w-6 h-6 animate-spin" />
-                              Subiendo...
-                            </>
-                          ) : (
-                            <>
-                              <UploadCloud className="w-6 h-6" />
-                              Publicar Imagen
-                            </>
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsModalOpen(false);
-                            setSelectedFile(null);
-                            setPreviewUrl("");
-                          }}
-                          className="flex-1 w-full py-4 text-muted-foreground font-bold hover:text-foreground transition-all duration-300 text-sm cursor-pointer hover:bg-muted/50 rounded-2xl"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
+                    {/* Actions */}
+                    <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsModalOpen(false);
+                          setSelectedFile(null);
+                          setPreviewUrl("");
+                        }}
+                        className="w-full sm:w-1/3 py-4 text-muted-foreground font-bold hover:text-foreground transition-all duration-300 text-sm cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-2xl"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || !selectedFile}
+                        className="w-full sm:w-2/3 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:grayscale transition-all duration-300 flex items-center justify-center gap-3 text-base cursor-pointer shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5 active:scale-95 group relative overflow-hidden"
+                      >
+                        {/* Shimmer effect */}
+                        <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg]" />
+                        
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin relative z-10" />
+                            <span className="relative z-10">Subiendo...</span>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300 relative z-10" />
+                            <span className="relative z-10">Publicar Imagen</span>
+                          </>
+                        )}
+                      </button>
                     </div>
                   </form>
                 </DialogPanel>

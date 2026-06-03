@@ -90,26 +90,28 @@ function UserForm({ initialData = null, onSuccess }) {
           onChange={handleChange}
         />
 
-        <div className="grid grid-cols-2 gap-4">
-            <InputField
-            label="Contraseña"
-            name="password"
-            type="password"
-            placeholder={initialData ? "Dejar en blanco para mantener" : "********"}
-            value={form.password}
-            onChange={handleChange}
-            required={!initialData} 
-            />
-            <InputField
-            label="Confirmar Contraseña"
-            name="password_confirmation"
-            type="password"
-            placeholder={initialData ? "Dejar en blanco para mantener" : "********"}
-            value={form.password_confirmation}
-            onChange={handleChange}
-            required={!initialData || form.password.length > 0} 
-            />
-        </div>
+        {!initialData && (
+          <div className="grid grid-cols-2 gap-4">
+              <InputField
+              label="Contraseña"
+              name="password"
+              type="password"
+              placeholder="********"
+              value={form.password}
+              onChange={handleChange}
+              required={true} 
+              />
+              <InputField
+              label="Confirmar Contraseña"
+              name="password_confirmation"
+              type="password"
+              placeholder="********"
+              value={form.password_confirmation}
+              onChange={handleChange}
+              required={true} 
+              />
+          </div>
+        )}
       </div>
 
       <div className="mt-6 flex justify-end">

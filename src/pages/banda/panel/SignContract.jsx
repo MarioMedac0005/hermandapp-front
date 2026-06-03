@@ -178,7 +178,18 @@ function SignContract() {
              signedBase64 = await signatureService.signDocument(base64ToSign);
         } catch (e) {
              toast.dismiss(loadingToast);
-             toast.error(`Error AutoFirma: ${e.message}`);
+             
+             // Detect mobile devices
+             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+             
+             let errorMessage = `Error AutoFirma: ${e.message}`;
+             
+             // Show specific message for missing AutoFirma installation
+             if (isMobile || e.message.toLowerCase().includes("error") || e.message.toLowerCase().includes("conexión")) {
+                 errorMessage = "No se ha podido iniciar AutoFirma. Asegúrate de tener la aplicación instalada en el dispositivo actual.";
+             }
+             
+             toast.error(errorMessage, { duration: 6000 });
              console.error("AutoFirma error", e);
              setSigning(false);
              return;
