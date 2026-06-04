@@ -97,7 +97,9 @@ function ContractForm({ initialData = null, onSuccess }) {
         { id: "expired", name: "Expirado" },
     ];
 
-    const typeOptions = [
+    const typeOptions = !initialData ? [
+        { id: "procession", name: "Procesión" }
+    ] : [
         { id: "procession", name: "Procesión" },
         { id: "concert", name: "Concierto" },
         { id: "transfer", name: "Traslado" },
