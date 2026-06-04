@@ -201,8 +201,18 @@ export default function ProposalPage() {
 				}),
 			});
 
+			let data = {};
+			try {
+				const text = await response.text();
+				if (text) {
+					data = JSON.parse(text);
+				}
+			} catch (e) {
+				console.warn("No JSON in response");
+			}
+
 			if (response.ok) {
-				toast.success("¡Propuesta enviada con éxito!", {
+				toast.success(data.message || "¡Propuesta enviada con éxito!", {
 					style: {
 						borderRadius: '12px',
 						background: '#1e1b4b',
@@ -210,10 +220,9 @@ export default function ProposalPage() {
 						fontWeight: 'bold',
 					},
 				});
-				navigate("/hermandad/panel/contratos");
+				window.location.href = "/hermandad/panel/contratos";
 			} else {
-				const errorData = await response.json();
-				toast.error(errorData.message || "Error al enviar la propuesta");
+				toast.error(data.message || "Error al enviar la propuesta");
 			}
 		} catch (error) {
 			console.error("Submit error:", error);
