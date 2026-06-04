@@ -239,12 +239,22 @@ export default function Register() {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      let data = {};
+      try {
+        const text = await response.text();
+        if (text) {
+          data = JSON.parse(text);
+        }
+      } catch (e) {
+        console.warn("No JSON in response");
+      }
 
-      if (!response.ok) throw new Error(data.message || "Error en el registro");
+      if (!response.ok) {
+        throw new Error(data.message || "Error en el registro");
+      }
 
-      toast.success(data.message || "Registro completado con éxito");
-      setTimeout(() => navigate("/"), 2000);
+      toast.success(data.message || "Registro completado con éxito, pendiente de revisión.");
+      navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
       toast.error(error.message || "Hubo un error al procesar el registro");
