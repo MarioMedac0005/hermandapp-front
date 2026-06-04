@@ -2,8 +2,12 @@ import {
   BuildingOfficeIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function CardInfoHeader({ isEditing, setIsEditing }) {
+  const { user } = useAuth();
+  const brotherhoodName = user?.brotherhood?.name || "Cargando...";
+
   return (
     <>
       <header className="bg-gradient-to-r from-purple-600 to-purple-700 px-5 py-4 flex justify-between items-center">
@@ -14,7 +18,7 @@ function CardInfoHeader({ isEditing, setIsEditing }) {
           <div className="text-white">
             <p className="text-xs opacity-90">Hermandad</p>
             <h2 className="text-base font-semibold">
-              Hermandad del Cristo de la Expiración
+              {brotherhoodName}
             </h2>
           </div>
         </div>
