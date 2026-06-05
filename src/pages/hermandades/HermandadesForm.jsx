@@ -125,9 +125,21 @@ export default function ProposalPage() {
 		if (step === 1) {
 			if (!formData.performance_type) newErrors.performance_type = "Selecciona un tipo de actuación";
 			if (!formData.performance_date) newErrors.performance_date = "Selecciona una fecha";
-            if (formData.performance_type === 'procession' && !formData.procession_id) {
-                newErrors.procession_id = "Selecciona una procesión";
-            }
+			if (formData.performance_type === 'procession') {
+				if (processions.length === 0) {
+					newErrors.performance_type = "No tienes procesiones creadas. Crea una en tu panel.";
+					toast.error("No tienes procesiones creadas. Debes crear una en tu panel antes de poder continuar.", {
+						style: {
+							borderRadius: '12px',
+							background: '#1e1b4b',
+							color: '#fff',
+							fontWeight: 'bold',
+						},
+					});
+				} else if (!formData.procession_id) {
+					newErrors.procession_id = "Selecciona una procesión";
+				}
+			}
 		} else if (step === 2) {
 			if (formData.performance_type !== 'procession') {
 				if (!formData.approximate_route) newErrors.approximate_route = "Indica los detalles del recorrido";
